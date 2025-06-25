@@ -1,0 +1,8 @@
+functions-framework
+firebase-functions
+firebase-admin
+openpyxl
+google-cloud-storage
+google-genai
+google-auth 
+google-auth-oauthlib

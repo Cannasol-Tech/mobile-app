@@ -1,0 +1,37 @@
+automationSystem1
+Device ID: 07b18d3b-2469-4c0e-9ca4-7b62355b96fe
+
+AutomationSystem2
+Device ID: 2354c8f5-8b2c-4807-be94-0e6580c78645
+
+automationSystemNanoESP32
+Device ID: 4c19cfe3-bf74-49f5-a8d6-8a30bd15b888
+Secret Key: 7sOthWoOa?q6ZfY5fY!l?SCGT
+
+AutomationSystemESP32
+New Device ID: B5C5-8C17-178D-5A53
+Device ID: 1e8a347a-8a24-452d-b7c5-2740a2fc812a
+Secret Key: 1CHHthpJQbYlaPmdnwdOPH3ao
+
+
+https://api2.arduino.cc/iot/v1/things/f9eaf3b3-ba11-4f37-a245-6780e8e1ebb2/properties/7fc58fae-0816-46e2-80df-acd046b24c56/publish
+
+
+APP IDS: 
+
+REVERT APP KEYS:
+
+TWILIO:
+password: Cannasol123456789!
+access code: ST3GTE452X7UPFP4SQ5XKZ6U
+
+CLIENT_ID
+vE9669oQWPefQEhcPWi2c8KGiYHNB04o
+
+CLIENT_SECRET
+knzrEUxzPFv1thup2JxoOdIWzlhpNiH50iPsJ1BYQJsj96nUGb76UQVN5t3Q8yMB
+
+
+GOOGLE FIREBASE ERROR:
+
+W/LocalRequestInterceptor( 5393): Error getting App Check token; using placeholder token instead. Error: com.google.firebase.FirebaseException: No AppCheckProvider installed.

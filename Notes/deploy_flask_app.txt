@@ -1,0 +1,21 @@
+gcloud auth login
+gcloud config set project cannasoltech
+gcloud auth configure-docker
+cd C:\Users\Cannasol\Documents\GitHub\CannasolPLC\Mobile_App_Official\hardware_simulation
+
+docker build -t gcr.io/cannasoltech/device-timers:v3 .
+docker push gcr.io/cannasoltech/device-timers:v3
+gcloud run deploy device-timers --image gcr.io/cannasoltech/device-timers:v1 --region us-central1 --platform managed --allow-unauthenticated
+
+
+LIST SERVICES: 
+gcloud run services list --platform managed --region us-central1
+
+
+DELETE SERVICE: 
+
+gcloud run services delete device-timers --platform managed --region us-central1
+
+
+
+

@@ -1,0 +1,20 @@
+Fix push notification message to not have underscore + email xx (should be fixed) 
+Can't warm up while alarm is happening -- will set to run state if warm up process is finished xx ( test - should be fixed ) 
+
+Fix run page so it builds everytime _currentRunPage changes 
+Make sure "HOME" is selected when push notification open -- try implementing in building of the run page
+Look at ignoring alarms issue.
+Verify alarm timer -- on alarm timer tick -- update alarm time based on alarm start time (scan alarm logs and get start time of alarm with same type where cleared time == N/A)  Subtract alarm start time from current time and save as Duration type. 
+Update Store button to say what it is.
+error handling
+
+
+
+Colors on the iPhone -- at the office
+
+
+
+
+
+Later 
+-- Move updating stats / sensor data to daemon

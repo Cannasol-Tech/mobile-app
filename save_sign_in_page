@@ -1,0 +1,135 @@
+import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
+import 'package:automation_system/run_page.dart';
+import 'package:automation_system/config_page.dart';
+import 'package:automation_system/providers/system_data_provider.dart';
+
+class SignInPage extends StatelessWidget {
+  const SignInPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    UI ui = userInterface(context);
+    Size size MediaQuery.of(context).size; 
+    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    return Consumer<SystemDataModel>(builder: (context, value, child) =>  Scaffold(
+      body: Form(
+        child: Center(
+          child: Card(
+            elevation: 8,
+            child: Container(
+              key: _formKey,
+              padding: const EdgeInsets.all(32.0),
+              constraints: const BoxConstraints(
+                maxWidth: ui.maxWidth : size.width*0.9,
+                maxHeight: size.height*0.9
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget> [
+                      Image.asset("assets/images/SmallIcon.png"),
+                    _gap(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Text(
+                        "Cannasol Technologies",
+                        style: Theme.of(context).textTheme.headline5,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        "Enter your system's name to continue.",
+                        style: Theme.of(context).textTheme.caption,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    _gap(),
+                    TextFormField(
+                      validator: (value) {
+                        return "hello";
+                      },
+                      decoration: const InputDecoration(
+                        labelText: 'System Name',
+                        hintText: "Enter your system's name",
+                        prefixIcon: Icon(Icons.factory),
+                        border: OutlineInputBorder(),
+                      ),
+
+                      onChanged: (String systemName) {
+                          Provider.of<SystemDataModel>(context, listen: false).setSystemName(systemName);
+                        }
+                    ),         
+                    _gap(),
+                    TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        if (value.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+                        return null;
+                      },
+                      obscureText: !value.isPasswordVisible,
+                      decoration: InputDecoration(
+                          labelText: 'Password',
+                          hintText: 'Enter your password',
+                          prefixIcon: const Icon(Icons.lock_outline_rounded),
+                          border: const OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: Icon(value.isPasswordVisible
+                                ? Icons.visibility_off
+                                : Icons.visibility),
+                            onPressed: () {
+                                Provider.of<SystemDataModel>(context, listen: false).togglePWVis();
+                              }
+                          )
+                        ),
+                    ),
+                   _gap(),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            'Connect',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        onPressed: () {
+                          if (_formKey.currentState?.validate() ?? false) {
+                          }
+
+
+                          // Provider.of<SystemDataModel>(context, listen: false).fetchData();
+                          // if (Provider.of<SystemDataModel>(context, listen: false).verifySystemName() == "VALID") {
+                          //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ConfigPage()));
+                          // }
+                          // else {
+                          //   print("Invalid Device");
+                          // }
+                          return;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    )
+    );
+  }
+  Widget _gap() => const SizedBox(height: 16);
+}

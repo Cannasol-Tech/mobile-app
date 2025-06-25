@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "681058687134",
+    "firebase_url": "https://cannasoltech-default-rtdb.firebaseio.com",
+    "project_id": "cannasoltech",
+    "storage_bucket": "cannasoltech.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:681058687134:android:226599577d4fa831c7438f",
+        "android_client_info": {
+          "package_name": "com.cannasoltech_automation.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "681058687134-6f8atkd860tsnukq32m2pk3qm3nija23.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cannasoltech_automation.app",
+            "certificate_hash": "bed599e57737e0b7a07860b6747c80598a1dfcd1"
+          }
+        },
+        {
+          "client_id": "681058687134-7u8b2tooh7rcojkkdb6tkrh0a1smh7n3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgoZEfLt5vObq2UQO1RM7x_yENvobWzRo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "681058687134-7u8b2tooh7rcojkkdb6tkrh0a1smh7n3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "681058687134-aurf86u0ocm6qk7mm7tj6lce40l9tggg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.cannasoltechAutomation"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
