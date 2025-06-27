@@ -1,0 +1,46 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Run Flutter Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.3.3'
+          channel: 'stable'
+
+      - name: Get dependencies
+        run: |
+          cd cannasoltech_automation
+          flutter pub get
+
+      - name: Verify Flutter installation
+        run: flutter doctor
+
+      - name: Analyze code
+        run: |
+          cd cannasoltech_automation
+          flutter analyze
+
+      - name: Run unit tests
+        run: |
+          cd cannasoltech_automation
+          flutter test --coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: cannasoltech_automation/coverage/lcov.info
+          fail_ci_if_error: false
