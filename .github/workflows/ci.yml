@@ -18,26 +18,32 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.3.3'
+          flutter-version: '3.24.3'
           channel: 'stable'
-
-      - name: Get dependencies
-        run: |
-          cd cannasoltech_automation
-          flutter pub get
+          cache: true
 
       - name: Verify Flutter installation
-        run: flutter doctor
+        run: flutter doctor -v
+
+      - name: Get dependencies
+        working-directory: cannasoltech_automation
+        run: flutter pub get
+
+      - name: Check for dependency conflicts
+        working-directory: cannasoltech_automation
+        run: flutter pub deps
+
+      - name: Format check
+        working-directory: cannasoltech_automation
+        run: dart format --output=none --set-exit-if-changed .
 
       - name: Analyze code
-        run: |
-          cd cannasoltech_automation
-          flutter analyze
+        working-directory: cannasoltech_automation
+        run: flutter analyze --fatal-infos
 
       - name: Run unit tests
-        run: |
-          cd cannasoltech_automation
-          flutter test --coverage
+        working-directory: cannasoltech_automation
+        run: flutter test --coverage --reporter=expanded
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
