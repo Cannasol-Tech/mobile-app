@@ -26,7 +26,7 @@ class PumpControlConfig extends StatelessWidget {
           value: (context.read<SystemDataModel>().activeDevice != null) ? pumpControl.value : false,
           onChanged: (swValue) {
             pumpControl.toggle();
-            setter(pumpValue);
+            setter(swValue);
           },
         );
       },
