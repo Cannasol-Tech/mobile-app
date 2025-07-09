@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cannasoltech_automation/providers/system_data_provider.dart';
 import 'package:cannasoltech_automation/providers/display_data_provider.dart';
+import 'package:cannasoltech_automation/services/navigation_service.dart';
+import 'package:cannasoltech_automation/services/logging_service.dart';
+import 'package:cannasoltech_automation/services/style_service.dart';
 import 'api/firebase_api.dart';
 import 'firebase_options.dart';
 import 'objects/alarm_notification.dart';
@@ -11,12 +14,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'pages/home/run_page.dart';
 import 'providers/transform_provider.dart';
 import 'shared/maps.dart';
-import 'objects/logger.dart';
 
 typedef CurrentUser = User?;
-
-final navigatorKey = GlobalKey<NavigatorState>();
-final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 
 
@@ -28,10 +27,21 @@ Future<void> main() async {
   } catch (e) {
     // Optionally show an error screen if Firebase fails to initialize
   }
-  setupLogging();
+  
+  // Initialize services
+  final navigationService = NavigationService();
+  final loggingService = LoggingService();
+  final styleService = StyleService();
+  
   runApp(
     MultiProvider(
     providers: [
+          // Service providers
+          Provider<NavigationService>.value(value: navigationService),
+          Provider<LoggingService>.value(value: loggingService),
+          Provider<StyleService>.value(value: styleService),
+          
+          // Existing providers
           // StreamProvider<Data>(create: (context) => DatabaseService().streamDevices(), initialData: Data(devices: [])),
           // StreamProvider<UserDbInfo>(create: (context) => DatabaseService().streamUser(), initialData: UserDbInfo.noUser()),
           ChangeNotifierProvider(create: (context) {
@@ -41,6 +51,7 @@ Future<void> main() async {
          }),
           ChangeNotifierProvider(create: (context) {
             var systemDataModel = SystemDataModel();
+            systemDataModel.setLoggingService(loggingService);
             systemDataModel.init();
             return systemDataModel;
           }),
@@ -64,6 +75,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool loggedIn = Provider.of<CurrentUser>(context) != null;
+    final navigationService = Provider.of<NavigationService>(context);
+    
     Future.microtask(() {
       context.read<DisplayDataModel>().setBottomNavSelectedItem(0);
     });
@@ -74,8 +87,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const HomePage(),
-      navigatorKey: navigatorKey,
-      scaffoldMessengerKey: scaffoldMessengerKey,
+      navigatorKey: navigationService.navigatorKey,
+      scaffoldMessengerKey: navigationService.scaffoldMessengerKey,
       onGenerateRoute: (settings) {
         if (loggedIn && settings.name != null && settings.arguments != null){
           if (settings.name!.contains("push")){
@@ -88,8 +101,8 @@ class MyApp extends StatelessWidget {
             } else{
               AlarmNotification(alarmName: data['alarm'], deviceId: data['deviceId']).showAlarmBanner();
             }
-            navigatorKey.currentContext?.read<DisplayDataModel>().setBottomNavSelectedItem(0);
-            navigatorKey.currentState?.pop();
+            navigationService.currentContext?.read<DisplayDataModel>().setBottomNavSelectedItem(0);
+            navigationService.pop();
             return MaterialPageRoute(
               builder: (context) {
                 int idx = alarmToIdxMap[data['alarm']];

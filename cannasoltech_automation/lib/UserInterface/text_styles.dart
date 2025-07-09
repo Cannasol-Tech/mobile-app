@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import '../services/style_service.dart';
 
-TextStyle configHeaderStyle = const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, decoration: TextDecoration.underline);
-
-const TextStyle noDeviceStyle = TextStyle(
-  fontSize: 24, 
-  color: Colors.red, 
-  fontWeight: FontWeight.bold
-);
+// Re-export styles for backward compatibility
+// TODO: Update all files to use StyleService directly
+TextStyle configHeaderStyle = StyleService.configHeaderStyle;
+const TextStyle noDeviceStyle = StyleService.noDeviceStyle;
