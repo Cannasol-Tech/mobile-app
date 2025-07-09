@@ -17,6 +17,13 @@ import 'shared/maps.dart';
 
 typedef CurrentUser = User?;
 
+// Initialize services
+final _navigationService = NavigationService();
+
+// Backward compatibility: expose service keys as global variables
+final navigatorKey = _navigationService.navigatorKey;
+final scaffoldMessengerKey = _navigationService.scaffoldMessengerKey;
+
 
 
 Future<void> main() async {
@@ -29,7 +36,7 @@ Future<void> main() async {
   }
   
   // Initialize services
-  final navigationService = NavigationService();
+  final navigationService = _navigationService; // Use the already created instance
   final loggingService = LoggingService();
   final styleService = StyleService();
   
@@ -75,7 +82,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool loggedIn = Provider.of<CurrentUser>(context) != null;
-    final navigationService = Provider.of<NavigationService>(context);
+    // No need to get navigationService here since we're using the global keys
     
     Future.microtask(() {
       context.read<DisplayDataModel>().setBottomNavSelectedItem(0);
@@ -87,8 +94,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const HomePage(),
-      navigatorKey: navigationService.navigatorKey,
-      scaffoldMessengerKey: navigationService.scaffoldMessengerKey,
+      navigatorKey: navigatorKey,
+      scaffoldMessengerKey: scaffoldMessengerKey,
       onGenerateRoute: (settings) {
         if (loggedIn && settings.name != null && settings.arguments != null){
           if (settings.name!.contains("push")){
@@ -101,8 +108,8 @@ class MyApp extends StatelessWidget {
             } else{
               AlarmNotification(alarmName: data['alarm'], deviceId: data['deviceId']).showAlarmBanner();
             }
-            navigationService.currentContext?.read<DisplayDataModel>().setBottomNavSelectedItem(0);
-            navigationService.pop();
+            navigatorKey.currentContext?.read<DisplayDataModel>().setBottomNavSelectedItem(0);
+            navigatorKey.currentState?.pop();
             return MaterialPageRoute(
               builder: (context) {
                 int idx = alarmToIdxMap[data['alarm']];
