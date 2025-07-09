@@ -34,7 +34,6 @@ const String SONIC_PATH = "assets/images/sonicator2.png";
 /* Icons */
 const String WARN_ICON  = "assets/images/warn.jpg";
 const String LOCK_OPEN  = "assets/images/padlock_open.avif";
-const String LOCK_CLOSE = "assets/images/padlock_close.png";
 
 /* Documents */
 const String PP_PATH = "assets/documents/privacy_policy.md";
