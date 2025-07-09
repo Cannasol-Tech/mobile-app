@@ -1,13 +1,7 @@
-
-
-
-// ignore_for_file: no_leading_underscores_for_local_identifiers, non_constant_identifier_names
-
-import 'package:cannasoltech_automation/controllers/toggle_controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../providers/system_data_provider.dart';
+import 'package:cannasoltech_automation/controllers/toggle_controllers.dart';
 
 class PumpControlConfig extends StatelessWidget {
   const PumpControlConfig({super.key});
@@ -16,7 +10,7 @@ class PumpControlConfig extends StatelessWidget {
   Widget build(BuildContext context) {
     return Selector<SystemDataModel, ToggleController>(
       selector: (_, p) => (p.toggleControllers.pumpControl),
-      builder: (__x, pumpControl, x__) {
+      builder: (_x_x, pumpControl, x_x_) {
         bool pumpValue = context.watch<SystemDataModel>().activeDevice?.config.pumpControl ?? false;
         void Function(bool) setter = context.read<SystemDataModel>().activeDevice!.config.setPumpControl;
         return SwitchListTile(
