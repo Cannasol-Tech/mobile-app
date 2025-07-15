@@ -8,6 +8,7 @@ import '../UserInterface/ui.dart';
 import '../UserInterface/text_styles.dart';
 import 'app_card.dart';
 import 'display_system.dart';
+import 'buttons/confirm_button.dart';
 
 extension StringExtension on String {
   String toCapital() {
@@ -82,6 +83,23 @@ Widget slotCard(context, idx, option) {
                     DisplaySysVal(
                       text: "Cool Down Enabled",
                       val: StringExtension(activeDevice.saveSlots[idx - 1].cooldownEnabled.toString()).toCapital(),
+                    ),
+                    const SizedBox(height: 24.0),
+                    // Add save or load button based on option
+                    SizedBox(
+                      width: 140,
+                      height: 50,
+                      child: ConfirmButton(
+                        color: Theme.of(context).colorScheme.primary,
+                        confirmMethod: option == "save" 
+                          ? activeDevice.saveSlots[idx - 1].save
+                          : activeDevice.saveSlots[idx - 1].load,
+                        confirmText: option == "save"
+                          ? 'want to overwrite the contents of save slot #$idx'
+                          : 'want to load the contents of save slot #$idx',
+                        buttonText: option == "save" ? 'Save Config' : 'Load Config',
+                        hero: '${option}CfgBtn_$idx',
+                      ),
                     ),
                     const SizedBox(height: 16.0),
                   ],
