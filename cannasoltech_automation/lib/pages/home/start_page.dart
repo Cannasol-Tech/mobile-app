@@ -3,7 +3,6 @@ import 'package:cannasoltech_automation/handlers/current_run.dart';
 import '../../UserInterface/ui.dart';
 import '../../handlers/user_handler.dart';
 import 'end_page.dart';
-import 'no_device.dart';
 import 'run_page.dart';
 
 import 'package:flutter/material.dart';
@@ -21,7 +20,6 @@ import '../../components/pump_control_config.dart';
 import '../../providers/system_data_provider.dart';
 import '../../components/system_input_warning.dart';
 
-
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
   @override
@@ -29,126 +27,139 @@ class StartPage extends StatefulWidget {
 }
 
 class _StartPageState extends State<StartPage> {
-
-  noDeviceSelectedDisplay() => (
-    Expanded( 
+  noDeviceSelectedDisplay() => (Expanded(
       child: Container(
-        alignment: Alignment.center, 
-        child: const Text("No Device Selected!", 
-          style: TextStyle(
-            color: Colors.red, 
-            fontSize: 24, 
-            fontWeight: FontWeight.bold
-          )
-        )
-      )
-    )
-  );
-  
+          alignment: Alignment.center,
+          child: const Text("No Device Selected!",
+              style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold)))));
+
   get runPageStates => [RUNNING, WARM_UP, ALARM, COOL_DOWN];
 
- @override
+  @override
   Widget build(BuildContext context) {
-    return Consumer<SystemDataModel>(
-      builder: (_xX, value, Xx_) {
+    return Consumer<SystemDataModel>(builder: (_xX, value, Xx_) {
       UI ui = userInterface(context);
       int state = value.activeDevice?.state.state ?? INIT;
       Device? activeDevice = value.activeDevice;
-      if (runPageStates.contains(state)) { 
+      if (runPageStates.contains(state)) {
         return const RunPage();
+      } else if (state == FINISHED) {
+        return const EndPage();
       }
-      else if (state == FINISHED) { 
-        return const EndPage(); 
-      }
-      return (activeDevice == null) ? const NoDevicePage() : Scaffold(
-        appBar: systemAppBar(context, activeDevice),
-        drawer: const SideMenu(),
-        body: SafeArea(
-            child: Center(
-              child: Card(
-                shadowColor: Colors.black,
-                elevation: 8,
-                child: (activeDevice.isOnline())
-                ? Container(
-                    width: ui.size.displayWidth * 0.90,
-                    height: ui.size.displayHeight * 0.70,
-                    constraints: BoxConstraints(
-                      maxWidth: ui.size.maxWidth, 
-                      maxHeight: ui.size.displayHeight * 0.9),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Image.asset("assets/images/SmallIcon.png"),
-                          _gap(),
-                          const Text("Ultrasonic Control System",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.underline,
-                              fontSize: 24,
-                            ),
-                          ),
-                          _gap(),
-                          dropDownDivider,
-                          const SetTimeConfig(),
-                          dropDownDivider,
-                          const SetTempListConfig(),
-                          dropDownDivider,
-                          const SetBatchSizeConfig(),
-                          dropDownDivider,
-                          const PumpControlConfig(),
-                          dropDownDivider,
-                          _gap(),
-                          SizedBox(
-                            width:  MediaQuery.of(context).size.width * 0.4,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                elevation: 15,
-                                shadowColor: Colors.black,
-                                backgroundColor: Colors.blueGrey,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20)),
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.all(10.0),
-                                child: Text('Start',
-                                  style: TextStyle(
-                                      fontSize: 16, 
-                                      fontWeight: FontWeight.bold, 
-                                      color: Colors.black
+      return (activeDevice == null)
+          ? const NoDevicePage()
+          : Scaffold(
+              appBar: systemAppBar(context, activeDevice),
+              drawer: const SideMenu(),
+              body: SafeArea(
+                child: Center(
+                  child: Card(
+                      shadowColor: Colors.black,
+                      elevation: 8,
+                      child: (activeDevice.isOnline())
+                          ? Container(
+                              width: ui.size.displayWidth * 0.90,
+                              height: ui.size.displayHeight * 0.70,
+                              constraints: BoxConstraints(
+                                  maxWidth: ui.size.maxWidth,
+                                  maxHeight: ui.size.displayHeight * 0.9),
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Image.asset("assets/images/SmallIcon.png"),
+                                    _gap(),
+                                    const Text(
+                                      "Ultrasonic Control System",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        decoration: TextDecoration.underline,
+                                        fontSize: 24,
+                                      ),
                                     ),
+                                    _gap(),
+                                    dropDownDivider,
+                                    const SetTimeConfig(),
+                                    dropDownDivider,
+                                    const SetTempListConfig(),
+                                    dropDownDivider,
+                                    const SetBatchSizeConfig(),
+                                    dropDownDivider,
+                                    const PumpControlConfig(),
+                                    dropDownDivider,
+                                    _gap(),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.4,
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          elevation: 15,
+                                          shadowColor: Colors.black,
+                                          backgroundColor: Colors.blueGrey,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20)),
+                                        ),
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(10.0),
+                                          child: Text(
+                                            'Start',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black),
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          if (activeDevice.state.paramsValid ==
+                                              true) {
+                                            Provider.of<SystemDataModel>(
+                                                    context,
+                                                    listen: false)
+                                                .activeDevice!
+                                                .config
+                                                .startDevice(context);
+                                            UserHandler currentUser = context
+                                                .read<SystemDataModel>()
+                                                .userHandler;
+                                            if (currentUser.uid != null) {
+                                              CurrentRunModel? currentRun =
+                                                  context
+                                                      .read<SystemDataModel>()
+                                                      .activeDevice
+                                                      ?.currentRun;
+                                              currentRun
+                                                  ?.setUser(currentUser.uid!);
+                                            }
+                                          } else {
+                                            showAlertDialog(context,
+                                                "Turn on pump and enter valid parameters to start your system.");
+                                          }
+                                          return;
+                                        },
+                                      ),
+                                    ),
+                                    _gap(),
+                                  ],
                                 ),
                               ),
-                              onPressed: () {
-                                if (activeDevice.state.paramsValid == true){
-                                  Provider.of<SystemDataModel>(context, listen: false).activeDevice!.config.startDevice(context);
-                                  UserHandler currentUser = context.read<SystemDataModel>().userHandler;
-                                  if (currentUser.uid != null) {
-                                    CurrentRunModel? currentRun = context.read<SystemDataModel>().activeDevice?.currentRun;
-                                    currentRun?.setUser(currentUser.uid!);
-
-                                  }
-                                }
-                                else {
-                                  showAlertDialog(context, "Turn on pump and enter valid parameters to start your system.");
-                                }
-                                return;
-                              },
-                            ),
-                          ),
-                          _gap(),
-                        ],
-                      ),
-                    ),
-                  ) : Container(alignment: Alignment.center, child: const Text("Device is offline", style: TextStyle(color: Colors.red, fontSize: 24, fontWeight: FontWeight.bold)))
+                            )
+                          : Container(
+                              alignment: Alignment.center,
+                              child: const Text("Device is offline",
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold)))),
                 ),
-            ),
-          ),
-          bottomNavigationBar: BottomNavBar(),
-        );
-      }
-    );
+              ),
+              bottomNavigationBar: BottomNavBar(),
+            );
+    });
   }
-  Widget _gap() => const SizedBox(height: 16);
 
+  Widget _gap() => const SizedBox(height: 16);
 }
