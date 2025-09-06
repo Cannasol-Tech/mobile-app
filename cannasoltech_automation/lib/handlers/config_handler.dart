@@ -1,3 +1,14 @@
+/**
+ * @file config_handler.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief Device configuration management handler.
+ * @details Manages device configuration parameters, control operations,
+ *          and save slot functionality with Firebase database integration.
+ * @version 1.0
+ * @since 1.0
+ */
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
@@ -10,23 +21,47 @@ import '../shared/methods.dart';
 import '../shared/snacks.dart';
 import '../shared/types.dart';
 
-
+/**
+ * @brief Handles device configuration and control operations.
+ * @details Extends DatabaseModel to provide device configuration management,
+ *          control operations (start/stop/reset), and save slot functionality.
+ * @since 1.0
+ */
 class ConfigHandler extends DatabaseModel{
+  /// Associated device instance
   dynamic device;
+
+  /// List of configuration save slots
   List<SaveSlot> saveSlots = [];
 
+  /// Getter for reset/abort run status
   bool get reset => getBoolPropertyValue('abort_run');
+
+  /// Getter for start operation status
   bool get start => getBoolPropertyValue('start');
+
+  /// Setter for reset/abort run operation
   set reset (bool value) => setPropertyValue("abort_run", value);
+
+  /// Setter for start operation
   set start (bool value) => setPropertyValue("start", value);
-  
+
+  /// Getter for end run status
   bool get end => getBoolPropertyValue('end_run');
+
+  /// Getter for abort operation status
   bool get abort => getBoolPropertyValue('abort_run');
+
+  /// Setter for abort operation
   set abort (bool value) => setPropertyValue("abort_run", value);
+
+  /// Setter for end run operation
   set end (bool value) => setPropertyValue("end_run", value);
 
-
+  /// Getter for configured hours setting
   int get setHours => getIntPropertyValue('set_hours');
+
+  /// Getter for configured minutes setting
   int get setMinutes => getIntPropertyValue('set_minutes');
   set setHours (int value) => setIntPropertyValue("set_temp", value);
   set setMinutes (int value) => setIntPropertyValue("batch_size", value);

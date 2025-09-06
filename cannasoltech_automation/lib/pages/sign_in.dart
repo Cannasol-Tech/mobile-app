@@ -1,3 +1,14 @@
+/**
+ * @file sign_in.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief User sign-in page with email/password and Google authentication.
+ * @details Provides user authentication interface with email validation,
+ *          password visibility toggle, Google Sign-In integration, and error handling.
+ * @version 1.0
+ * @since 1.0
+ */
+
 import 'package:cannasoltech_automation/api/firebase_api.dart';
 import 'package:cannasoltech_automation/components/square_tile.dart';
 import 'package:cannasoltech_automation/providers/system_data_provider.dart';
@@ -11,13 +22,28 @@ import '../UserInterface/ui.dart';
 import '../handlers/user_handler.dart';
 import 'reset_password.dart';
 
-
+/**
+ * @brief Sign-in page widget with multiple authentication options.
+ * @details Stateful widget providing email/password authentication,
+ *          Google Sign-In, and navigation to registration and password reset.
+ * @since 1.0
+ */
 class SignInPage1 extends StatefulWidget {
 
+  /// Function to toggle between sign-in and registration pages
   final dynamic toggleFn;
 
+  /**
+   * @brief Creates a SignInPage1 widget.
+   * @param key Optional widget key for identification
+   * @param toggleFn Function to toggle between authentication pages
+   */
   const SignInPage1({super.key, required this.toggleFn});
 
+  /**
+   * @brief Creates the state for SignInPage1 widget.
+   * @return _SignInPage1State instance
+   */
   @override
   State<SignInPage1> createState() => _SignInPage1State();
 }

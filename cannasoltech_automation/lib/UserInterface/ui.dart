@@ -1,3 +1,14 @@
+/**
+ * @file ui.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief User interface utilities and color management library.
+ * @details Provides UI components, color schemes, and visual utilities for the
+ *          Cannasol Technologies application including system state colors and animations.
+ * @version 1.0
+ * @since 1.0
+ */
+
 library ui;
 
 import 'package:decorated_icon/decorated_icon.dart';
@@ -6,23 +17,71 @@ import 'package:flutter/material.dart';
 import 'animate.dart';
 part 'icons.dart';
 
-
+/**
+ * @brief Color database for application-wide color management.
+ * @details Provides standardized colors for different system states including
+ *          warm-up, cool-down, alarm, and warning states with alpha variations.
+ * @since 1.0
+ */
 class ColorDb {
+  /// Primary warm-up state color
   Color get warmUp1 => const Color.fromARGB(255, 170, 51, 51);
+
+  /// Secondary warm-up state color
   Color get warmUp2 => const Color.fromARGB(255, 117, 25, 25);
 
+  /**
+   * @brief Creates warm-up color 1 with specified alpha.
+   * @param alpha Alpha value (0-255)
+   * @return Color with specified alpha
+   */
   Color alphaWarm1(int alpha) => Color.fromARGB(alpha, 170, 51, 51);
+
+  /**
+   * @brief Creates warm-up color 2 with specified alpha.
+   * @param alpha Alpha value (0-255)
+   * @return Color with specified alpha
+   */
   Color alphaWarm2(int alpha) => Color.fromARGB(alpha, 117, 25, 25);
 
+  /// Primary cool-down state color
   Color get CoolDown1 => const Color.fromARGB(255, 52, 113, 206);
+
+  /// Secondary cool-down state color
   Color get CoolDown2 => const Color.fromARGB(255, 53, 130, 245);
 
+  /**
+   * @brief Creates cool-down color 1 with specified alpha.
+   * @param alpha Alpha value (0-255)
+   * @return Color with specified alpha
+   */
   Color alphaCool1(int alpha) => Color.fromARGB(alpha, 52, 113, 206);
+
+  /**
+   * @brief Creates cool-down color 2 with specified alpha.
+   * @param alpha Alpha value (0-255)
+   * @return Color with specified alpha
+   */
   Color alphaCool2(int alpha) => Color.fromARGB(alpha, 53, 130, 245);
 
+  /// Alarm state color (bright red)
   Color get alarm => const Color.fromARGB(255, 255, 17, 0);
+
+  /// No alarm state color (transparent)
   Color get noAlarm => Colors.transparent;
+
+  /**
+   * @brief Creates alarm color with specified alpha.
+   * @param alpha Alpha value (0-255)
+   * @return Alarm color with specified alpha
+   */
   Color alphaAlarm(int alpha) => Color.fromARGB(alpha, 255, 30, 40);
+
+  /**
+   * @brief Creates warning color with specified alpha.
+   * @param alpha Alpha value (0-255)
+   * @return Warning color with specified alpha
+   */
   Color alphaWarn(int alpha) => Color.fromARGB(alpha, 255, 242, 61); // Use ARGB for explicit alpha
 
   Color scaleBlend(int scalor) => Color.alphaBlend(
