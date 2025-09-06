@@ -8,7 +8,7 @@ As an industrial operator,
 I want to remotely adjust temperature setpoints, flow rates, and timing parameters,
 so that I can optimize system performance without on-site visits.
 
-**Acceptance Criteria**
+***Acceptance Criteria***
 
 1. Secure parameter adjustment interface with current and target value display
 2. Parameter validation against safe operating ranges with confirmation dialogs
@@ -23,7 +23,7 @@ As an industrial operator,
 I want to start and stop ultrasonic processing systems remotely,
 so that I can manage operations efficiently and respond to changing conditions.
 
-**Acceptance Criteria**
+***Acceptance Criteria***
 
 1. Remote start/stop controls with safety interlocks and confirmation requirements
 2. System status verification before allowing control operations
@@ -38,7 +38,7 @@ As a facility manager,
 I want to manage device configurations and user access permissions,
 so that I can maintain security and operational consistency across systems.
 
-**Acceptance Criteria**
+***Acceptance Criteria***
 
 1. Device configuration backup and restore capabilities
 2. User access control management with role-based permissions
@@ -53,7 +53,7 @@ As a facility manager,
 I want comprehensive safety controls and compliance logging,
 so that I can ensure safe operations and meet regulatory requirements.
 
-**Acceptance Criteria**
+***Acceptance Criteria***
 
 1. Safety interlock verification before allowing remote operations
 2. Comprehensive audit logging for all control actions and configuration changes

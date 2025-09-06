@@ -8,7 +8,7 @@ As an industrial operator,
 I want the system to automatically detect and classify critical alarms,
 so that I can respond appropriately to different types of system events.
 
-**Acceptance Criteria**
+***Acceptance Criteria***
 
 1. Real-time alarm detection for flow, temperature, pressure, overload, and frequency lock events
 2. Alarm severity classification (critical, warning, informational) with appropriate prioritization
@@ -23,7 +23,7 @@ As an industrial operator,
 I want immediate push notifications for critical alarms,
 so that I can respond quickly regardless of my location.
 
-**Acceptance Criteria**
+***Acceptance Criteria**
 
 1. Firebase Cloud Messaging integration for cross-platform push notifications
 2. Notification delivery within 30 seconds of alarm trigger
@@ -38,7 +38,7 @@ As an industrial operator,
 I want to acknowledge alarms and document my response actions,
 so that I can track alarm resolution and maintain operational records.
 
-**Acceptance Criteria**
+***Acceptance Criteria***
 
 1. One-tap alarm acknowledgment from notification or application interface
 2. Alarm response documentation with predefined actions and custom notes
@@ -53,7 +53,7 @@ As a facility manager,
 I want access to 30-day alarm history with filtering and search capabilities,
 so that I can analyze alarm patterns and improve system performance.
 
-**Acceptance Criteria**
+***Acceptance Criteria***
 
 1. Comprehensive alarm log with all alarm events and operator responses
 2. Filtering by date range, device, alarm type, and severity level

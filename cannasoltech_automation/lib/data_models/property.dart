@@ -1,28 +1,46 @@
 import 'package:firebase_database/firebase_database.dart';
 
-class FireProperty{
+class FireProperty {
+  /// @brief The base class for a Firebase Realtime Database Property.
+  ///
+  /// This class serves as the Base Abstract Class for all data being
+  /// sent/read through the Firebase Realtime Database. It provides
+  /// a standardized interface for managing property values and their
+  /// corresponding database references.
+
   String name;
   dynamic value;
-  // late String type;
   DatabaseReference ref;
 
-  FireProperty({required this.name, required this.value, required this.ref});//, required this.type});
+  FireProperty(
+      {required this.name,
+      required this.value,
+      required this.ref}); //, required this.type});
 
   factory FireProperty.fromData(MapEntry data, DatabaseReference ref) {
-    FireProperty property = FireProperty(
-      ref: ref,
-      name: data.key,
-      value: data.value
-    );
+    FireProperty property =
+        FireProperty(ref: ref, name: data.key, value: data.value);
     return property;
   }
 
-  void setValue(value){
+  /// Updates the Firebase Realtime Database with the new value
+
+  void setValue(value) {
     ref.set(value);
   }
-}
 
-// property.ref.set(data.value);
-// property.ref.onValue.listen((DatabaseEvent event){
-//   property.value = event.snapshot.value.toString();
-// }
+  void getValue(value) {
+    ref.once().then((event) {
+      value = event.snapshot.value;
+    });
+  }
+
+  /// TODO: #13 Implement listening for all firebase properties.
+
+  /// Listens for changes to the Firebase Realtime Database and updates the value
+  // void listenForChanges(Function(dynamic) onChange) {
+  //   ref.onValue.listen((DatabaseEvent event) {
+  //     onChange(event.snapshot.value);
+  //   });
+  // }
+}

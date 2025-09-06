@@ -8,7 +8,7 @@ As an industrial operator,
 I want to register ultrasonic processing devices using QR codes or manual entry,
 so that I can monitor my authorized equipment through the mobile application.
 
-**Acceptance Criteria**
+***Acceptance Criteria***
 
 1. QR code scanning functionality using device camera with proper permissions
 2. Manual device ID entry form with validation and error handling
@@ -23,7 +23,7 @@ As an industrial operator,
 I want to see live flow rates, temperatures, pressures, and frequency status,
 so that I can monitor system performance in real-time.
 
-**Acceptance Criteria**
+***Acceptance Criteria***
 
 1. Real-time data synchronization from Firebase Realtime Database with 2-second refresh
 2. Parameter display with appropriate units and precision for industrial use
@@ -38,7 +38,7 @@ As a facility manager,
 I want to monitor up to 10 devices simultaneously on a single dashboard,
 so that I can oversee multiple processing systems efficiently.
 
-**Acceptance Criteria**
+***Acceptance Criteria***
 
 1. Grid layout displaying device cards with key parameters and status
 2. Device status indicators (online, offline, alarm, normal) with color coding
@@ -53,7 +53,7 @@ As an industrial operator,
 I want detailed parameter views for individual devices,
 so that I can analyze specific system performance and troubleshoot issues.
 
-**Acceptance Criteria**
+***Acceptance Criteria***
 
 1. Comprehensive parameter display with historical trending (last 4 hours)
 2. Parameter grouping by system (flow, temperature, pressure, ultrasonic)

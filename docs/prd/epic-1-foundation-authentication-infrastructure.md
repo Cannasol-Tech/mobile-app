@@ -8,7 +8,7 @@ As a developer,
 I want a properly configured Flutter project with Firebase integration,
 so that I can build cross-platform applications with cloud backend capabilities.
 
-**Acceptance Criteria**
+### Project Setup Acceptance Criteria
 
 1. Flutter 3.29+ project created with iOS, Android, and web platform support
 2. Firebase project configured with Realtime Database, Authentication, Cloud Functions, and Cloud Messaging
@@ -23,7 +23,7 @@ As an industrial operator,
 I want to securely log into the monitoring application using my Google account,
 so that I can access my authorized devices with enterprise-grade security.
 
-**Acceptance Criteria**
+### Authentication Acceptance Criteria
 
 1. Firebase Authentication integrated with Google Sign-In provider
 2. User session management with automatic token refresh
@@ -38,7 +38,7 @@ As an industrial operator,
 I want a consistent navigation structure across all platforms,
 so that I can efficiently access monitoring features regardless of my device.
 
-**Acceptance Criteria**
+### Navigation Acceptance Criteria
 
 1. Bottom navigation bar for mobile platforms with primary feature access
 2. Responsive navigation drawer for web platform with collapsible sidebar
@@ -53,7 +53,7 @@ As a facility manager,
 I want to verify that the application can connect to Firebase services,
 so that I can confirm system readiness before deploying to production.
 
-**Acceptance Criteria**
+### Health Check Acceptance Criteria
 
 1. Health check endpoint that validates Firebase Realtime Database connectivity
 2. Network connectivity status indicator visible in application header
