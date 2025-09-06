@@ -1,4 +1,15 @@
 
+/**
+ * @file alarm_logs.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief Alarm logging and history management system.
+ * @details Provides alarm log tracking, history management, and alarm event
+ *          persistence with timestamp handling and Firebase integration.
+ * @version 1.0
+ * @since 1.0
+ */
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import '../objects/database_model.dart';
@@ -8,14 +19,34 @@ import '../shared/types.dart';
 
 import 'package:intl/intl.dart';
 
+/**
+ * @brief Individual alarm log entry with timing information.
+ * @details Represents a single alarm event with start time, clear time,
+ *          and type information, including timestamp conversion utilities.
+ * @since 1.0
+ */
 class AlarmLog {
+  /// Type of alarm (e.g., "flow", "temperature", "pressure")
   late String type;
+
+  /// Formatted start time string (MM/dd/yyyy HH:mm:ss)
   late String? startTime;
+
+  /// Formatted cleared time string (MM/dd/yyyy HH:mm:ss)
   late String? clearedTime;
 
+  /// Getter for start time in seconds since epoch
   int get startSeconds => startTime != null ? DateFormat("MM/dd/yyyy HH:mm:ss").parse(startTime!).millisecondsSinceEpoch ~/ 1000 : 0;
+
+  /// Getter for cleared time in seconds since epoch
   int get clearedSeconds => clearedTime != null ? DateFormat("MM/dd/yyyy HH:mm:ss").parse(clearedTime!).millisecondsSinceEpoch ~/ 1000 : 0;
 
+  /**
+   * @brief Creates an AlarmLog with specified timing and type information.
+   * @param type Type of alarm
+   * @param startTime Formatted start time string
+   * @param clearedTime Formatted cleared time string (nullable)
+   */
   AlarmLog({
     required this.type,
     required this.startTime,

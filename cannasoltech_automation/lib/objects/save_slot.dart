@@ -1,3 +1,14 @@
+/**
+ * @file save_slot.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief Save slot management for device configuration storage.
+ * @details Provides save slot functionality for storing and loading device
+ *          configurations including timing, temperature, and threshold settings.
+ * @version 1.0
+ * @since 1.0
+ */
+
 import 'package:cannasoltech_automation/data_models/device.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../data_models/property.dart';
@@ -5,17 +16,45 @@ import '../shared/methods.dart';
 import '../shared/types.dart';
 import 'database_model.dart';
 
+/**
+ * @brief Staged configuration slot for temporary storage.
+ * @details Holds configuration parameters temporarily before saving to
+ *          permanent save slots, allowing for configuration staging.
+ * @since 1.0
+ */
 class StagedSlot {
+  /// Run duration in hours
   int hours = 0;
+
+  /// Run duration in minutes
   int minutes = 0;
+
+  /// Set temperature for the run
   double setTemp = 0.0;
+
+  /// Batch size parameter
   double batchSize = 0.0;
+
+  /// Temperature threshold setting
   double tempThresh = 0.0;
+
+  /// Flow threshold setting
   double flowThresh = 0.0;
+
+  /// Pressure threshold setting
   double pressureThresh = 0.0;
+
+  /// Cooldown enabled flag
   bool cooldownEnabled = false;
+
+  /// Cooldown temperature setting
   double cooldownTemp = 0.0;
 
+  /**
+   * @brief Creates a StagedSlot from configuration object.
+   * @details Initializes staged slot with values from device configuration.
+   * @param config Configuration object to copy values from
+   */
   StagedSlot.fromConfig(config) {
     hours = config.setHours;
     minutes = config.setMinutes;
