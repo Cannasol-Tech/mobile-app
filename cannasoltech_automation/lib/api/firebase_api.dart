@@ -18,13 +18,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   }
 }
 
-/// Firebase API service class that handles Firebase Cloud Messaging (FCM) operations.
-///
-/// This class provides functionality for:
-/// - Initializing Firebase notifications and push notifications
-/// - Handling foreground and background message processing
-/// - Managing FCM tokens and token refresh callbacks
-/// - Processing alarm notifications and navigation
 class FirebaseApi {
   final _firebaseMessaging = FirebaseMessaging.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
