@@ -50,7 +50,42 @@ class _StartPageState extends State<StartPage> {
         return const EndPage();
       }
       return (activeDevice == null)
-          ? const NoDevicePage()
+          ? Scaffold(
+              appBar: AppBar(
+                backgroundColor: Colors.grey[900],
+                centerTitle: true,
+                title: const Text("Cannasol Technologies", style: TextStyle(color: Colors.white)),
+                leading: Builder(
+                  builder: (BuildContext context) {
+                    return IconButton(
+                      color: Colors.white,
+                      icon: const Icon(Icons.menu),
+                      onPressed: () {
+                        Scaffold.of(context).openDrawer();
+                      },
+                      tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+                    );
+                  },
+                ),
+              ),
+              drawer: const SideMenu(),
+              body: const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      "No Device Selected!",
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold
+                      )
+                    )
+                  ],
+                )
+              ),
+              bottomNavigationBar: BottomNavBar(),
+            )
           : Scaffold(
               appBar: systemAppBar(context, activeDevice),
               drawer: const SideMenu(),

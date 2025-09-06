@@ -35,43 +35,47 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
-  fancy_containers:
-  provider:
-  firebase_core: ^3.9.0
-  firebase_auth: ^5.3.4
-  firebase_database: ^11.0.2
-  firebase_storage:
-  datetime_picker_formfield:
-  email_validator:
-  firebase_messaging: ^15.0.4
-  google_sign_in:
-  url_launcher:
-  settings_ui:
-  another_flushbar:
-  flutter_switch:
-  flutter_barcode_scanner:
-  logging:  
+  fancy_containers: ^0.0.5
+  provider: ^6.1.2
+  firebase_core: ^3.10.1
+  firebase_auth: ^5.4.1
+  firebase_database: ^11.3.1
+  firebase_storage: ^12.3.4
+  datetime_picker_formfield: ^2.0.1
+  email_validator: ^2.1.17
+  firebase_messaging: ^15.1.4
+  google_sign_in: ^6.2.1
+  url_launcher: ^6.3.1
+  settings_ui: ^2.0.2
+  another_flushbar: ^1.12.30
+  flutter_switch: ^0.3.2
+  flutter_barcode_scanner: ^2.0.0
+  logging: ^1.2.0
   intl: ^0.18.0
-  flutter_markdown:
-  decorated_icon:
+  flutter_markdown: ^0.7.4+1
+  decorated_icon: ^1.2.1
   animations: ^2.0.11
   simple_animations: ^5.0.2
-  dio: ^5.0.0 # For downloading the file
-  path_provider: ^2.0.15 # For accessing the file system
-  open_filex: ^4.0.0 # To open the file after downloading (optional)
-  permission_handler: ^10.0.0
+  dio: ^5.7.0 # For downloading the file
+  path_provider: ^2.1.5 # For accessing the file system
+  open_filex: ^4.5.0 # To open the file after downloading (optional)
+  permission_handler: ^11.3.1
   
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mocktail:
+  mocktail: ^1.0.4                    # Primary mocking framework - null-safe, modern
+  bloc_test: ^9.1.7                   # BLoC testing support
+  integration_test:                   # End-to-end testing
+    sdk: flutter
+  build_runner: ^2.4.13               # Code generation support (if needed)
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: 
+  flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

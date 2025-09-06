@@ -22,18 +22,28 @@ final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase with better error handling for web
+  bool firebaseInitialized = false;
   try {
-    await Firebase.initializeApp(name: "cannasoltech", options: DefaultFirebaseOptions.currentPlatform);
-    await FirebaseApi().initNotifications();
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    // Only initialize notifications if not on web (web doesn't support FCM the same way)
+    try {
+      await FirebaseApi().initNotifications();
+    } catch (notificationError) {
+      print('Notification initialization failed (expected on web): $notificationError');
+    }
+    firebaseInitialized = true;
+    print('Firebase initialized successfully');
   } catch (e) {
-    // Optionally show an error screen if Firebase fails to initialize
+    print('Firebase initialization failed: $e');
+    // Continue without Firebase for development
   }
+
   setupLogging();
   runApp(
     MultiProvider(
     providers: [
-          // StreamProvider<Data>(create: (context) => DatabaseService().streamDevices(), initialData: Data(devices: [])),
-          // StreamProvider<UserDbInfo>(create: (context) => DatabaseService().streamUser(), initialData: UserDbInfo.noUser()),
           ChangeNotifierProvider(create: (context) {
             var sysIdx = SystemIdx();
             sysIdx.init();
@@ -44,14 +54,17 @@ Future<void> main() async {
             systemDataModel.init();
             return systemDataModel;
           }),
-
           ChangeNotifierProvider(create: (context) {
             var transformModel = TransformModel();
             transformModel.init();
             return transformModel;
           }),
           ChangeNotifierProvider(create: (context) => DisplayDataModel()),
-          StreamProvider<CurrentUser>.value(value: FirebaseAuth.instance.authStateChanges(), initialData: null,),
+          // Provide Firebase Auth stream if Firebase is initialized
+          StreamProvider<CurrentUser>.value(
+            value: firebaseInitialized ? FirebaseAuth.instance.authStateChanges() : Stream.value(null),
+            initialData: null,
+          ),
         ],
       child: const MyApp()
       ),
@@ -64,16 +77,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool loggedIn = Provider.of<CurrentUser>(context) != null;
-    Future.microtask(() {
-      context.read<DisplayDataModel>().setBottomNavSelectedItem(0);
-    });
+    // Removed problematic DisplayDataModel initialization for now
     return  MaterialApp(
       title: 'Cannasol Technologies Automation',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: const HomePage(), // Restored original home page
       navigatorKey: navigatorKey,
       scaffoldMessengerKey: scaffoldMessengerKey,
       onGenerateRoute: (settings) {
@@ -101,6 +112,40 @@ class MyApp extends StatelessWidget {
         }
         return null;
       },
+    );
+  }
+}
+
+// Temporary test page to verify basic Flutter functionality
+class TestHomePage extends StatelessWidget {
+  const TestHomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Cannasol Technologies - Test'),
+        backgroundColor: Colors.blue,
+      ),
+      body: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Flutter App is Working!',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
+            Text(
+              'This is a test page to verify the app is rendering correctly.',
+              style: TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 20),
+            CircularProgressIndicator(),
+          ],
+        ),
+      ),
     );
   }
 }

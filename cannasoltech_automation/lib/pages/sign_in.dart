@@ -88,7 +88,10 @@ class _SignInPage1State extends State<SignInPage1> {
 
   Future<void> signInWithGoogle(UserHandler userHandler) async {
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      // Configure GoogleSignIn - let it use platform-specific client IDs from configuration
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
         showErrorMessage('Google sign-in aborted');
         return;
@@ -108,7 +111,8 @@ class _SignInPage1State extends State<SignInPage1> {
       userHandler.setFCMToken(token);
       fbApi.setTokenRefreshCallback(userHandler.setFCMToken);
     } catch (error) {
-      showErrorMessage('Google sign-in failed');
+      print('Google sign-in error: $error'); // Add debugging
+      showErrorMessage('Google sign-in failed: ${error.toString()}');
     }
   }
 
