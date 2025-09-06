@@ -39,14 +39,14 @@ interface User {
 
 ## Facility
 
-**Purpose:** Represents a cannabis cultivation facility with multiple growing environments
+**Purpose:** Represents an industrial facility with multiple ultrasonic liquid processing systems
 
 **Key Attributes:**
 - id: string - Unique facility identifier
 - name: string - Facility display name
 - address: Address - Physical location
 - timezone: string - Facility timezone for scheduling
-- environments: string[] - Array of environment IDs within facility
+- systems: string[] - Array of processing system IDs within facility
 - settings: FacilitySettings - Facility-wide configuration
 - status: FacilityStatus - Current operational status
 
@@ -64,7 +64,7 @@ interface Facility {
     country: string;
   };
   timezone: string;
-  environments: string[];
+  systems: string[];
   settings: {
     alertThresholds: Record<string, number>;
     operatingHours: {
@@ -72,6 +72,12 @@ interface Facility {
       end: string;
     };
     emergencyContacts: string[];
+    processParameters: {
+      maxFlowRate: number;
+      maxPressure: number;
+      maxTemperature: number;
+      ultrasonicFrequency: number;
+    };
   };
   status: 'active' | 'maintenance' | 'offline';
   createdAt: FirebaseFirestore.Timestamp;
@@ -80,70 +86,69 @@ interface Facility {
 ```
 
 ### Relationships
-- One-to-many with Environments (facility contains multiple grow environments)
+- One-to-many with ProcessingSystems (facility contains multiple ultrasonic processing systems)
 - Many-to-many with Users (multiple users can access facility)
-- One-to-many with Devices (facility contains multiple monitoring devices)
+- One-to-many with Devices (facility contains multiple monitoring and control devices)
 
-## Environment
+## ProcessingSystem
 
-**Purpose:** Represents a specific growing environment within a facility (room, tent, greenhouse section)
+**Purpose:** Represents a specific ultrasonic liquid processing system within a facility (sonicator, pump, temperature control unit)
 
 **Key Attributes:**
-- id: string - Unique environment identifier
+- id: string - Unique processing system identifier
 - facilityId: string - Parent facility reference
-- name: string - Environment display name
-- type: EnvironmentType - Type of growing environment
-- devices: string[] - Array of device IDs monitoring this environment
-- currentConditions: EnvironmentConditions - Latest sensor readings
-- targetRanges: EnvironmentTargets - Desired environmental parameters
+- name: string - Processing system display name
+- type: SystemType - Type of processing system (sonicator, pump, tank)
+- devices: string[] - Array of device IDs monitoring this system
+- currentParameters: ProcessingParameters - Latest sensor readings
+- targetRanges: ProcessingTargets - Desired operational parameters
 
 ### TypeScript Interface
 
 ```typescript
-interface Environment {
+interface ProcessingSystem {
   id: string;
   facilityId: string;
   name: string;
-  type: 'vegetative' | 'flowering' | 'drying' | 'storage';
+  type: 'sonicator' | 'pump' | 'tank' | 'temperature_control';
   devices: string[];
-  currentConditions: {
-    temperature: number;
-    humidity: number;
-    co2: number;
-    lightLevel: number;
-    soilMoisture: number;
-    ph: number;
+  currentParameters: {
+    flowRate: number;        // L/min
+    pressure: number;        // psi
+    temperature: number;     // °C
+    ultrasonicFrequency: number; // kHz
+    powerLevel: number;      // %
+    runTime: number;         // minutes
     lastUpdated: FirebaseFirestore.Timestamp;
   };
   targetRanges: {
+    flowRate: { min: number; max: number };
+    pressure: { min: number; max: number };
     temperature: { min: number; max: number };
-    humidity: { min: number; max: number };
-    co2: { min: number; max: number };
-    lightLevel: { min: number; max: number };
-    soilMoisture: { min: number; max: number };
-    ph: { min: number; max: number };
+    ultrasonicFrequency: { min: number; max: number };
+    powerLevel: { min: number; max: number };
   };
-  status: 'optimal' | 'warning' | 'critical' | 'offline';
+  status: 'running' | 'stopped' | 'alarm' | 'maintenance' | 'offline';
   createdAt: FirebaseFirestore.Timestamp;
   updatedAt: FirebaseFirestore.Timestamp;
 }
 ```
 
 ### Relationships
-- Many-to-one with Facility (environment belongs to one facility)
-- One-to-many with Devices (environment monitored by multiple devices)
-- One-to-many with SensorReadings (environment generates sensor data)
-- One-to-many with Alerts (environment can trigger alerts)
+- Many-to-one with Facility (processing system belongs to one facility)
+- One-to-many with Devices (processing system monitored by multiple devices)
+- One-to-many with SensorReadings (processing system generates sensor data)
+- One-to-many with Alerts (processing system can trigger alerts)
 
 ## Device
 
-**Purpose:** Represents IoT devices that monitor and control environmental conditions
+**Purpose:** Represents IoT devices that monitor and control industrial ultrasonic processing equipment
 
 **Key Attributes:**
 - id: string - Unique device identifier
 - facilityId: string - Parent facility reference
-- environmentId: string - Environment being monitored
-- type: DeviceType - Type of device (sensor, controller, camera)
+- systemId: string - Processing system being monitored
+- type: DeviceType - Type of device (flow_sensor, pressure_sensor, temperature_sensor, sonicator_controller, pump_controller)
 - model: string - Device model/manufacturer info
 - status: DeviceStatus - Current operational status
 - lastSeen: Timestamp - Last communication timestamp
@@ -155,8 +160,8 @@ interface Environment {
 interface Device {
   id: string;
   facilityId: string;
-  environmentId: string;
-  type: 'temperature_sensor' | 'humidity_sensor' | 'co2_sensor' | 'camera' | 'hvac_controller' | 'irrigation_controller';
+  systemId: string;
+  type: 'flow_sensor' | 'pressure_sensor' | 'temperature_sensor' | 'ultrasonic_frequency_monitor' | 'sonicator_controller' | 'pump_controller' | 'valve_controller';
   model: string;
   firmware: string;
   status: 'online' | 'offline' | 'error' | 'maintenance';
@@ -165,11 +170,15 @@ interface Device {
     reportingInterval: number; // seconds
     alertThresholds: Record<string, number>;
     calibration: Record<string, number>;
+    controlParameters: Record<string, number>; // For controllers
   };
   location: {
-    x: number;
-    y: number;
-    z: number;
+    systemPosition: string; // e.g., "inlet", "outlet", "main_chamber"
+    coordinates: {
+      x: number;
+      y: number;
+      z: number;
+    };
   };
   createdAt: FirebaseFirestore.Timestamp;
   updatedAt: FirebaseFirestore.Timestamp;
@@ -183,12 +192,12 @@ interface Device {
 
 ## SensorReading
 
-**Purpose:** Time-series data from IoT sensors with high-frequency updates
+**Purpose:** Time-series data from industrial sensors monitoring ultrasonic processing parameters
 
 **Key Attributes:**
 - id: string - Unique reading identifier
 - deviceId: string - Source device reference
-- environmentId: string - Environment reference
+- systemId: string - Processing system reference
 - timestamp: Timestamp - Reading timestamp
 - sensorType: string - Type of sensor measurement
 - value: number - Sensor reading value
@@ -201,9 +210,9 @@ interface Device {
 interface SensorReading {
   id: string;
   deviceId: string;
-  environmentId: string;
+  systemId: string;
   timestamp: FirebaseFirestore.Timestamp;
-  sensorType: 'temperature' | 'humidity' | 'co2' | 'light' | 'soil_moisture' | 'ph';
+  sensorType: 'flow_rate' | 'pressure' | 'temperature' | 'ultrasonic_frequency' | 'power_level' | 'vibration' | 'liquid_level';
   value: number;
   unit: string;
   quality: number; // 0-1 quality score
@@ -211,6 +220,7 @@ interface SensorReading {
     calibrated: boolean;
     anomaly: boolean;
     interpolated: boolean;
+    processingCycle: string; // Current processing cycle ID
   };
 }
 ```
@@ -221,14 +231,14 @@ interface SensorReading {
 
 ## Alert
 
-**Purpose:** System alerts triggered by environmental conditions or device issues
+**Purpose:** System alerts triggered by processing parameter deviations or equipment malfunctions
 
 **Key Attributes:**
 - id: string - Unique alert identifier
 - facilityId: string - Facility reference
-- environmentId: string - Environment reference (optional)
+- systemId: string - Processing system reference (optional)
 - deviceId: string - Device reference (optional)
-- type: AlertType - Category of alert
+- type: AlertType - Category of alert (process_parameter, equipment_malfunction, safety, maintenance)
 - severity: AlertSeverity - Alert priority level
 - message: string - Human-readable alert description
 - status: AlertStatus - Current alert state
@@ -242,9 +252,9 @@ interface SensorReading {
 interface Alert {
   id: string;
   facilityId: string;
-  environmentId?: string;
+  systemId?: string;
   deviceId?: string;
-  type: 'environmental' | 'device' | 'security' | 'system';
+  type: 'process_parameter' | 'equipment_malfunction' | 'safety' | 'maintenance' | 'system';
   severity: 'low' | 'medium' | 'high' | 'critical';
   message: string;
   status: 'active' | 'acknowledged' | 'resolved' | 'suppressed';
@@ -257,6 +267,9 @@ interface Alert {
     threshold?: number;
     currentValue?: number;
     duration?: number;
+    parameterType?: string; // e.g., 'flow_rate', 'pressure', 'temperature'
+    processingCycle?: string;
+    recommendedAction?: string;
   };
 }
 ```

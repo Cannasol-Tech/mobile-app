@@ -2,7 +2,7 @@
 
 ## Technical Summary
 
-The Cannasol Technologies Mobile App employs a Firebase-centric serverless architecture with Flutter as the primary mobile interface, leveraging Cloud Firestore for real-time data synchronization and Firebase Cloud Functions for backend processing. The system integrates with IoT devices through Firebase Cloud Messaging and custom Cloud Functions, while utilizing Google Cloud Platform services for advanced analytics and machine learning capabilities. This architecture ensures offline-first functionality for mobile users, real-time device monitoring across multiple cultivation facilities, and seamless scalability through Google's managed services infrastructure.
+The Cannasol Technologies Mobile App employs a Firebase-centric serverless architecture with Flutter as the primary mobile interface, leveraging Cloud Firestore for real-time data synchronization and Firebase Cloud Functions for backend processing. The system integrates with **Industrial Ultrasonic Liquid Processing equipment** through Firebase Realtime Database and custom Python Cloud Functions, while utilizing Google Cloud Platform services for advanced analytics and machine learning capabilities. This architecture ensures offline-first functionality for mobile users, real-time monitoring of **ultrasonic processing systems, pumps, sonicators, and temperature control** across multiple industrial facilities, and seamless scalability through Google's managed services infrastructure.
 
 ## Platform and Infrastructure Choice
 
