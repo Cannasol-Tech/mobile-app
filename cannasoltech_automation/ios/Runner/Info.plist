@@ -56,6 +56,10 @@
 	<false/>
 	<key>UIStatusBarStyle</key>
 	<string></string>
+	<key>com.apple.developer.applesignin</key>
+	<array>
+		<string>Default</string>
+	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationLandscapeLeft</string>

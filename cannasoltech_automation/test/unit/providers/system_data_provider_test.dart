@@ -16,7 +16,6 @@ import 'package:firebase_database/firebase_database.dart';
 
 import 'package:cannasoltech_automation/providers/system_data_provider.dart';
 import 'package:cannasoltech_automation/handlers/user_handler.dart';
-import 'package:cannasoltech_automation/objects/device.dart';
 import 'package:cannasoltech_automation/shared/maps.dart';
 
 import '../../helpers/mocks.dart';
@@ -45,7 +44,7 @@ void main() {
     test('should increment value when below max', () {
       systemIdx.increment();
       expect(systemIdx.value, equals(1));
-      
+
       systemIdx.increment();
       expect(systemIdx.value, equals(2));
     });
@@ -60,7 +59,7 @@ void main() {
       systemIdx.set(2);
       systemIdx.decrement();
       expect(systemIdx.value, equals(1));
-      
+
       systemIdx.decrement();
       expect(systemIdx.value, equals(0));
     });
@@ -74,7 +73,7 @@ void main() {
     test('should set value directly', () {
       systemIdx.set(1);
       expect(systemIdx.value, equals(1));
-      
+
       systemIdx.set(2);
       expect(systemIdx.value, equals(2));
     });
@@ -103,7 +102,7 @@ void main() {
     test('should start timer correctly', () {
       alarmTimer.alarmStartTime = const Duration(seconds: 0);
       alarmTimer.start();
-      
+
       expect(alarmTimer.started, isTrue);
       expect(alarmTimer.duration, isNotNull);
       expect(alarmTimer.latch, isNotNull);
@@ -113,9 +112,9 @@ void main() {
       alarmTimer.alarmStartTime = const Duration(seconds: 0);
       alarmTimer.start();
       final firstLatch = alarmTimer.latch;
-      
+
       alarmTimer.start(); // Try to start again
-      
+
       expect(alarmTimer.latch, equals(firstLatch));
     });
 
@@ -123,7 +122,7 @@ void main() {
       alarmTimer.alarmStartTime = const Duration(seconds: 0);
       alarmTimer.start();
       alarmTimer.stop();
-      
+
       expect(alarmTimer.started, isFalse);
       expect(alarmTimer.latch, isNull);
     });
@@ -174,9 +173,9 @@ void main() {
       mockAuth = MockFirebaseAuth();
       mockUserHandler = MockUserHandler();
       mockDatabase = MockFirebaseDatabase();
-      
+
       systemDataModel = SystemDataModel();
-      
+
       // Setup basic mocks
       when(() => mockAuth.authStateChanges()).thenAnswer(
         (_) => Stream.value(null),
@@ -200,7 +199,7 @@ void main() {
 
     test('should initialize correctly', () {
       systemDataModel.init();
-      
+
       expect(systemDataModel.bottomNavPages.length, equals(4));
       // Timer should be started during initialization
       expect(systemDataModel.updatingData, isTrue);
@@ -220,7 +219,7 @@ void main() {
     test('should handle timer restart correctly', () {
       systemDataModel.startUpdateDataTimer();
       expect(systemDataModel.updatingData, isTrue);
-      
+
       // Starting again should reset the timer
       systemDataModel.startUpdateDataTimer();
       expect(systemDataModel.updatingData, isTrue);
@@ -228,7 +227,7 @@ void main() {
 
     test('should set bottom nav pages correctly', () {
       systemDataModel.setBottomNavPages();
-      
+
       expect(systemDataModel.bottomNavPages.length, equals(4));
       expect(systemDataModel.bottomNavPages[0], isA<Widget>());
       expect(systemDataModel.bottomNavPages[1], isA<Widget>());
@@ -238,28 +237,28 @@ void main() {
 
     test('should update current run page based on device state', () {
       systemDataModel.updateCurrentRunPage();
-      
+
       // With no active device, should use RESET state page
       expect(systemDataModel.currentRunPage, isNotNull);
     });
 
     test('should update alarm flash correctly', () {
       systemDataModel.updateAlarmFlash();
-      
+
       // With no active device, alarm flash should remain false
       expect(systemDataModel.alarmFlash, isFalse);
     });
 
     test('should handle data controllers update with null device', () {
       systemDataModel.updateDataControllers(null);
-      
+
       expect(systemDataModel.activeDevice, isNull);
     });
 
     test('should dispose correctly', () {
       systemDataModel.init();
       systemDataModel.dispose();
-      
+
       expect(systemDataModel.updatingData, isFalse);
     });
 
@@ -268,9 +267,9 @@ void main() {
       systemDataModel.addListener(() {
         notified = true;
       });
-      
+
       systemDataModel.updateData();
-      
+
       expect(notified, isTrue);
     });
 
@@ -278,10 +277,10 @@ void main() {
       final context = MockBuildContext();
       final mediaQuery = MockMediaQueryData();
       const testSize = Size(375, 667);
-      
+
       when(() => mediaQuery.size).thenReturn(testSize);
       when(() => MediaQuery.of(context)).thenReturn(mediaQuery);
-      
+
       expect(systemDataModel.display(context), equals(testSize));
       expect(systemDataModel.screenHeight(context), equals(667));
       expect(systemDataModel.screenWidth(context), equals(375));

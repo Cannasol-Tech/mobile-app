@@ -4,7 +4,7 @@
 
 ### Component Organization
 
-```
+```sh
 lib/
 ├── main.dart                    # App entry point
 ├── app/                         # App-level configuration

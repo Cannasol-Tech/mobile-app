@@ -14,7 +14,8 @@ The Cannasol Technologies Mobile App employs a Firebase-centric serverless archi
 
 **Structure:** Monorepo with Flutter app and Cloud Functions
 **Monorepo Tool:** Firebase CLI with workspace organization
-**Package Organization:** 
+**Package Organization:**
+
 - `/lib` - Flutter application code
 - `/functions` - Firebase Cloud Functions (Node.js/TypeScript)
 - `/cloud_run` - Python services for device integration

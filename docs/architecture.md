@@ -18,6 +18,7 @@ This unified approach builds upon your proven Firebase + Flutter foundation, str
 - **Python services** integrated via Cloud Functions/Cloud Run
 
 **Key Architectural Constraints:**
+
 - Maintain Firebase as primary backend platform
 - Preserve existing authentication flows and user data
 - Extend current Firestore data models
@@ -46,7 +47,8 @@ The Cannasol Technologies Mobile App employs a Firebase-centric serverless archi
 
 **Structure:** Monorepo with Flutter app and Cloud Functions
 **Monorepo Tool:** Firebase CLI with workspace organization
-**Package Organization:** 
+**Package Organization:**
+
 - `/lib` - Flutter application code
 - `/functions` - Firebase Cloud Functions (Node.js/TypeScript)
 - `/cloud_run` - Python services for device integration
@@ -146,6 +148,7 @@ graph TB
 **Purpose:** Represents system users including facility managers, technicians, and administrators
 
 **Key Attributes:**
+
 - uid: string - Firebase Auth unique identifier
 - email: string - User email address
 - displayName: string - User's display name
@@ -175,6 +178,7 @@ interface User {
 ```
 
 #### Relationships
+
 - One-to-many with Facilities (user can access multiple facilities)
 - One-to-many with AlertSubscriptions (user can subscribe to various alerts)
 
@@ -183,6 +187,7 @@ interface User {
 **Purpose:** Represents a cannabis cultivation facility with multiple growing environments
 
 **Key Attributes:**
+
 - id: string - Unique facility identifier
 - name: string - Facility display name
 - address: Address - Physical location
@@ -221,6 +226,7 @@ interface Facility {
 ```
 
 #### Relationships
+
 - One-to-many with Environments (facility contains multiple grow environments)
 - Many-to-many with Users (multiple users can access facility)
 - One-to-many with Devices (facility contains multiple monitoring devices)
@@ -230,6 +236,7 @@ interface Facility {
 **Purpose:** Represents a specific growing environment within a facility (room, tent, greenhouse section)
 
 **Key Attributes:**
+
 - id: string - Unique environment identifier
 - facilityId: string - Parent facility reference
 - name: string - Environment display name
@@ -271,6 +278,7 @@ interface Environment {
 ```
 
 #### Relationships
+
 - Many-to-one with Facility (environment belongs to one facility)
 - One-to-many with Devices (environment monitored by multiple devices)
 - One-to-many with SensorReadings (environment generates sensor data)
@@ -281,6 +289,7 @@ interface Environment {
 **Purpose:** Represents IoT devices that monitor and control environmental conditions
 
 **Key Attributes:**
+
 - id: string - Unique device identifier
 - facilityId: string - Parent facility reference
 - environmentId: string - Environment being monitored
@@ -318,6 +327,7 @@ interface Device {
 ```
 
 #### Relationships
+
 - Many-to-one with Facility (device belongs to one facility)
 - Many-to-one with Environment (device monitors one environment)
 - One-to-many with SensorReadings (device generates sensor data)
@@ -327,6 +337,7 @@ interface Device {
 **Purpose:** Time-series data from IoT sensors with high-frequency updates
 
 **Key Attributes:**
+
 - id: string - Unique reading identifier
 - deviceId: string - Source device reference
 - environmentId: string - Environment reference
@@ -357,6 +368,7 @@ interface SensorReading {
 ```
 
 #### Relationships
+
 - Many-to-one with Device (reading from one device)
 - Many-to-one with Environment (reading for one environment)
 
@@ -365,6 +377,7 @@ interface SensorReading {
 **Purpose:** System alerts triggered by environmental conditions or device issues
 
 **Key Attributes:**
+
 - id: string - Unique alert identifier
 - facilityId: string - Facility reference
 - environmentId: string - Environment reference (optional)
@@ -403,6 +416,7 @@ interface Alert {
 ```
 
 #### Relationships
+
 - Many-to-one with Facility (alert for one facility)
 - Many-to-one with Environment (alert for one environment, optional)
 - Many-to-one with Device (alert from one device, optional)
@@ -656,6 +670,7 @@ components:
 **Responsibility:** Primary user interface for cannabis monitoring system, providing real-time facility monitoring, alert management, and device control capabilities
 
 **Key Interfaces:**
+
 - Firebase Authentication SDK for user management
 - Cloud Firestore SDK for real-time data synchronization
 - Firebase Cloud Messaging for push notifications
@@ -670,6 +685,7 @@ components:
 **Responsibility:** Manages user authentication, authorization, and session management across all platforms
 
 **Key Interfaces:**
+
 - Email/password authentication
 - Multi-factor authentication
 - Custom claims for role-based access control
@@ -684,6 +700,7 @@ components:
 **Responsibility:** Primary data store with real-time synchronization, offline support, and automatic conflict resolution
 
 **Key Interfaces:**
+
 - Real-time listeners for live data updates
 - Offline-first data access with automatic sync
 - Security rules for data access control
@@ -698,6 +715,7 @@ components:
 **Responsibility:** Serverless backend processing for complex business logic, data validation, and external integrations
 
 **Key Interfaces:**
+
 - HTTP endpoints for API operations
 - Firestore triggers for data processing
 - Pub/Sub triggers for IoT data processing
@@ -712,6 +730,7 @@ components:
 **Responsibility:** Manages IoT device connectivity, data ingestion, and device control commands
 
 **Key Interfaces:**
+
 - MQTT broker for device communication
 - Device registry and authentication
 - Telemetry data processing
@@ -726,6 +745,7 @@ components:
 **Responsibility:** Monitors environmental conditions, triggers alerts based on thresholds, and manages alert lifecycle
 
 **Key Interfaces:**
+
 - Real-time condition monitoring
 - Alert threshold evaluation
 - Notification dispatch (FCM, email, SMS)
@@ -740,6 +760,7 @@ components:
 **Responsibility:** Processes historical data for analytics, generates reports, and provides insights for optimization
 
 **Key Interfaces:**
+
 - Data pipeline from Firestore to BigQuery
 - Scheduled report generation
 - Data visualization APIs
@@ -807,12 +828,13 @@ graph TB
 ### Twilio SMS API
 
 - **Purpose:** Send SMS notifications for critical alerts when push notifications are insufficient
-- **Documentation:** https://www.twilio.com/docs/sms
-- **Base URL(s):** https://api.twilio.com/2010-04-01/
+- **Documentation:** <https://www.twilio.com/docs/sms>
+- **Base URL(s):** <https://api.twilio.com/2010-04-01/>
 - **Authentication:** Basic Auth with Account SID and Auth Token
 - **Rate Limits:** 1 message per second (default), configurable
 
 **Key Endpoints Used:**
+
 - `POST /Accounts/{AccountSid}/Messages.json` - Send SMS message
 
 **Integration Notes:** Used for critical alerts only to minimize costs. Integrated via Cloud Functions with retry logic and delivery status tracking.
@@ -820,12 +842,13 @@ graph TB
 ### SendGrid Email API
 
 - **Purpose:** Send email notifications for alerts, reports, and system communications
-- **Documentation:** https://docs.sendgrid.com/api-reference
-- **Base URL(s):** https://api.sendgrid.com/v3/
+- **Documentation:** <https://docs.sendgrid.com/api-reference>
+- **Base URL(s):** <https://api.sendgrid.com/v3/>
 - **Authentication:** Bearer token (API Key)
 - **Rate Limits:** 600 requests per minute
 
 **Key Endpoints Used:**
+
 - `POST /mail/send` - Send email with templates
 - `GET /templates` - Retrieve email templates
 
@@ -834,12 +857,13 @@ graph TB
 ### Weather API (OpenWeatherMap)
 
 - **Purpose:** Correlate environmental conditions with external weather data for better insights
-- **Documentation:** https://openweathermap.org/api
-- **Base URL(s):** https://api.openweathermap.org/data/2.5/
+- **Documentation:** <https://openweathermap.org/api>
+- **Base URL(s):** <https://api.openweathermap.org/data/2.5/>
 - **Authentication:** API Key in query parameter
 - **Rate Limits:** 1,000 calls per day (free tier)
 
 **Key Endpoints Used:**
+
 - `GET /weather` - Current weather data
 - `GET /forecast` - 5-day weather forecast
 
@@ -2370,12 +2394,14 @@ PUBSUB_EMULATOR_HOST=localhost:8085     # For local development
 ### Deployment Strategy
 
 **Frontend Deployment:**
+
 - **Platform:** Firebase Hosting (web) + App Stores (mobile)
 - **Build Command:** `flutter build web` / `flutter build apk` / `flutter build ios`
 - **Output Directory:** `build/web/` (for web deployment)
 - **CDN/Edge:** Firebase Hosting global CDN
 
 **Backend Deployment:**
+
 - **Platform:** Firebase Functions + Google Cloud Run
 - **Build Command:** `npm run build` (Functions) / `docker build` (Cloud Run)
 - **Deployment Method:** Firebase CLI + gcloud CLI
@@ -2454,25 +2480,28 @@ jobs:
 
 | Environment | Frontend URL | Backend URL | Purpose |
 |-------------|--------------|-------------|---------|
-| Development | http://localhost:3000 | http://localhost:5001 | Local development |
-| Staging | https://staging.cannasol-tech.web.app | https://us-central1-cannasol-tech-staging.cloudfunctions.net | Pre-production testing |
-| Production | https://app.cannasol-tech.com | https://us-central1-cannasol-tech.cloudfunctions.net | Live environment |
+| Development | <http://localhost:3000> | <http://localhost:5001> | Local development |
+| Staging | <https://staging.cannasol-tech.web.app> | <https://us-central1-cannasol-tech-staging.cloudfunctions.net> | Pre-production testing |
+| Production | <https://app.cannasol-tech.com> | <https://us-central1-cannasol-tech.cloudfunctions.net> | Live environment |
 
 ## Security and Performance
 
 ### Security Requirements
 
 **Frontend Security:**
+
 - CSP Headers: `default-src 'self'; script-src 'self' 'unsafe-inline' https://apis.google.com; style-src 'self' 'unsafe-inline'`
 - XSS Prevention: Input sanitization, Content Security Policy, secure cookie handling
 - Secure Storage: Sensitive data encrypted in device keychain/keystore, no sensitive data in SharedPreferences
 
 **Backend Security:**
+
 - Input Validation: Joi schema validation for all API inputs, SQL injection prevention
 - Rate Limiting: 100 requests per minute per user, 1000 requests per hour per IP
 - CORS Policy: Restricted to known domains (app.cannasol-tech.com, localhost for development)
 
 **Authentication Security:**
+
 - Token Storage: JWT tokens in secure HTTP-only cookies (web) / device keychain (mobile)
 - Session Management: 1-hour token expiry with refresh token rotation
 - Password Policy: Minimum 8 characters, uppercase, lowercase, number, special character
@@ -2480,11 +2509,13 @@ jobs:
 ### Performance Optimization
 
 **Frontend Performance:**
+
 - Bundle Size Target: < 2MB initial bundle, < 500KB per lazy-loaded route
 - Loading Strategy: Progressive loading with skeleton screens, image lazy loading
 - Caching Strategy: Service worker caching for static assets, Firebase offline persistence
 
 **Backend Performance:**
+
 - Response Time Target: < 200ms for API calls, < 2s for complex queries
 - Database Optimization: Firestore composite indexes, BigQuery partitioning and clustering
 - Caching Strategy: Redis caching for frequently accessed data, CDN for static assets
@@ -2748,6 +2779,7 @@ export const errorHandler = (
 ### Key Metrics
 
 **Frontend Metrics:**
+
 - Core Web Vitals (LCP, FID, CLS)
 - App startup time and screen load times
 - JavaScript errors and crash rates
@@ -2755,6 +2787,7 @@ export const errorHandler = (
 - User engagement and retention metrics
 
 **Backend Metrics:**
+
 - Request rate and response times per endpoint
 - Error rate by service and endpoint
 - Database query performance and connection pool usage
@@ -2763,7 +2796,7 @@ export const errorHandler = (
 
 ## Checklist Results Report
 
-*This section will be populated after running the architect-checklist to validate the architecture document.*
+_This section will be populated after running the architect-checklist to validate the architecture document._
 
 ---
 
@@ -2877,5 +2910,6 @@ cannasol-technologies-mobile-app/
 ├── .env.example               # Environment template (to be created)
 └── README.md                  # Root project documentation
 ```
+
 ```
 ```
