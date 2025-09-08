@@ -1,3 +1,14 @@
+/**
+ * @file firebase_api.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief Firebase API service for handling Firebase Cloud Messaging and authentication.
+ * @details Provides comprehensive Firebase integration including push notifications,
+ *          background message handling, token management, and alarm notification processing.
+ * @version 1.0
+ * @since 1.0
+ */
+
 import 'dart:io';
 import '../objects/logger.dart';
 import '../firebase_options.dart';
@@ -7,6 +18,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+/**
+ * @brief Background message handler for Firebase Cloud Messaging.
+ * @details Handles incoming FCM messages when the app is in the background.
+ *          Initializes Firebase and logs message processing.
+ * @param message The remote message received from FCM
+ * @throws Exception if Firebase initialization fails
+ * @since 1.0
+ */
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   try {
@@ -18,8 +37,20 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   }
 }
 
+/**
+ * @brief Firebase API service class for handling Firebase Cloud Messaging operations.
+ * @details Provides comprehensive Firebase integration including:
+ *          - Initializing Firebase notifications and push notifications
+ *          - Handling foreground and background message processing
+ *          - Managing FCM tokens and token refresh callbacks
+ *          - Processing alarm notifications and navigation
+ * @since 1.0
+ */
 class FirebaseApi {
+  /// Firebase Cloud Messaging instance for handling push notifications
   final _firebaseMessaging = FirebaseMessaging.instance;
+
+  /// Firebase Authentication instance for user authentication
   FirebaseAuth auth = FirebaseAuth.instance;
 
   Future<void> initNotifications() async {

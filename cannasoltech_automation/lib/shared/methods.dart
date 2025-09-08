@@ -1,4 +1,15 @@
 
+/**
+ * @file methods.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief Shared utility methods and extensions for the application.
+ * @details Provides common utility functions for string formatting, number display,
+ *          error handling, and UI helper methods used throughout the application.
+ * @version 1.0
+ * @since 1.0
+ */
+
 // ignore_for_file: unnecessary_this
 
 import 'package:firebase_database/firebase_database.dart';
@@ -6,17 +17,46 @@ import 'package:flutter/material.dart';
 
 import '../data_models/device.dart';
 
+/// Type alias for active device reference
 typedef ActiveDevice = Device;
 
+/**
+ * @brief Formats a double value with specified decimal places and optional units.
+ * @details Converts a double to a string with fixed decimal places and appends units.
+ * @param d The double value to format
+ * @param decimalPlaces Number of decimal places to display
+ * @param units Optional units string to append (default: empty)
+ * @return Formatted string representation of the double
+ * @since 1.0
+ */
 String displayDouble(double d, int decimalPlaces, {String units = ''}) =>
 "${d.toStringAsFixed(decimalPlaces)}$units";
     // "${d.toStringAsFixed(decimalPlaces).replaceFirst(RegExp(r'\.?0*$'), '')} $units";
 
+/**
+ * @brief Pads a number with leading zeros to reach specified total length.
+ * @details Converts an integer to string and pads with leading zeros.
+ * @param number The integer to pad
+ * @param totalLength The desired total string length
+ * @return Zero-padded string representation
+ * @since 1.0
+ */
 String padZeros(int number, int totalLength) {
   return number.toString().padLeft(totalLength, '0');
 }
 
+/**
+ * @brief Extension methods for String class.
+ * @details Adds utility methods for string manipulation and formatting.
+ * @since 1.0
+ */
 extension StringExtension on String {
+  /**
+   * @brief Converts string to capital case (first letter uppercase, rest lowercase).
+   * @details Capitalizes the first character and converts remaining to lowercase.
+   * @return Capitalized string
+   * @since 1.0
+   */
   String toCapital() => length > 0 ?'${this[0].toUpperCase()}${substring(1).toLowerCase()}': this[0].toUpperCase();
 }
 

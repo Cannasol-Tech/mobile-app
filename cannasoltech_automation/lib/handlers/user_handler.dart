@@ -1,3 +1,14 @@
+/**
+ * @file user_handler.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief User authentication and profile management handler.
+ * @details Manages user authentication, profile data, device associations,
+ *          and user preferences including email notifications and device selection.
+ * @version 1.0
+ * @since 1.0
+ */
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -5,33 +16,66 @@ import 'package:flutter/material.dart';
 import '../shared/methods.dart';
 import '../shared/snacks.dart';
 
+/**
+ * @brief Handles user authentication and profile management.
+ * @details Manages user authentication state, profile information, device associations,
+ *          and user preferences with Firebase integration.
+ * @since 1.0
+ */
 class UserHandler{
 
+  /// User's unique identifier from Firebase Auth
   String? uid;
+
+  /// Firebase Authentication instance
   dynamic auth = FirebaseAuth.instance;
 
-  /* Settings */ 
+  /// Device token for push notifications
   dynamic _deviceToken;
+
+  /// Flag indicating if the handler is initialized
   bool initialized = false;
+
+  /// Firebase database reference for user data
   late DatabaseReference _uidReference;
+
+  /// Firebase database reference for devices
   late DatabaseReference _devicesReference;
 
+  /// Private field for current user email
   dynamic _currentEmail;
+
+  /// Getter for current user email
   dynamic get email => _currentEmail;
 
+  /// Private field for current username
   dynamic _currentUserName;
+
+  /// Getter for current username
   dynamic get name => _currentUserName;
 
+  /// Private field for email notification preference
   bool _emailOnAlarm = true;
+
+  /// Getter for email notification preference
   bool get emailOnAlarm => _emailOnAlarm;
-  
+
+  /// Private field for selected device ID
   String _selectedDevice = 'null';
+
+  /// Getter for selected device ID
   String get selectedDevice => _selectedDevice;
 
+  /// Private field for list of watched device IDs
   List<String> _watchedDevices = [];
+
+  /// Getter for list of watched device IDs
   List<String> get watchedDevices => _watchedDevices;
 
+  /// Private field for Terms and Conditions acceptance
   bool _doesAcceptTaC = false;
+
+  /// Getter for Terms and Conditions acceptance status
   bool get doesAcceptTaC => _doesAcceptTaC;
 
   UserHandler.uninitialized(){
