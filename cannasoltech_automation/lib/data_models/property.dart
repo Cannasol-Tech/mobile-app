@@ -50,12 +50,23 @@ class FireProperty {
     });
   }
 
-  /// TODO: #13 Implement listening for all firebase properties.
-
   /// Listens for changes to the Firebase Realtime Database and updates the value
-  // void listenForChanges(Function(dynamic) onChange) {
-  //   ref.onValue.listen((DatabaseEvent event) {
-  //     onChange(event.snapshot.value);
-  //   });
-  // }
+  /// Returns a StreamSubscription that can be cancelled to stop listening
+  ///
+  /// The [onChange] callback is called whenever the Firebase value changes
+  /// The local [value] property is automatically updated when changes occur
+  StreamSubscription<DatabaseEvent> listenForChanges(
+      [Function(dynamic)? onChange]) {
+    return ref.onValue.listen((DatabaseEvent event) {
+      // Update the local value
+      if (event.snapshot.exists) {
+        value = event.snapshot.value;
+      } else {
+        value = null;
+      }
+
+      // Call the optional callback with the new value
+      onChange?.call(value);
+    });
+  }
 }
