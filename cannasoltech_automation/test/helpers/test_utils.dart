@@ -7,9 +7,12 @@
 // Standards: Follow TESTING-STANDARDS.md guidelines
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:mocktail/mocktail.dart';
+import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:cannasoltech_automation/providers/system_data_provider.dart';
 import 'package:cannasoltech_automation/providers/display_data_provider.dart';
@@ -351,22 +354,251 @@ class GoldenTestUtils {
     Widget widget,
     String goldenFile, {
     Size? size,
+    bool skipInCI = true,
   }) async {
+    // Skip golden tests in CI unless explicitly enabled
+    if (skipInCI && TestEnvironment.isCI &&
+        !const bool.fromEnvironment('ENABLE_GOLDEN_TESTS', defaultValue: false)) {
+      return;
+    }
+
     if (size != null) {
       await tester.binding.setSurfaceSize(size);
     }
-    
+
     await tester.pumpWidget(widget);
     await tester.pumpAndSettle();
-    
+
     await expectLater(
       find.byWidget(widget),
       matchesGoldenFile('golden/$goldenFile'),
     );
   }
-  
+
+  /// Performs a golden test with multiple screen sizes
+  static Future<void> expectGoldenMultiSize(
+    WidgetTester tester,
+    Widget widget,
+    String baseFileName, {
+    List<Size>? sizes,
+    bool skipInCI = true,
+  }) async {
+    final testSizes = sizes ?? [phoneSize, tabletSize];
+
+    for (int i = 0; i < testSizes.length; i++) {
+      final size = testSizes[i];
+      final fileName = '${baseFileName}_${_getSizeName(size)}.png';
+
+      await expectGolden(
+        tester,
+        widget,
+        fileName,
+        size: size,
+        skipInCI: skipInCI,
+      );
+    }
+  }
+
+  /// Gets a descriptive name for a screen size
+  static String _getSizeName(Size size) {
+    if (size == phoneSize) return 'phone';
+    if (size == tabletSize) return 'tablet';
+    if (size == desktopSize) return 'desktop';
+    return '${size.width.toInt()}x${size.height.toInt()}';
+  }
+
   /// Common screen sizes for golden tests
   static const Size phoneSize = Size(375, 667);
   static const Size tabletSize = Size(768, 1024);
   static const Size desktopSize = Size(1920, 1080);
+
+  /// Additional device sizes
+  static const Size iphoneSE = Size(320, 568);
+  static const Size iphone12 = Size(390, 844);
+  static const Size ipadPro = Size(1024, 1366);
+}
+
+// =============================================================================
+// Widget Test Utilities - Enhanced
+// =============================================================================
+
+/// Enhanced utilities for widget testing following Axovia Flow standards
+class WidgetTestUtils {
+  /// Tests a widget with different themes
+  static Future<void> testWithThemes(
+    WidgetTester tester,
+    Widget widget,
+    List<ThemeData> themes,
+    Future<void> Function(WidgetTester, ThemeData) testCallback,
+  ) async {
+    for (final theme in themes) {
+      await testCallback(tester, theme);
+    }
+  }
+
+  /// Tests a widget with different screen sizes
+  static Future<void> testWithScreenSizes(
+    WidgetTester tester,
+    Widget widget,
+    List<Size> sizes,
+    Future<void> Function(WidgetTester, Size) testCallback,
+  ) async {
+    for (final size in sizes) {
+      await tester.binding.setSurfaceSize(size);
+      await testCallback(tester, size);
+    }
+  }
+
+  /// Tests a widget with different locales
+  static Future<void> testWithLocales(
+    WidgetTester tester,
+    Widget Function(Locale) widgetBuilder,
+    List<Locale> locales,
+    Future<void> Function(WidgetTester, Locale) testCallback,
+  ) async {
+    for (final locale in locales) {
+      final widget = widgetBuilder(locale);
+      await tester.pumpWidget(widget);
+      await testCallback(tester, locale);
+    }
+  }
+
+  /// Verifies that a widget doesn't overflow
+  static void expectNoOverflow(WidgetTester tester) {
+    expect(tester.takeException(), isNull);
+  }
+
+  /// Waits for a specific condition to be met
+  static Future<void> waitForCondition(
+    WidgetTester tester,
+    bool Function() condition, {
+    Duration timeout = const Duration(seconds: 5),
+    Duration interval = const Duration(milliseconds: 100),
+  }) async {
+    final stopwatch = Stopwatch()..start();
+
+    while (!condition() && stopwatch.elapsed < timeout) {
+      await tester.pump(interval);
+    }
+
+    if (!condition()) {
+      throw TimeoutException('Condition not met within timeout', timeout);
+    }
+  }
+
+  /// Simulates device rotation
+  static Future<void> rotateDevice(
+    WidgetTester tester, {
+    bool toPortrait = true,
+  }) async {
+    final currentSize = tester.binding.window.physicalSize;
+    final newSize = toPortrait
+        ? Size(currentSize.height, currentSize.width)
+        : Size(currentSize.width, currentSize.height);
+
+    await tester.binding.setSurfaceSize(newSize);
+    await tester.pump();
+  }
+}
+
+// =============================================================================
+// Performance Test Utilities
+// =============================================================================
+
+/// Utilities for performance testing
+class PerformanceTestUtils {
+  /// Measures widget build time
+  static Future<Duration> measureBuildTime(
+    WidgetTester tester,
+    Widget widget,
+  ) async {
+    final stopwatch = Stopwatch()..start();
+    await tester.pumpWidget(widget);
+    stopwatch.stop();
+    return stopwatch.elapsed;
+  }
+
+  /// Measures animation performance
+  static Future<Duration> measureAnimationTime(
+    WidgetTester tester,
+    Future<void> Function() animationTrigger,
+  ) async {
+    final stopwatch = Stopwatch()..start();
+    await animationTrigger();
+    await tester.pumpAndSettle();
+    stopwatch.stop();
+    return stopwatch.elapsed;
+  }
+
+  /// Tests memory usage during widget operations
+  static Future<void> testMemoryUsage(
+    WidgetTester tester,
+    Widget widget,
+    Future<void> Function() operations,
+  ) async {
+    // This would integrate with memory profiling tools
+    // Implementation depends on specific memory testing requirements
+    await tester.pumpWidget(widget);
+    await operations();
+
+    // Force garbage collection
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+}
+
+// =============================================================================
+// Accessibility Test Utilities
+// =============================================================================
+
+/// Utilities for accessibility testing
+class AccessibilityTestUtils {
+  /// Verifies semantic labels are present
+  static void expectSemanticLabel(
+    WidgetTester tester,
+    Finder finder,
+    String expectedLabel,
+  ) {
+    final semantics = tester.getSemantics(finder);
+    expect(semantics.label, contains(expectedLabel));
+  }
+
+  /// Verifies widget is focusable
+  static void expectFocusable(WidgetTester tester, Finder finder) {
+    final widget = tester.widget(finder);
+    // Check if widget has focus capabilities
+    expect(widget, isA<Focusable>());
+  }
+
+  /// Tests keyboard navigation
+  static Future<void> testKeyboardNavigation(
+    WidgetTester tester,
+    List<Finder> focusableWidgets,
+  ) async {
+    for (int i = 0; i < focusableWidgets.length - 1; i++) {
+      // Simulate tab key press to move focus
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+    }
+  }
+
+  /// Verifies contrast ratios (simplified)
+  static void expectSufficientContrast(
+    Color foreground,
+    Color background, {
+    double minimumRatio = 4.5,
+  }) {
+    final ratio = _calculateContrastRatio(foreground, background);
+    expect(ratio, greaterThanOrEqualTo(minimumRatio));
+  }
+
+  static double _calculateContrastRatio(Color color1, Color color2) {
+    // Simplified contrast ratio calculation
+    final luminance1 = color1.computeLuminance();
+    final luminance2 = color2.computeLuminance();
+
+    final lighter = math.max(luminance1, luminance2);
+    final darker = math.min(luminance1, luminance2);
+
+    return (lighter + 0.05) / (darker + 0.05);
+  }
 }

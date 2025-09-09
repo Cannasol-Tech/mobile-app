@@ -12,7 +12,7 @@
 #   make coverage       - Generate coverage report
 #   make clean-test     - Clean test artifacts
 
-.PHONY: help test test-unit test-widget test-golden test-integration coverage clean-test setup-test
+.PHONY: help test test-unit test-widget test-widget-suite test-components test-pages test-dialogs test-golden test-golden-components test-integration coverage clean-test setup-test
 
 # Default target
 help:
@@ -22,6 +22,10 @@ help:
 	@echo "  test              - Run complete test suite (unit + widget + integration)"
 	@echo "  test-unit         - Run unit tests (≥85% coverage required)"
 	@echo "  test-widget       - Run widget tests (≥70% coverage required)"
+	@echo "  test-widget-suite - Run comprehensive widget test suite"
+	@echo "  test-components   - Run component widget tests"
+	@echo "  test-pages        - Run page widget tests"
+	@echo "  test-dialogs      - Run dialog widget tests"
 	@echo "  test-golden       - Run golden tests (visual regression)"
 	@echo "  test-integration  - Run integration tests (critical paths)"
 	@echo "  coverage          - Generate and display coverage report"
@@ -55,32 +59,76 @@ test-unit:
 	flutter test test/unit/ --coverage --reporter=expanded
 	@echo "✅ Unit tests completed"
 
-# Widget Testing (NO mocking)
+# Widget Testing (with mocking allowed for providers)
 # Executes: flutter test test/widget/
-# Coverage: ≥70% requirement  
-# Mocking: PROHIBITED
+# Coverage: ≥70% requirement
+# Mocking: Provider mocking permitted (Mocktail)
 test-widget:
 	@echo "🎨 Running widget tests..."
-	@echo "Target: ≥70% coverage | Mocking: PROHIBITED"
+	@echo "Target: ≥70% coverage | Mocking: Provider mocking permitted"
 	flutter test test/widget/ --reporter=expanded
 	@echo "✅ Widget tests completed"
 
+# Widget Test Suite (comprehensive)
+test-widget-suite:
+	@echo "🎨 Running comprehensive widget test suite..."
+	flutter test test/widget/widget_test_suite.dart --reporter=expanded
+	@echo "✅ Widget test suite completed"
+
+# Component-specific widget tests
+test-components:
+	@echo "🧩 Running component widget tests..."
+	flutter test test/widget/components/ --reporter=expanded
+	@echo "✅ Component tests completed"
+
+# Page-specific widget tests
+test-pages:
+	@echo "📄 Running page widget tests..."
+	flutter test test/widget/pages/ --reporter=expanded
+	@echo "✅ Page tests completed"
+
+# Dialog-specific widget tests
+test-dialogs:
+	@echo "💬 Running dialog widget tests..."
+	flutter test test/widget/dialogs/ --reporter=expanded
+	@echo "✅ Dialog tests completed"
+
+# Widget tests with coverage
+test-widget-coverage:
+	@echo "🎨📊 Running widget tests with coverage..."
+	flutter test test/widget/ --coverage --reporter=expanded
+	@echo "✅ Widget tests with coverage completed"
+
 # Golden Testing (visual regression)
-# Executes: flutter test test/golden/
-# Mocking: PROHIBITED
+# Executes: flutter test with golden file generation
+# Mocking: Provider mocking permitted for widget goldens
 test-golden:
 	@echo "🖼️  Running golden tests (visual regression)..."
-	@echo "Mocking: PROHIBITED | Purpose: Visual consistency"
-	flutter test test/golden/ --reporter=expanded
+	@echo "Mocking: Provider mocking permitted | Purpose: Visual consistency"
+	flutter test --dart-define=ENABLE_GOLDEN_TESTS=true test/widget/ --reporter=expanded
 	@echo "✅ Golden tests completed"
+
+# Golden tests for specific components
+test-golden-components:
+	@echo "🖼️  Running component golden tests..."
+	flutter test --dart-define=ENABLE_GOLDEN_TESTS=true test/widget/components/ --reporter=expanded
+	@echo "✅ Component golden tests completed"
 
 # Update golden files (use with caution)
 update-goldens:
 	@echo "🔄 Updating golden files..."
 	@echo "⚠️  WARNING: This will update all golden reference images"
 	@read -p "Are you sure? (y/N): " confirm && [ "$$confirm" = "y" ] || exit 1
-	flutter test test/golden/ --update-goldens
+	flutter test --dart-define=ENABLE_GOLDEN_TESTS=true --update-goldens test/widget/
 	@echo "✅ Golden files updated"
+
+# Update golden files for specific components
+update-goldens-components:
+	@echo "🔄 Updating component golden files..."
+	@echo "⚠️  WARNING: This will update component golden reference images"
+	@read -p "Are you sure? (y/N): " confirm && [ "$$confirm" = "y" ] || exit 1
+	flutter test --dart-define=ENABLE_GOLDEN_TESTS=true --update-goldens test/widget/components/
+	@echo "✅ Component golden files updated"
 
 # Integration Testing (end-to-end)
 # Executes: flutter test integration_test/
