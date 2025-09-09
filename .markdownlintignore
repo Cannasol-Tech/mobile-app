@@ -1,0 +1,12 @@
+# Build directories
+cannasoltech_automation/build/
+cannasoltech_automation/.dart_tool/
+
+# iOS Pods
+cannasoltech_automation/ios/Pods/
+
+# Node modules
+node_modules/
+
+# Generated files
+*.generated.md

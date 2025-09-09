@@ -51,6 +51,7 @@ This document is meant to define the standardized directory structure and archit
 ### Prohibited Root Directory Files
 
 **NEVER place these in the root directory:**
+
 - Package files: `package.json`, `package-lock.json`, `requirements.txt`
 - Build artifacts: `dist/`, `build/`, compiled binaries
 - IDE files: `.vscode/`, `.idea/`, `*.swp`
