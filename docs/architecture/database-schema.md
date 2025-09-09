@@ -68,6 +68,7 @@ Each device in the system follows this standardized structure:
 ## Module Definitions
 
 ### AlarmLogs Module
+
 ```json
 "AlarmLogs": {
   "[LOG_ID]": {
@@ -79,6 +80,7 @@ Each device in the system follows this standardized structure:
 ```
 
 ### Alarms Module
+
 ```json
 "Alarms": {
   "flow_alarm": false,         // Boolean: Flow rate alarm active
@@ -98,6 +100,7 @@ Each device in the system follows this standardized structure:
 ```
 
 ### CloudLogging Module (Optional)
+
 ```json
 "CloudLogging": {
   "export_history": false,     // Boolean: Enable cloud export
@@ -115,6 +118,7 @@ Each device in the system follows this standardized structure:
 ```
 
 ### Config Module
+
 ```json
 "Config": {
   "abort_run": 0,              // Integer/Boolean: Abort current run
@@ -138,6 +142,7 @@ Each device in the system follows this standardized structure:
 ```
 
 ### CurrentRun Module (Optional)
+
 ```json
 "CurrentRun": {
   "end_time": "N/A",           // String: End time or "N/A" if running
@@ -147,6 +152,7 @@ Each device in the system follows this standardized structure:
 ```
 
 ### History Module
+
 ```json
 "History": {
   "[RUN_ID]": {
@@ -181,6 +187,7 @@ Each device in the system follows this standardized structure:
 ```
 
 ### Info Module
+
 ```json
 "Info": {
   "id": "[DEVICE_ID]",         // String: Unique device identifier
@@ -191,6 +198,7 @@ Each device in the system follows this standardized structure:
 ```
 
 ### Logging Module (Optional)
+
 ```json
 "Logging": {
   "[LOG_ID]": {
@@ -209,6 +217,7 @@ Each device in the system follows this standardized structure:
 ```
 
 ### SaveSlots Module
+
 ```json
 "SaveSlots": {
   "slot_1": {
@@ -238,6 +247,7 @@ Each device in the system follows this standardized structure:
 ```
 
 ### Simulation Module (Optional)
+
 ```json
 "Simulation": {
   "status": "stopped",         // String: Simulation status (running/stopped)
@@ -246,6 +256,7 @@ Each device in the system follows this standardized structure:
 ```
 
 ### State Module
+
 ```json
 "State": {
   "Simulation": {              // Optional: Simulation-specific state
@@ -271,6 +282,7 @@ Each device in the system follows this standardized structure:
 ```
 
 ### Watchers Module
+
 ```json
 "Watchers": {
   "[USER_ID]": true            // Boolean: User has access to watch this device
@@ -280,6 +292,7 @@ Each device in the system follows this standardized structure:
 ## Device Types
 
 The system supports multiple device types:
+
 - `CTESP32V2`: Standard ESP32 device version 2
 - `CTESP32V2_PROD`: Production ESP32 device version 2
 - `ESP32_REV_0`: ESP32 revision 0
@@ -287,6 +300,7 @@ The system supports multiple device types:
 ## State Codes
 
 System state codes indicate the current operational mode:
+
 - `0`: Idle/Stopped
 - `1`: Running/Active
 - `2`: Warming up
@@ -295,212 +309,13 @@ System state codes indicate the current operational mode:
 ## Alarm Types
 
 The system monitors these alarm conditions:
+
 - `Flow alarm`: Flow rate outside acceptable range
 - `Pressure alarm`: Pressure outside acceptable range
 - `Temp alarm`: Temperature outside acceptable range
 - `Freq lock alarm`: Frequency lock failure
 - `Overload alarm`: System overload condition
 
-
-      "Logging": {
-        "-OEgyrIp3YH_s99jnTXB": {
-          "avg_flow_rate": 0,
-          "avg_temp": 0,
-          "num_passes": 0,
-          "run_hours": 0,
-          "run_minutes": 0,
-          "run_seconds": 0,
-          "system_config": {
-            "batch_size": 0,
-            "cool_down_temp": 45,
-            "enable_cooldown": 0,
-            "flow_thresh": 4,
-            "pressure_thresh": 50,
-            "set_hours": 0,
-            "set_minutes": 25,
-            "set_temp": 45
-          },
-          "timestamp": "2024-12-22 06:08:42"
-        }
-      },
-      "SaveSlots": {
-        "slot_1": {
-          "batch_size": 0,
-          "cool_down_temp": 0,
-          "enable_cooldown": 0,
-          "hours": 0,
-          "min_flow": 0,
-          "min_pressure": 0,
-          "minutes": 0,
-          "set_temp": 0,
-          "temp_var": 0
-        },
-        "slot_2": {
-          "batch_size": 0,
-          "cool_down_temp": 0,
-          "enable_cooldown": 0,
-          "hours": 0,
-          "min_flow": 0,
-          "min_pressure": 0,
-          "minutes": 0,
-          "set_temp": 0,
-          "temp_var": 0
-        },
-        "slot_3": {
-          "batch_size": 0,
-          "cool_down_temp": 0,
-          "enable_cooldown": 0,
-          "hours": 0,
-          "min_flow": 0,
-          "min_pressure": 0,
-          "minutes": 0,
-          "set_temp": 0,
-          "temp_var": 0
-        },
-        "slot_4": {
-          "batch_size": 0,
-          "cool_down_temp": 0,
-          "enable_cooldown": 0,
-          "hours": 0,
-          "min_flow": 0,
-          "min_pressure": 0,
-          "minutes": 0,
-          "set_temp": 0,
-          "temp_var": 0
-        },
-        "slot_5": {
-          "batch_size": 0,
-          "cool_down_temp": 0,
-          "enable_cooldown": 0,
-          "hours": 0,
-          "min_flow": 0,
-          "min_pressure": 0,
-          "minutes": 0,
-          "set_temp": 0,
-          "temp_var": 0
-        }
-      },
-      "State": {
-        "alarms_cleared": false,
-        "avg_flow_rate": 0,
-        "avg_temp": 0,
-        "flow": 0,
-        "freq_lock": false,
-        "num_passes": 0,
-        "params_valid": false,
-        "pressure": 0,
-        "pump_status": false,
-        "run_hours": 0,
-        "run_minutes": 0,
-        "run_seconds": 0,
-        "state": 0,
-        "temperature": 0,
-        "warming_up": false
-      },
-      "Watchers": {
-        "74v9t4ipxKZXhdIhLD2V7eEuLRG3": true,
-        "7JKHj9pplXP8S5LpRwlgo2VaQzo2": true
-      }
-    },
-    "504D-3035-3221-7C35": {
-      "AlarmLogs": {
-        "-OSzuB1IpG9URbw6TsJA": {
-          "cleared_time": 0,
-          "start_time": 1750197649,
-          "type": "Flow alarm"
-        }
-      },
-      "Alarms": {
-        "flow_alarm": true,
-        "flow_warn": false,
-        "freq_lock_alarm": false,
-        "ign_flow_alarm": 0,
-        "ign_freqlock_alarm": 0,
-        "ign_overload_alarm": 0,
-        "ign_pressure_alarm": 0,
-        "ign_temp_alarm": 0,
-        "overload_alarm": false,
-        "pressure_alarm": false,
-        "pressure_warn": false,
-        "temp_alarm": false,
-        "temp_warn": false
-      },
-      "Config": {
-        "abort_run": 0,
-        "batch_size": 0,
-        "cool_down_temp": 0,
-        "enable_cooldown": 0,
-        "end_run": 0,
-        "flow_thresh": 0,
-        "load_slot": 0,
-        "pressure_thresh": 0,
-        "pump_control": 0,
-        "restart": 0,
-        "resume": 0,
-        "save_slot": 0,
-        "set_hours": 0,
-        "set_minutes": 0,
-        "set_temp": 0,
-        "start": 0,
-        "temp_thresh": 0
-      },
-      "Info": {
-        "id": "504D-3035-3221-7C35",
-        "name": "0MP`��?,\"�504D-3035-3221-7C35",
-        "status": "ONLINE",
-        "type": "ESP32_REV_0"
-      },
-      "SaveSlots": {
-        "slot_1": {
-          "batch_size": 78,
-          "cool_down_temp": 45,
-          "enable_cooldown": 1,
-          "hours": 1,
-          "min_flow": 4,
-          "min_pressure": 20,
-          "minutes": 0,
-          "set_temp": 58,
-          "temp_var": 3
-        },
-        "slot_2": {
-          "enable_cooldown": 1,
-          "hours": 65535,
-          "minutes": 65535
-        },
-        "slot_3": {
-          "enable_cooldown": 1,
-          "hours": 65535,
-          "minutes": 65535
-        },
-        "slot_4": {
-          "enable_cooldown": 1,
-          "hours": 65535,
-          "minutes": 65535
-        },
-        "slot_5": {
-          "enable_cooldown": 1,
-          "hours": 65535,
-          "minutes": 65535
-        }
-      },
-      "State": {
-        "alarms_cleared": false,
-        "avg_flow_rate": 0,
-        "avg_temp": 0,
-        "flow": 0,
-        "freq_lock": true,
-        "num_passes": 0,
-        "params_valid": false,
-        "pressure": 0,
-        "pump_status": false,
-        "run_hours": 0,
-        "run_minutes": 0,
-        "run_seconds": 0,
-        "state": 0,
-        "temperature": 0,
-        "warming_up": false
-      }
-    },
     "B5C5-8C17-178D-5A53": {
       "Alarms": {
         "flow_alarm": false,
@@ -1516,13 +1331,13 @@ The system monitors these alarm conditions:
       },
       "CloudLogging": {
         "Spreadsheet": {
-          "download_url": "https://storage.googleapis.com/cannasoltech.firebasestorage.app/exports/SIMULATION-DEVICE-2/RunLogs_SIMULATION-DEVICE-2_1737591712.xlsx?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=firebase-adminsdk-37xto%40cannasoltech.iam.gserviceaccount.com%2F20250123%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20250123T002152Z&X-Goog-Expires=3600&X-Goog-SignedHeaders=host&X-Goog-Signature=0bc19f1a26f5c67e5f444d267b2cc4ef99d525aa21bfea655f26946c349dcebb2b41a00b3329e8314ee34beb1ee9367cb4f6f66318bc19603988648ddd4b037c6ecd0778803bb30e11ed395277fd860f1d91fcaa68dbca98f44d2803c58d07f962d04ffc8b871fde38f2aa4335851a4d11122d98fc5c7a5020b2186a289caee40459c4ddfca770baaa6b600a1cbff6ae002aefe01122d4525c141d40aef587949f9dd3bd19410ac62bc13350d0163b764e11287abb872547c690150844ce069d8362f3b91e7aebf57c4e71a967abc69efe4bbd4e157233442bb02d1fb51a23edf8349ac73c2279e39d23874b63b8b567fd9281322a454b754cafe0329fe8d05f",
+          "download_url": "<https://storage.googleapis.com/cannasoltech.firebasestorage.app/exports/SIMULATION-DEVICE-2/RunLogs_SIMULATION-DEVICE-2_1737591712.xlsx?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=firebase-adminsdk-37xto%40cannasoltech.iam.gserviceaccount.com%2F20250123%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20250123T002152Z&X-Goog-Expires=3600&X-Goog-SignedHeaders=host&X-Goog-Signature=0bc19f1a26f5c67e5f444d267b2cc4ef99d525aa21bfea655f26946c349dcebb2b41a00b3329e8314ee34beb1ee9367cb4f6f66318bc19603988648ddd4b037c6ecd0778803bb30e11ed395277fd860f1d91fcaa68dbca98f44d2803c58d07f962d04ffc8b871fde38f2aa4335851a4d11122d98fc5c7a5020b2186a289caee40459c4ddfca770baaa6b600a1cbff6ae002aefe01122d4525c141d40aef587949f9dd3bd19410ac62bc13350d0163b764e11287abb872547c690150844ce069d8362f3b91e7aebf57c4e71a967abc69efe4bbd4e157233442bb02d1fb51a23edf8349ac73c2279e39d23874b63b8b567fd9281322a454b754cafe0329fe8d05f>",
           "file_name": "RunLogs_SIMULATION-DEVICE-2_1737591712.xlsx",
           "time_stamp": "2025-01-23T00:21:52.944150+00:00"
         },
         "download_links": {
           "-OHFJ_362ORZQ2w4BO4B": {
-            "downloadUrl": "https://storage.googleapis.com/cannasoltech.firebasestorage.app/exports/SIMULATION-DEVICE-2/RunLogs_SIMULATION-DEVICE-2_1737588101.xlsx?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=firebase-adminsdk-37xto%40cannasoltech.iam.gserviceaccount.com%2F20250122%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20250122T232141Z&X-Goog-Expires=3600&X-Goog-SignedHeaders=host&X-Goog-Signature=1aa7f8afbf2d505753fdf79bdb8d82e15dc415a37b177bd25591bd07c0fde916a372cebec6872b12406c266496a0f33133c803f3d5052db9adb646b4610a2875c2260c532089998f76c4c50ba907608cb0b90b04cb546e953bb48c9f551e9d74d0277c4054eb0e6ca60b336fdc06dd9640e5f28f35692a67854717e11cdd19d1ea188148b2fa918df56435e61ede5066b3cede06c880614c4fdec06e76dd923cfa83e91f8203a6d2027c4aea81fb416eb285f2939c60aa820346df540116ed9dab0eb6e8e1f9f1950845a5195e5b7a792072b9554a246ac3969bb7635387d9d1a1b24880f7e4653b85d001388d763c42a5e3a7eba14cdf544532d7f3c002dfe6",
+            "downloadUrl": "<https://storage.googleapis.com/cannasoltech.firebasestorage.app/exports/SIMULATION-DEVICE-2/RunLogs_SIMULATION-DEVICE-2_1737588101.xlsx?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=firebase-adminsdk-37xto%40cannasoltech.iam.gserviceaccount.com%2F20250122%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20250122T232141Z&X-Goog-Expires=3600&X-Goog-SignedHeaders=host&X-Goog-Signature=1aa7f8afbf2d505753fdf79bdb8d82e15dc415a37b177bd25591bd07c0fde916a372cebec6872b12406c266496a0f33133c803f3d5052db9adb646b4610a2875c2260c532089998f76c4c50ba907608cb0b90b04cb546e953bb48c9f551e9d74d0277c4054eb0e6ca60b336fdc06dd9640e5f28f35692a67854717e11cdd19d1ea188148b2fa918df56435e61ede5066b3cede06c880614c4fdec06e76dd923cfa83e91f8203a6d2027c4aea81fb416eb285f2939c60aa820346df540116ed9dab0eb6e8e1f9f1950845a5195e5b7a792072b9554a246ac3969bb7635387d9d1a1b24880f7e4653b85d001388d763c42a5e3a7eba14cdf544532d7f3c002dfe6>",
             "fileName": "RunLogs_SIMULATION-DEVICE-2_1737588101.xlsx",
             "timestamp": "2025-01-22T23:21:41.352312+00:00"
           }
@@ -1726,14 +1541,14 @@ The system monitors these alarm conditions:
   "users": {
     "3tlus5NLEHaUWPRsHJ8hshr17Oh2": {
       "does_accept_tac": true,
-      "email": "alterabeats@gmail.com",
+      "email": "<alterabeats@gmail.com>",
       "email_on_alarm": true,
       "name": "Stephen3",
       "selected_device": "None"
     },
     "74v9t4ipxKZXhdIhLD2V7eEuLRG3": {
       "does_accept_tac": true,
-      "email": "josh.detzel@cannasolusa.com",
+      "email": "<josh.detzel@cannasolusa.com>",
       "email_on_alarm": true,
       "name": "Josh",
       "selected_device": "35C9-B297-0575-5A53",
@@ -1745,7 +1560,7 @@ The system monitors these alarm conditions:
       }
     },
     "7JKHj9pplXP8S5LpRwlgo2VaQzo2": {
-      "email": "bbphst@aol.com",
+      "email": "<bbphst@aol.com>",
       "name": "Ryan",
       "selected_device": "454B-4E31-3237-0010",
       "watched_devices": {
@@ -1754,7 +1569,7 @@ The system monitors these alarm conditions:
     },
     "GdoDAfiqvPVgb3PN09FsFKYGlLF2": {
       "does_accept_tac": true,
-      "email": "s.boyett31@gmail.com",
+      "email": "<s.boyett31@gmail.com>",
       "email_on_alarm": true,
       "name": "Stephen Boyett",
       "notification_tokens": {
@@ -1770,12 +1585,12 @@ The system monitors these alarm conditions:
     },
     "bfRHfSpZ6fPi5ThpJST0xlFUl0J3": {
       "does_accept_tac": true,
-      "email": "aortyxofficial@gmail.com",
+      "email": "<aortyxofficial@gmail.com>",
       "name": "new user"
     },
     "p2TxU66e8nVO4py5GtGvT6EuCmt1": {
       "does_accept_tac": true,
-      "email": "cannasol.appletest@gmail.com",
+      "email": "<cannasol.appletest@gmail.com>",
       "email_on_alarm": true,
       "name": "Apple Tester",
       "selected_device": "SIMULATION-DEVICE-2",
@@ -1785,7 +1600,7 @@ The system monitors these alarm conditions:
     },
     "xcEhHSpkbyQnZkthyhigPrmSUpg2": {
       "does_accept_tac": true,
-      "email": "ekyliep@gmail.com",
+      "email": "<ekyliep@gmail.com>",
       "email_on_alarm": false,
       "name": "Kylie Peebles",
       "selected_device": "SIMULATION-DEVICE-1",
@@ -1796,6 +1611,7 @@ The system monitors these alarm conditions:
     }
   }
 }
+
 ```
 
 
