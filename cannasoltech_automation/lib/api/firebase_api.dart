@@ -47,8 +47,13 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
  * @since 1.0
  */
 class FirebaseApi {
+  final GlobalKey<NavigatorState> navigatorKey;
+
+  FirebaseApi({FirebaseMessaging? firebaseMessaging, GlobalKey<NavigatorState>? navigatorKey})
+      : _firebaseMessaging = firebaseMessaging ?? FirebaseMessaging.instance,
+        navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>();
   /// Firebase Cloud Messaging instance for handling push notifications
-  final _firebaseMessaging = FirebaseMessaging.instance;
+  final FirebaseMessaging _firebaseMessaging;
 
   /// Firebase Authentication instance for user authentication
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -110,7 +115,7 @@ class FirebaseApi {
     if (message.notification != null) {
       if (['System Alarm!', 'Alarm Cleared!']
           .contains(message.notification?.title)) {
-        navigatorKey.currentState
+        this.navigatorKey.currentState
             ?.pushNamed('/push_alarm', arguments: message.data);
       }
     }

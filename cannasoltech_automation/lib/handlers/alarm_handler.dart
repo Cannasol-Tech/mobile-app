@@ -42,7 +42,7 @@ class IgnoredAlarmsModel {
   bool overload;
 
   /// Nested ignored alarms model for complex alarm hierarchies
-  IgnoredAlarmsModel ignored;
+  IgnoredAlarmsModel? ignored;
 
   /// Raw native data from database
   Map<String, dynamic> native;
@@ -63,7 +63,7 @@ class IgnoredAlarmsModel {
     required this.pressure,
     required this.freqLock,
     required this.overload,
-    required this.ignored,
+    this.ignored,
     required this.native,
   });
 
@@ -76,13 +76,16 @@ class IgnoredAlarmsModel {
    * @since 1.0
    */
   factory IgnoredAlarmsModel.fromDatabase(Map<String, dynamic> data) {
+    final ignoredData = data['ignored'];
     return IgnoredAlarmsModel(
-      flow: data['flow'] as bool,
-      temp: data['temp'] as bool,
-      pressure: data['pressure'] as bool,
-      freqLock: data['freqLock'] as bool,
-      overload: data['overload'] as bool,
-      ignored: IgnoredAlarmsModel.fromDatabase(data['ignored']),
+      flow: data['flow'] ?? false,
+      temp: data['temp'] ?? false,
+      pressure: data['pressure'] ?? false,
+      freqLock: data['freqLock'] ?? false,
+      overload: data['overload'] ?? false,
+      ignored: (ignoredData != null && ignoredData is Map && ignoredData.isNotEmpty)
+          ? IgnoredAlarmsModel.fromDatabase(Map<String, dynamic>.from(ignoredData))
+          : null,
       native: data,
     );
   }
@@ -132,7 +135,7 @@ class WarningsModel {
   factory WarningsModel.fromDatabase(Map<String, dynamic> data) {
     return WarningsModel(
       flow: data['flow'] as bool,
-      pressure:  data['flow'] as bool,
+      pressure:  data['pressure'] as bool,
       temp: data['temp'] as bool,
       native: data,
     );

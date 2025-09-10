@@ -17,7 +17,6 @@ Axovia Flow™ aims to become the industry standard for agentic AI coding framew
 ## Core Capabilities
 
 ### Multi-Agent Orchestration
-
 - **Director of Flow**: Central orchestration agent that coordinates all other agents and maintains project alignment
 - **Specialized Coding Agents**: Domain-specific agents for different aspects of development (frontend, backend, testing, documentation)
 - **Intelligent Task Distribution**: Automatic assignment of tasks to the most appropriate agents based on expertise and current workload

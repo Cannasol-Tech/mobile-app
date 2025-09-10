@@ -99,7 +99,7 @@ class TextControllers {
     dynamic config = newDeviceData.config;
     dynamic state = newDeviceData.state;
       // registerDeviceController.text = newDeviceData.id.toString();
-      stateController.text = state.toString();
+      stateController.text = state.state.toString();
       setTimeController.text = config.setTime;
       // pumpControlController.text = config.toString();
       batchSizeController.text = displayDouble(config.batchSize, 1);

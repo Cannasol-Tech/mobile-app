@@ -22,6 +22,18 @@ This document serves as the central hub for all testing standards within the org
 
 ## Universal Testing Strategy
 
+> *Testing Guidelines Listed here should be Adhered to by all Agents working in All types of projects*
+
+### Universal Principles
+
+***IMPORTANT:** All project types must adhere to these core principles:*
+
+1. **Mocking Policy**: Mocks are reserved for unit testing only, unless explicitly approved
+2. **Coverage Requirements**: Minimum coverage thresholds defined per project type
+3. **Test Organization**: Structured test directories and naming conventions
+4. **Quality Gates**: Automated validation before story completion
+5. **BMad-Core Integration**: Compliance with agent workflows and tasks
+
 ### Three-Stage Foundation
 
 All project types follow this foundational approach, adapted to their specific needs:
@@ -54,7 +66,7 @@ All project types follow this foundational approach, adapted to their specific n
 
 ## Standardized Make Targets
 
-All projects must implement standardized make targets for consistent execution:
+> **All projects must implement standardized make targets for consistent execution:**
 
 ### Required Targets (Project-Specific Implementation)
 
@@ -86,19 +98,19 @@ make test
 
 ### Implementation Requirements
 
-- **Exit Codes**: All targets must return proper exit codes (0 = success, non-zero = failure)
-- **Output Format**: Standardized reporting format for CI/CD integration
-- **Coverage Integration**: Unit testing targets must include coverage reporting
-- **Project-Specific**: Additional targets defined in project-specific standards
+* **Exit Codes**: All targets must return proper exit codes (0 = success, non-zero = failure)
+* **Output Format**: Standardized reporting format for CI/CD integration
+* **Coverage Integration**: Unit testing targets must include coverage reporting
+* **Project-Specific**: Additional targets defined in project-specific standards
 
 ---
 
 ## Test Case Guidelines
 
-- **Behavior Scenarios:** Each test scenario must map clearly to PRD requirements.
-- **Edge Cases:** Must be included, covering hardware limits (where applicable), production issues, and stress/failure boundaries.
-- **Automation:** Automate tests whenever possible; manual testing only if automation is impractical.
-- **Risk-Based Prioritization:** Use `test-priorities-matrix.md` for P0/P1/P2/P3 classification.
+* **Behavior Scenarios:** Each test scenario must map clearly to PRD requirements.
+* **Edge Cases:** Must be included, covering hardware limits (where applicable), production issues, and stress/failure boundaries.
+* **Automation:** Automate tests whenever possible; manual testing only if automation is impractical.
+* **Risk-Based Prioritization:** Use `test-priorities-matrix.md` for P0/P1/P2/P3 classification.
 
 ---
 
@@ -106,32 +118,32 @@ make test
 
 1. **Test Plans:**
    Each project must include a structured test plan before implementation begins.
-   - Use `test-design` task for automated test scenario generation.
-   - Reference `test-levels-framework.md` for implementation guidance.
+   * Use `test-design` task for automated test scenario generation.
+   * Reference `test-levels-framework.md` for implementation guidance.
 
 2. **Coverage Reporting:**
    Unit test coverage must be tracked and reported; Integration/Acceptance test pass rates must also be documented.
 
 3. **Sign-Off Criteria:**
 
-   - **Unit:** ≥90% coverage achieved.
-   - **Acceptance:** All BDD scenarios pass and align with PRD.
-   - **Integration:**
+   * **Unit:** ≥90% coverage achieved.
+   * **Acceptance:** All BDD scenarios pass and align with PRD.
+   * **Integration:**
 
-     - Hardware projects → HIL or Emulation testing completed and passed.
-     - Software-only projects → E2E automation testing completed and passed.
+     * Hardware projects → HIL or Emulation testing completed and passed.
+     * Software-only projects → E2E automation testing completed and passed.
 
 4. **Reports:**
    Each release must include two standardized outputs:
 
-   - `functionality-report.json` → Technical test results, coverage metrics, and PRD mapping.
-   - `executive-report.json` → High-level summary of success rates, risks, and open issues for stakeholders.
+   * `functionality-report.json` → Technical test results, coverage metrics, and PRD mapping.
+   * `executive-report.json` → High-level summary of success rates, risks, and open issues for stakeholders.
 
 5. **Defect Management:**
 
-   - All failures logged in defect tracking system.
-   - Root cause analysis required for repeat issues.
-   - Use `risk-profile` task for systematic risk assessment.
+   * All failures logged in defect tracking system.
+   * Root cause analysis required for repeat issues.
+   * Use `risk-profile` task for systematic risk assessment.
 
 ---
 
@@ -139,25 +151,25 @@ make test
 
 ### Agent Workflow Integration
 
-- **QA Agent**: Primary implementer of this standard through `*test-design`, `*trace`, and `*gate` commands
-- **Dev Agent**: Must achieve 90% unit coverage before story completion
-- **PM Agent**: Ensures acceptance criteria are BDD-testable during story creation
+* **QA Agent**: Primary implementer of this standard through `*test-design`, `*trace`, and `*gate` commands
+* **Dev Agent**: Must achieve 90% unit coverage before story completion
+* **PM Agent**: Ensures acceptance criteria are BDD-testable during story creation
 
 ### Task Integration
 
-- **test-design.md**: Automated test scenario generation following this standard
-- **trace-requirements.md**: Maps acceptance tests to PRD requirements
-- **qa-gate.md**: Validates compliance with this standard before story approval
-- **review-story.md**: Comprehensive review including testing standard compliance
+* **test-design.md**: Automated test scenario generation following this standard
+* **trace-requirements.md**: Maps acceptance tests to PRD requirements
+* **qa-gate.md**: Validates compliance with this standard before story approval
+* **review-story.md**: Comprehensive review including testing standard compliance
 
 ### Quality Gates
 
 All stories must pass through QA gates that validate:\
 
-- [ ] Unit tests achieve ≥90% coverage
-- [ ] Acceptance tests map to PRD requirements using BDD format
-- [ ] Integration tests cover all external system interactions
-- [ ] Test reports generated in standardized format
+* [ ] Unit tests achieve ≥90% coverage
+* [ ] Acceptance tests map to PRD requirements using BDD format
+* [ ] Integration tests cover all external system interactions
+* [ ] Test reports generated in standardized format
 
 ---
 
@@ -187,23 +199,25 @@ Additional quality gates are defined in each project-specific testing standard:
 
 ### Implementation Guidance
 
-- **test-levels-framework.md**: Detailed decision criteria for test level selection
-- **test-priorities-matrix.md**: Risk-based prioritization (P0/P1/P2/P3) system
+* **test-levels-framework.md**: Detailed decision criteria for test level selection
+* **test-priorities-matrix.md**: Risk-based prioritization (P0/P1/P2/P3) system
 
 ### Automated Tooling
 
-- **test-design task**: Systematic test scenario generation
-- **trace-requirements task**: Automated requirement-to-test mapping
-- **qa-gate task**: Quality gate decision automation
+* **test-design task**: Systematic test scenario generation
+* **trace-requirements task**: Automated requirement-to-test mapping
+* **qa-gate task**: Quality gate decision automation
 
 ---
 
 ## Continuous Improvement
 
-- Quarterly review of testing practices.
-- Adoption of new automation/emulation tools as appropriate.
-- Maintain alignment with industry standards (ISTQB, IEEE 829, ISO/IEC/IEEE 29119).
-- Regular updates to supplementary guidance based on project learnings.
+* Quarterly review of testing practices.
+* Adoption of new automation/emulation tools as appropriate.
+* Maintain alignment with industry standards (ISTQB, IEEE 829, ISO/IEC/IEEE 29119).
+* Regular updates to supplementary guidance based on project learnings.
+* Assess effectiveness of project-specific standards
+* Cross-pollinate learnings between project types
 
 ---
 
@@ -258,6 +272,25 @@ graph TD
 - **Monorepos**: May require multiple testing standards
 - **Microservices**: Each service follows its appropriate standard
 - **Full-Stack Projects**: Frontend and backend may use different standards
+
+---
+
+## Quick Reference
+
+### Getting Started
+
+1. Identify your project type
+2. Read the appropriate project-specific testing standard
+3. Implement required make targets
+4. Set up CI/CD integration
+5. Begin following the prescribed testing patterns
+
+### Support Resources
+
+- Project-specific testing standard documents
+- BMad-Core task documentation
+- Framework-specific implementation guides
+- Quality gate validation tools
 
 ---
 

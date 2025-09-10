@@ -8,15 +8,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:cannasoltech_automation/components/bottom_nav_bar.dart';
-import 'package:cannasoltech_automation/providers/system_data_provider.dart';
-import 'package:cannasoltech_automation/providers/display_data_provider.dart';
 
 // Import centralized test helpers
-import '../../helpers/mocks.dart';
 import '../../helpers/test_data.dart';
 import '../../helpers/test_utils.dart';
 
@@ -29,14 +25,15 @@ void main() {
 
     setUp(() {
       providerMocks = MockSetup.createProviderMocks();
-      
+
       // Setup common mock behaviors
       when(() => providerMocks.displayDataModel.currentPageIndex).thenReturn(0);
-      when(() => providerMocks.displayDataModel.setPageIndex(any())).thenReturn(null);
+      when(() => providerMocks.displayDataModel.setPageIndex(any()))
+          .thenReturn(null);
     });
 
     group('Rendering Tests', () {
-      testWidgets('should render with all navigation items', 
+      testWidgets('should render with all navigation items',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -55,7 +52,7 @@ void main() {
         TestAssertions.expectVisible(find.text(UITestData.configurationTitle));
       });
 
-      testWidgets('should display correct icons for navigation items', 
+      testWidgets('should display correct icons for navigation items',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -73,10 +70,11 @@ void main() {
         TestAssertions.expectVisible(find.byIcon(Icons.settings));
       });
 
-      testWidgets('should highlight selected tab correctly', 
+      testWidgets('should highlight selected tab correctly',
           (WidgetTester tester) async {
         // Arrange
-        when(() => providerMocks.displayDataModel.currentPageIndex).thenReturn(1);
+        when(() => providerMocks.displayDataModel.currentPageIndex)
+            .thenReturn(1);
 
         // Act
         await tester.pumpWidget(
@@ -98,10 +96,11 @@ void main() {
     });
 
     group('Navigation Tests', () {
-      testWidgets('should navigate to home when home tab is tapped', 
+      testWidgets('should navigate to home when home tab is tapped',
           (WidgetTester tester) async {
         // Arrange
-        when(() => providerMocks.displayDataModel.currentPageIndex).thenReturn(1);
+        when(() => providerMocks.displayDataModel.currentPageIndex)
+            .thenReturn(1);
 
         await tester.pumpWidget(
           createTestAppWithProviders(
@@ -120,10 +119,11 @@ void main() {
         verify(() => providerMocks.displayDataModel.setPageIndex(0)).called(1);
       });
 
-      testWidgets('should navigate to configuration when config tab is tapped', 
+      testWidgets('should navigate to configuration when config tab is tapped',
           (WidgetTester tester) async {
         // Arrange
-        when(() => providerMocks.displayDataModel.currentPageIndex).thenReturn(0);
+        when(() => providerMocks.displayDataModel.currentPageIndex)
+            .thenReturn(0);
 
         await tester.pumpWidget(
           createTestAppWithProviders(
@@ -136,16 +136,19 @@ void main() {
         );
 
         // Act
-        await TestInteractions.tap(tester, find.text(UITestData.configurationTitle));
+        await TestInteractions.tap(
+            tester, find.text(UITestData.configurationTitle));
 
         // Assert
         verify(() => providerMocks.displayDataModel.setPageIndex(1)).called(1);
       });
 
-      testWidgets('should not call setPageIndex when tapping already selected tab', 
+      testWidgets(
+          'should not call setPageIndex when tapping already selected tab',
           (WidgetTester tester) async {
         // Arrange
-        when(() => providerMocks.displayDataModel.currentPageIndex).thenReturn(0);
+        when(() => providerMocks.displayDataModel.currentPageIndex)
+            .thenReturn(0);
 
         await tester.pumpWidget(
           createTestAppWithProviders(
@@ -166,10 +169,11 @@ void main() {
     });
 
     group('State Management Tests', () {
-      testWidgets('should update selected tab when page index changes', 
+      testWidgets('should update selected tab when page index changes',
           (WidgetTester tester) async {
         // Arrange
-        when(() => providerMocks.displayDataModel.currentPageIndex).thenReturn(0);
+        when(() => providerMocks.displayDataModel.currentPageIndex)
+            .thenReturn(0);
 
         await tester.pumpWidget(
           createTestAppWithProviders(
@@ -188,7 +192,8 @@ void main() {
         expect(bottomNavBar.currentIndex, equals(0));
 
         // Act - Simulate page index change
-        when(() => providerMocks.displayDataModel.currentPageIndex).thenReturn(1);
+        when(() => providerMocks.displayDataModel.currentPageIndex)
+            .thenReturn(1);
         providerMocks.displayDataModel.notifyListeners();
         await tester.pump();
 
@@ -199,10 +204,11 @@ void main() {
         expect(bottomNavBar.currentIndex, equals(1));
       });
 
-      testWidgets('should handle invalid page index gracefully', 
+      testWidgets('should handle invalid page index gracefully',
           (WidgetTester tester) async {
         // Arrange
-        when(() => providerMocks.displayDataModel.currentPageIndex).thenReturn(-1);
+        when(() => providerMocks.displayDataModel.currentPageIndex)
+            .thenReturn(-1);
 
         // Act & Assert - Should not throw
         await tester.pumpWidget(
@@ -220,7 +226,7 @@ void main() {
     });
 
     group('Accessibility Tests', () {
-      testWidgets('should have proper semantic labels', 
+      testWidgets('should have proper semantic labels',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -234,14 +240,16 @@ void main() {
         );
 
         // Assert
-        final homeSemantics = tester.getSemantics(find.text(UITestData.homeTitle));
-        final configSemantics = tester.getSemantics(find.text(UITestData.configurationTitle));
-        
+        final homeSemantics =
+            tester.getSemantics(find.text(UITestData.homeTitle));
+        final configSemantics =
+            tester.getSemantics(find.text(UITestData.configurationTitle));
+
         expect(homeSemantics.label, contains('Home'));
         expect(configSemantics.label, contains('Configuration'));
       });
 
-      testWidgets('should be accessible via screen reader', 
+      testWidgets('should be accessible via screen reader',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -258,13 +266,13 @@ void main() {
         final bottomNavBar = tester.widget<BottomNavigationBar>(
           find.byType(BottomNavigationBar),
         );
-        
+
         expect(bottomNavBar.type, equals(BottomNavigationBarType.fixed));
       });
     });
 
     group('Theme and Styling Tests', () {
-      testWidgets('should apply correct theme colors', 
+      testWidgets('should apply correct theme colors',
           (WidgetTester tester) async {
         // Arrange
         final customTheme = ThemeData(
@@ -291,17 +299,18 @@ void main() {
         final bottomNavBar = tester.widget<BottomNavigationBar>(
           find.byType(BottomNavigationBar),
         );
-        
+
         expect(bottomNavBar.selectedItemColor, equals(Colors.blue));
         expect(bottomNavBar.unselectedItemColor, equals(Colors.grey));
       });
     });
 
     group('Performance Tests', () {
-      testWidgets('should handle rapid tab switching', 
+      testWidgets('should handle rapid tab switching',
           (WidgetTester tester) async {
         // Arrange
-        when(() => providerMocks.displayDataModel.currentPageIndex).thenReturn(0);
+        when(() => providerMocks.displayDataModel.currentPageIndex)
+            .thenReturn(0);
 
         await tester.pumpWidget(
           createTestAppWithProviders(
@@ -315,7 +324,8 @@ void main() {
 
         // Act - Rapid tab switching
         for (int i = 0; i < 10; i++) {
-          await TestInteractions.tap(tester, find.text(UITestData.configurationTitle));
+          await TestInteractions.tap(
+              tester, find.text(UITestData.configurationTitle));
           await tester.pump(const Duration(milliseconds: 10));
           await TestInteractions.tap(tester, find.text(UITestData.homeTitle));
           await tester.pump(const Duration(milliseconds: 10));

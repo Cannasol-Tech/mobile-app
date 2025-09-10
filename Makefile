@@ -19,7 +19,14 @@ help:
 	@echo "  preview-android - Launch Flutter app in Android emulator"
 	@echo "  install     - Install Flutter dependencies"
 	@echo "  clean       - Clean Flutter build cache"
-	@echo "  test        - Run Flutter tests"
+	@echo "  test        - Run complete Flutter test suite"
+	@echo "  test-unit   - Run unit tests (≥85% coverage, mocking allowed)"
+	@echo "  test-widget - Run widget tests (≥70% coverage, NO mocking)"
+	@echo "  test-widget-compliant - Run only compliant widget tests (no violations)"
+	@echo "  test-widget-legacy - Run legacy widget tests (TEMPORARY - allows mocking)"
+	@echo "  test-integration - Run integration tests"
+	@echo "  test-golden - Run golden tests (visual regression)"
+	@echo "  coverage    - Generate coverage report"
 	@echo "  build       - Build Flutter app for production"
 	@echo "  devices     - List available devices"
 	@echo ""
@@ -64,11 +71,43 @@ clean:
 	@echo "🧹 Cleaning Flutter build cache..."
 	@cd $(FLUTTER_DIR) && $(FLUTTER) clean
 
-# Run tests
-.PHONY: test
+# Testing targets (delegate to cannasoltech_automation/Makefile)
+.PHONY: test test-unit test-widget test-widget-compliant test-widget-legacy test-integration test-golden coverage
+
+# Complete test suite
 test:
-	@echo "🧪 Running Flutter tests..."
-	@cd $(FLUTTER_DIR) && $(FLUTTER) test
+	@echo "🧪 Running complete Flutter test suite..."
+	@cd $(FLUTTER_DIR) && $(MAKE) test
+
+# Unit tests (mocking allowed)
+test-unit:
+	@echo "🧪 Running unit tests..."
+	@cd $(FLUTTER_DIR) && $(MAKE) test-unit
+
+# Widget tests (NO mocking - Company Standard)
+test-widget:
+	@echo "🎨 Running widget tests (Company Standard - NO mocking)..."
+	@cd $(FLUTTER_DIR) && $(MAKE) test-widget
+
+# Legacy widget tests (TEMPORARY - allows mocking)
+test-widget-legacy:
+	@echo "🎨⚠️  Running LEGACY widget tests (bypasses standards)..."
+	@cd $(FLUTTER_DIR) && $(MAKE) test-widget-legacy
+
+# Integration tests
+test-integration:
+	@echo "🔗 Running integration tests..."
+	@cd $(FLUTTER_DIR) && $(MAKE) test-integration
+
+# Golden tests (visual regression)
+test-golden:
+	@echo "🖼️  Running golden tests..."
+	@cd $(FLUTTER_DIR) && $(MAKE) test-golden
+
+# Coverage report
+coverage:
+	@echo "📊 Generating coverage report..."
+	@cd $(FLUTTER_DIR) && $(MAKE) coverage
 
 # Build for production
 .PHONY: build
@@ -83,7 +122,7 @@ devices:
 	@cd $(FLUTTER_DIR) && $(FLUTTER) devices
 
 # Development utilities
-.PHONY: doctor
+.PHONY: doctor upgrade
 doctor:
 	@echo "🩺 Running Flutter doctor..."
 	@cd $(FLUTTER_DIR) && $(FLUTTER) doctor

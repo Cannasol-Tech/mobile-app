@@ -27,6 +27,7 @@ All project types must adhere to these core principles:
 3. **Test Organization**: Structured test directories and naming conventions
 4. **Quality Gates**: Automated validation before story completion
 5. **BMad-Core Integration**: Compliance with agent workflows and tasks
+6. **Project State Restoration**: Any test that creates, modifies, or deletes repository files or directories must restore them to their original state after test execution (pass or fail). Use framework fixtures/hooks (e.g., pytest fixtures, Behave environment hooks) to guarantee cleanup.
 
 ---
 
@@ -100,6 +101,8 @@ All stories must pass these quality gates regardless of project type:
 - [ ] No prohibited mocking in integration/e2e tests
 
 ### Project-Specific Gates
+
+- [ ] State restoration: Any test that creates, modifies, or deletes repository files or directories must restore them to their original state after test execution (pass or fail). Use framework fixtures/hooks (e.g., pytest fixtures, Behave environment hooks) to guarantee cleanup.
 
 Additional quality gates are defined in each project-specific testing standard:
 

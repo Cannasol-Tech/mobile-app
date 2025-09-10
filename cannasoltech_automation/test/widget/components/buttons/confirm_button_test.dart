@@ -8,16 +8,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
-import 'package:mocktail/mocktail.dart';
-
 import 'package:cannasoltech_automation/components/buttons/confirm_button.dart';
-import 'package:cannasoltech_automation/providers/system_data_provider.dart';
-import 'package:cannasoltech_automation/providers/display_data_provider.dart';
 
 // Import centralized test helpers
-import '../../../helpers/mocks.dart';
-import '../../../helpers/test_data.dart';
 import '../../../helpers/test_utils.dart';
 
 void main() {
@@ -32,13 +25,17 @@ void main() {
     });
 
     group('Rendering Tests', () {
-      testWidgets('should render confirm button with default text', 
+      testWidgets('should render confirm button with default text',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
           createTestAppWithProviders(
             child: const Scaffold(
-              body: ConfirmButton(),
+              body: ConfirmButton(
+                color: null,
+                buttonText: '',
+                confirmMethod: null,
+              ),
             ),
             systemDataModel: providerMocks.systemDataModel,
             displayDataModel: providerMocks.displayDataModel,
@@ -50,7 +47,7 @@ void main() {
         TestAssertions.expectVisible(find.text('Confirm'));
       });
 
-      testWidgets('should render confirm button with custom text', 
+      testWidgets('should render confirm button with custom text',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -67,7 +64,7 @@ void main() {
         TestAssertions.expectVisible(find.text('Apply Changes'));
       });
 
-      testWidgets('should display loading indicator when isLoading is true', 
+      testWidgets('should display loading indicator when isLoading is true',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -85,7 +82,7 @@ void main() {
         TestAssertions.expectNotVisible(find.text('Confirm'));
       });
 
-      testWidgets('should be disabled when isEnabled is false', 
+      testWidgets('should be disabled when isEnabled is false',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -99,11 +96,12 @@ void main() {
         );
 
         // Assert
-        final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+        final button =
+            tester.widget<ElevatedButton>(find.byType(ElevatedButton));
         expect(button.onPressed, isNull);
       });
 
-      testWidgets('should display correct icon when provided', 
+      testWidgets('should display correct icon when provided',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -122,7 +120,7 @@ void main() {
     });
 
     group('Interaction Tests', () {
-      testWidgets('should call onPressed when button is tapped', 
+      testWidgets('should call onPressed when button is tapped',
           (WidgetTester tester) async {
         // Arrange
         bool pressed = false;
@@ -145,7 +143,7 @@ void main() {
         expect(pressed, isTrue);
       });
 
-      testWidgets('should not call onPressed when button is disabled', 
+      testWidgets('should not call onPressed when button is disabled',
           (WidgetTester tester) async {
         // Arrange
         bool pressed = false;
@@ -171,7 +169,7 @@ void main() {
         expect(pressed, isFalse);
       });
 
-      testWidgets('should not call onPressed when button is loading', 
+      testWidgets('should not call onPressed when button is loading',
           (WidgetTester tester) async {
         // Arrange
         bool pressed = false;
@@ -197,7 +195,7 @@ void main() {
         expect(pressed, isFalse);
       });
 
-      testWidgets('should handle rapid taps gracefully', 
+      testWidgets('should handle rapid taps gracefully',
           (WidgetTester tester) async {
         // Arrange
         int pressCount = 0;
@@ -225,11 +223,11 @@ void main() {
     });
 
     group('State Management Tests', () {
-      testWidgets('should update button state when properties change', 
+      testWidgets('should update button state when properties change',
           (WidgetTester tester) async {
         // Arrange
         bool isLoading = false;
-        
+
         await tester.pumpWidget(
           createTestAppWithProviders(
             child: StatefulBuilder(
@@ -265,7 +263,7 @@ void main() {
     });
 
     group('Accessibility Tests', () {
-      testWidgets('should have proper semantic labels', 
+      testWidgets('should have proper semantic labels',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -283,7 +281,7 @@ void main() {
         expect(semantics.label, contains('Confirm'));
       });
 
-      testWidgets('should be accessible via screen reader', 
+      testWidgets('should be accessible via screen reader',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -297,11 +295,12 @@ void main() {
         );
 
         // Assert
-        final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+        final button =
+            tester.widget<ElevatedButton>(find.byType(ElevatedButton));
         expect(button.child, isNotNull);
       });
 
-      testWidgets('should indicate disabled state to screen readers', 
+      testWidgets('should indicate disabled state to screen readers',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -315,13 +314,14 @@ void main() {
         );
 
         // Assert
-        final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+        final button =
+            tester.widget<ElevatedButton>(find.byType(ElevatedButton));
         expect(button.onPressed, isNull);
       });
     });
 
     group('Theme and Styling Tests', () {
-      testWidgets('should apply custom theme colors', 
+      testWidgets('should apply custom theme colors',
           (WidgetTester tester) async {
         // Arrange
         final customTheme = ThemeData(
@@ -346,11 +346,13 @@ void main() {
         );
 
         // Assert
-        final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
-        expect(button.style?.backgroundColor?.resolve({}), equals(Colors.green));
+        final button =
+            tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+        expect(
+            button.style?.backgroundColor?.resolve({}), equals(Colors.green));
       });
 
-      testWidgets('should handle different button sizes', 
+      testWidgets('should handle different button sizes',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -379,7 +381,7 @@ void main() {
     });
 
     group('Edge Cases', () {
-      testWidgets('should handle null onPressed gracefully', 
+      testWidgets('should handle null onPressed gracefully',
           (WidgetTester tester) async {
         // Act & Assert - Should not throw
         await tester.pumpWidget(
@@ -393,12 +395,13 @@ void main() {
         );
 
         TestAssertions.expectVisible(find.byType(ConfirmButton));
-        
-        final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+
+        final button =
+            tester.widget<ElevatedButton>(find.byType(ElevatedButton));
         expect(button.onPressed, isNull);
       });
 
-      testWidgets('should handle empty text gracefully', 
+      testWidgets('should handle empty text gracefully',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -415,10 +418,10 @@ void main() {
         TestAssertions.expectVisible(find.byType(ConfirmButton));
       });
 
-      testWidgets('should handle very long text', 
-          (WidgetTester tester) async {
+      testWidgets('should handle very long text', (WidgetTester tester) async {
         // Arrange
-        const longText = 'This is a very long button text that should be handled properly without causing overflow';
+        const longText =
+            'This is a very long button text that should be handled properly without causing overflow';
 
         // Act
         await tester.pumpWidget(

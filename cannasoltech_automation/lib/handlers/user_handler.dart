@@ -28,13 +28,16 @@ class UserHandler{
   String? uid;
 
   /// Firebase Authentication instance
-  dynamic auth = FirebaseAuth.instance;
+  final FirebaseAuth auth;
 
   /// Device token for push notifications
   dynamic _deviceToken;
 
   /// Flag indicating if the handler is initialized
   bool initialized = false;
+
+  /// Firebase database instance
+  final FirebaseDatabase database;
 
   /// Firebase database reference for user data
   late DatabaseReference _uidReference;
@@ -78,7 +81,9 @@ class UserHandler{
   /// Getter for Terms and Conditions acceptance status
   bool get doesAcceptTaC => _doesAcceptTaC;
 
-  UserHandler.uninitialized(){
+  UserHandler.uninitialized({FirebaseAuth? auth, FirebaseDatabase? db})
+      : auth = auth ?? FirebaseAuth.instance,
+        database = db ?? FirebaseDatabase.instance {
     initialized = false;
   }
 
@@ -88,7 +93,7 @@ class UserHandler{
       uid = currentUser.uid;
       _currentUserName = currentUser.displayName;
       _currentEmail = currentUser.email;
-      _uidReference = FirebaseDatabase.instance.ref('/users/$uid');
+      _uidReference = database.ref('/users/$uid');
       await _initName();
       await _initEmail();
       await _initSelectedDevice();
@@ -160,7 +165,7 @@ class UserHandler{
   }
 
   Future<void> _initDevices() async {
-    _devicesReference = FirebaseDatabase.instance.ref('/users/$uid/watched_devices');
+    _devicesReference = database.ref('/users/$uid/watched_devices');
     await _devicesReference.get().then((snap) => {
       for (final child in snap.children) {
         _watchedDevices.add(child.key.toString())
@@ -192,14 +197,14 @@ class UserHandler{
 
   bool isEmailVerified() {
     if (auth.currentUser != null){
-      auth.currentUser.reload();
-      return auth.currentUser.emailVerified;
+      auth.currentUser?.reload();
+      return auth.currentUser?.emailVerified ?? false;
     }
     return false;
   }
 
   Future<bool> doesEmailExist(String email) async {
-    dynamic userReference = FirebaseDatabase.instance.ref('/users');
+    dynamic userReference = database.ref('/users');
     if (userReference != null){
       dynamic userSnapshot = await userReference.get();
       for (dynamic user in userSnapshot.children){
@@ -227,13 +232,13 @@ class UserHandler{
   }
 
   Future<void> verifyEmail() async {
-    if (auth.currentUser!= null && !auth.currentUser.emailVerified) {
-      await auth.currentUser.sendEmailVerification();
+    if (auth.currentUser != null && !(auth.currentUser?.emailVerified ?? true)) {
+      await auth.currentUser?.sendEmailVerification();
     }
   }
 
   Future<void> setUsername(String userName) async {
-    auth.currentUser.updateDisplayName(userName);
+    await auth.currentUser?.updateDisplayName(userName);
     await _uidReference.update({
       "name" : userName
     });
@@ -297,11 +302,11 @@ class UserHandler{
   }
 
   void reloadUser(){
-    auth.currentUser.reload();
+    auth.currentUser?.reload();
   }
 
   String getUserName(String uid) {
-    DatabaseReference userReference = FirebaseDatabase.instance.ref('/users/$uid/name');
+    DatabaseReference userReference = database.ref('/users/$uid/name');
     userReference.get().then((snapshot) => {
       if (snapshot.exists){
         _currentUserName = snapshot.value.toString()

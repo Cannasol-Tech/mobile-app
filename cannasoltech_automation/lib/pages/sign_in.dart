@@ -1,23 +1,21 @@
-/**
- * @file sign_in.dart
- * @author Stephen Boyett
- * @date 2025-09-06
- * @brief User sign-in page with email/password and Google authentication.
- * @details Provides user authentication interface with email validation,
- *          password visibility toggle, Google Sign-In integration, and error handling.
- * @version 1.0
- * @since 1.0
- */
+/// @file sign_in.dart
+/// @author Stephen Boyett
+/// @date 2025-09-06
+/// @brief User sign-in page with email/password and Google authentication.
+/// @details Provides user authentication interface with email validation,
+///          password visibility toggle, Google Sign-In integration, and error handling.
+/// @version 1.0
+/// @since 1.0
 
 import 'package:cannasoltech_automation/api/firebase_api.dart';
 import 'package:cannasoltech_automation/components/square_tile.dart';
 import 'package:cannasoltech_automation/providers/system_data_provider.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:provider/provider.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
 import 'dart:math';
@@ -26,27 +24,20 @@ import '../UserInterface/ui.dart';
 import '../handlers/user_handler.dart';
 import 'reset_password.dart';
 
-/**
- * @brief Sign-in page widget with multiple authentication options.
- * @details Stateful widget providing email/password authentication,
- *          Google Sign-In, and navigation to registration and password reset.
- * @since 1.0
- */
+/// Sign-in page widget with multiple authentication options.
+///
+/// A stateful widget that provides email/password authentication,
+/// Google Sign-In, and navigation to registration and password reset.
 class SignInPage1 extends StatefulWidget {
   /// Function to toggle between sign-in and registration pages
   final dynamic toggleFn;
 
-  /**
-   * @brief Creates a SignInPage1 widget.
-   * @param key Optional widget key for identification
-   * @param toggleFn Function to toggle between authentication pages
-   */
+  /// Creates a [SignInPage1] widget.
+  ///
+  /// The [toggleFn] is required to switch between sign-in and registration views.
   const SignInPage1({super.key, required this.toggleFn});
 
-  /**
-   * @brief Creates the state for SignInPage1 widget.
-   * @return _SignInPage1State instance
-   */
+  /// Creates the state for the [SignInPage1] widget.
   @override
   State<SignInPage1> createState() => _SignInPage1State();
 }

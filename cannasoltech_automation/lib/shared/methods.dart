@@ -57,7 +57,7 @@ extension StringExtension on String {
    * @return Capitalized string
    * @since 1.0
    */
-  String toCapital() => length > 0 ?'${this[0].toUpperCase()}${substring(1).toLowerCase()}': this[0].toUpperCase();
+  String toCapital() => length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : this;
 }
 
   void showErrorMessage(BuildContext context, String message) {

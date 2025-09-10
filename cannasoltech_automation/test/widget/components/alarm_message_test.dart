@@ -32,7 +32,7 @@ void main() {
     });
 
     group('Rendering Tests', () {
-      testWidgets('should render alarm message when alarm is active', 
+      testWidgets('should render alarm message when alarm is active',
           (WidgetTester tester) async {
         // Arrange
         when(() => providerMocks.systemDataModel.alarmActive).thenReturn(true);
@@ -55,7 +55,7 @@ void main() {
         TestAssertions.expectVisible(find.text('Flow alarm active'));
       });
 
-      testWidgets('should not render alarm message when no alarm is active', 
+      testWidgets('should not render alarm message when no alarm is active',
           (WidgetTester tester) async {
         // Arrange
         when(() => providerMocks.systemDataModel.alarmActive).thenReturn(false);
@@ -76,7 +76,7 @@ void main() {
         TestAssertions.expectNotVisible(find.text('Flow alarm active'));
       });
 
-      testWidgets('should display correct alarm icon', 
+      testWidgets('should display correct alarm icon',
           (WidgetTester tester) async {
         // Arrange
         when(() => providerMocks.systemDataModel.alarmActive).thenReturn(true);
@@ -100,7 +100,7 @@ void main() {
     });
 
     group('Interaction Tests', () {
-      testWidgets('should handle tap interaction on alarm message', 
+      testWidgets('should handle tap interaction on alarm message',
           (WidgetTester tester) async {
         // Arrange
         bool tapped = false;
@@ -130,7 +130,7 @@ void main() {
     });
 
     group('State Management Tests', () {
-      testWidgets('should update when alarm state changes', 
+      testWidgets('should update when alarm state changes',
           (WidgetTester tester) async {
         // Arrange
         when(() => providerMocks.systemDataModel.alarmActive).thenReturn(false);
@@ -153,7 +153,7 @@ void main() {
         when(() => providerMocks.systemDataModel.alarmActive).thenReturn(true);
         when(() => providerMocks.systemDataModel.alarmMessage)
             .thenReturn('System alarm');
-        
+
         // Trigger rebuild
         providerMocks.systemDataModel.notifyListeners();
         await tester.pump();
@@ -164,7 +164,7 @@ void main() {
     });
 
     group('Accessibility Tests', () {
-      testWidgets('should have proper accessibility labels', 
+      testWidgets('should have proper accessibility labels',
           (WidgetTester tester) async {
         // Arrange
         when(() => providerMocks.systemDataModel.alarmActive).thenReturn(true);
@@ -189,7 +189,7 @@ void main() {
     });
 
     group('Edge Cases', () {
-      testWidgets('should handle null alarm message gracefully', 
+      testWidgets('should handle null alarm message gracefully',
           (WidgetTester tester) async {
         // Arrange
         when(() => providerMocks.systemDataModel.alarmActive).thenReturn(true);
@@ -209,7 +209,7 @@ void main() {
         TestAssertions.expectVisible(find.byType(AlarmMessage));
       });
 
-      testWidgets('should handle empty alarm message', 
+      testWidgets('should handle empty alarm message',
           (WidgetTester tester) async {
         // Arrange
         when(() => providerMocks.systemDataModel.alarmActive).thenReturn(true);
@@ -230,10 +230,11 @@ void main() {
         TestAssertions.expectVisible(find.byType(AlarmMessage));
       });
 
-      testWidgets('should handle very long alarm messages', 
+      testWidgets('should handle very long alarm messages',
           (WidgetTester tester) async {
         // Arrange
-        const longMessage = 'This is a very long alarm message that should be handled properly by the widget without causing overflow or layout issues';
+        const longMessage =
+            'This is a very long alarm message that should be handled properly by the widget without causing overflow or layout issues';
         when(() => providerMocks.systemDataModel.alarmActive).thenReturn(true);
         when(() => providerMocks.systemDataModel.alarmMessage)
             .thenReturn(longMessage);

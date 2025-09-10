@@ -11,17 +11,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 
 import 'package:cannasoltech_automation/providers/system_data_provider.dart';
-import 'package:cannasoltech_automation/handlers/user_handler.dart';
-import 'package:cannasoltech_automation/shared/maps.dart';
 import 'package:cannasoltech_automation/shared/constants.dart';
 
 import '../../helpers/mocks.dart';
-import '../../helpers/test_data.dart';
-import '../../helpers/test_utils.dart';
 
 void main() {
   // Register fallback values for Mocktail

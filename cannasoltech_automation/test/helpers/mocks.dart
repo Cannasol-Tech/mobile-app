@@ -23,6 +23,10 @@ import 'package:cannasoltech_automation/providers/system_data_provider.dart';
 import 'package:cannasoltech_automation/providers/display_data_provider.dart';
 import 'package:cannasoltech_automation/providers/transform_provider.dart';
 import 'package:cannasoltech_automation/api/firebase_api.dart';
+import 'package:cannasoltech_automation/data_models/device.dart';
+import 'package:cannasoltech_automation/handlers/config_handler.dart';
+import 'package:cannasoltech_automation/handlers/state_handler.dart';
+import 'package:cannasoltech_automation/data_classes/status_message.dart';
 
 // =============================================================================
 // Firebase & Authentication Mocks
@@ -36,6 +40,15 @@ class MockFirebaseApp extends Mock implements FirebaseApp {}
 
 /// Mock Firebase Database instance
 class MockFirebaseDatabase extends Mock implements FirebaseDatabase {}
+
+/// Mock DatabaseReference for Firebase Realtime Database
+class MockDatabaseReference extends Mock implements DatabaseReference {}
+
+/// Mock DataSnapshot for Firebase Realtime Database
+class MockDataSnapshot extends Mock implements DataSnapshot {}
+
+/// Mock DatabaseEvent for Firebase Realtime Database
+class MockDatabaseEvent extends Mock implements DatabaseEvent {}
 
 /// Mock Firebase Storage instance
 class MockFirebaseStorage extends Mock implements FirebaseStorage {}
@@ -93,6 +106,18 @@ class MockSystemIdx extends Mock implements SystemIdx {}
 
 /// Mock FirebaseApi
 class MockFirebaseApi extends Mock implements FirebaseApi {}
+
+/// Mock Device
+class MockDevice extends Mock implements Device {}
+
+/// Mock ConfigHandler
+class MockConfigHandler extends Mock implements ConfigHandler {}
+
+/// Mock StateHandler
+class MockStateHandler extends Mock implements StateHandler {}
+
+/// Mock StatusMessage
+class MockStatusMessage extends Mock implements StatusMessage {}
 
 // =============================================================================
 // HTTP & Network Mocks

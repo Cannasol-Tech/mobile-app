@@ -63,8 +63,8 @@ class ConfigHandler extends DatabaseModel{
 
   /// Getter for configured minutes setting
   int get setMinutes => getIntPropertyValue('set_minutes');
-  set setHours (int value) => setIntPropertyValue("set_temp", value);
-  set setMinutes (int value) => setIntPropertyValue("batch_size", value);
+  set setHours (int value) => setIntPropertyValue("set_hours", value);
+  set setMinutes (int value) => setIntPropertyValue("set_minutes", value);
 
   String get setTime => "$setHours:${padZeros(setMinutes, 2)}";
 
