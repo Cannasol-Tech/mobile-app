@@ -159,6 +159,24 @@ class MockStateHandler extends Mock implements StateHandler {}
 /// Mock StatusMessage
 class MockStatusMessage extends Mock implements StatusMessage {}
 
+/// Mock ActiveDeviceHandler
+class MockActiveDeviceHandler extends Mock {}
+
+/// Mock RegisteredDeviceHandler
+class MockRegisteredDeviceHandler extends Mock {}
+
+/// Mock Devices
+class MockDevices extends Mock {}
+
+/// Mock TextControllers
+class MockTextControllers extends Mock {}
+
+/// Mock ToggleControllers
+class MockToggleControllers extends Mock {}
+
+/// Mock AlarmLogsModel
+class MockAlarmLogsModel extends Mock {}
+
 // =============================================================================
 // HTTP & Network Mocks
 // =============================================================================

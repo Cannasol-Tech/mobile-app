@@ -108,23 +108,23 @@ void main() {
     });
 
     test('should initialize successfully with valid user', () async {
-       when(() => mockAuth.currentUser).thenReturn(mockUser);
-       when(() => mockDatabase.ref('/users/test-uid')).thenReturn(mockUserRef);
-       when(() => mockDatabase.ref('/users/test-uid/watched_devices'))
-           .thenReturn(mockDevicesRef);
-       when(() => mockDevicesRef.get()).thenAnswer((_) async => mockSnapshot);
-       when(() => mockSnapshot.children).thenReturn([]);
-       when(() => mockSnapshot.value).thenReturn('Test User');
+      when(() => mockAuth.currentUser).thenReturn(mockUser);
+      when(() => mockDatabase.ref('/users/test-uid')).thenReturn(mockUserRef);
+      when(() => mockDatabase.ref('/users/test-uid/watched_devices'))
+          .thenReturn(mockDevicesRef);
+      when(() => mockDevicesRef.get()).thenAnswer((_) async => mockSnapshot);
+      when(() => mockSnapshot.children).thenReturn([]);
+      when(() => mockSnapshot.value).thenReturn('Test User');
 
-       final handler =
-           UserHandler.uninitialized(auth: mockAuth, db: mockDatabase);
-       await handler.initialize();
+      final handler =
+          UserHandler.uninitialized(auth: mockAuth, db: mockDatabase);
+      await handler.initialize();
 
-       expect(handler.initialized, isTrue);
-       expect(handler.uid, equals('test-uid'));
-       expect(handler.name, equals('Test User'));
-       expect(handler.email, equals('test@example.com'));
-     });
+      expect(handler.initialized, isTrue);
+      expect(handler.uid, equals('test-uid'));
+      expect(handler.name, equals('Test User'));
+      expect(handler.email, equals('test@example.com'));
+    });
 
     test('should initialize handler for testing', () {
       final handler =
@@ -485,6 +485,204 @@ void main() {
         () => handler.signInWithGoogle(),
         throwsA(isA<Exception>()),
       );
+    });
+
+    test('should check if email exists successfully', () async {
+      // Mock user reference and snapshot for email checking
+      final mockUserRef = MockDatabaseReference();
+      final mockEmailSnapshot = MockDataSnapshot();
+
+      when(() => mockDatabase.ref('/users')).thenReturn(mockUserRef);
+      when(() => mockUserRef.child(any())).thenReturn(mockUserRef);
+      when(() => mockUserRef.get()).thenAnswer((_) async => mockSnapshot);
+      when(() => mockSnapshot.children).thenReturn([mockUserRef]);
+      when(() => mockUserRef.child('/email').ref.get())
+          .thenAnswer((_) async => mockEmailSnapshot);
+      when(() => mockEmailSnapshot.value).thenReturn('existing@example.com');
+
+      final handler =
+          UserHandler.uninitialized(auth: mockAuth, db: mockDatabase);
+
+      final result = await handler.doesEmailExist('existing@example.com');
+
+      expect(result, isTrue);
+    });
+
+    test('should return false when email does not exist', () async {
+      final mockUserRef = MockDatabaseReference();
+      final mockEmailSnapshot = MockDataSnapshot();
+
+      when(() => mockDatabase.ref('/users')).thenReturn(mockUserRef);
+      when(() => mockUserRef.child(any())).thenReturn(mockUserRef);
+      when(() => mockUserRef.get()).thenAnswer((_) async => mockSnapshot);
+      when(() => mockSnapshot.children).thenReturn([mockUserRef]);
+      when(() => mockUserRef.child('/email').ref.get())
+          .thenAnswer((_) async => mockEmailSnapshot);
+      when(() => mockEmailSnapshot.value).thenReturn('different@example.com');
+
+      final handler =
+          UserHandler.uninitialized(auth: mockAuth, db: mockDatabase);
+
+      final result = await handler.doesEmailExist('nonexistent@example.com');
+
+      expect(result, isFalse);
+    });
+
+    test('should get does accept TaC status', () async {
+      when(() => mockSnapshot.value).thenReturn('true');
+
+      final handler =
+          UserHandler.uninitialized(auth: mockAuth, db: mockDatabase);
+      handler.uid = 'test-uid';
+
+      final result = await handler.getDoesAcceptTaC();
+
+      expect(result, isTrue);
+    });
+
+    test('should return false when does accept TaC is false', () async {
+      when(() => mockSnapshot.value).thenReturn('false');
+
+      final handler =
+          UserHandler.uninitialized(auth: mockAuth, db: mockDatabase);
+      handler.uid = 'test-uid';
+
+      final result = await handler.getDoesAcceptTaC();
+
+      expect(result, isFalse);
+    });
+
+    test('should update FCM token', () {
+      final handler =
+          UserHandler.uninitialized(auth: mockAuth, db: mockDatabase);
+      handler.uid = 'test-uid';
+      handler._deviceToken = 'old-token';
+
+      handler.updateFCMToken('new-token');
+
+      verify(() => mockUserRef.child('/notification_tokens/old-token').remove())
+          .called(1);
+      verify(() => mockUserRef
+          .child('notification_tokens')
+          .update({'new-token': true})).called(1);
+    });
+
+    test('should not update null FCM token', () {
+      final handler =
+          UserHandler.uninitialized(auth: mockAuth, db: mockDatabase);
+
+      handler.updateFCMToken(null);
+
+      verifyNever(() => mockUserRef.child(any()).remove());
+      verifyNever(() => mockUserRef.child(any()).update(any()));
+    });
+
+    test('should handle watch device when device already watched', () async {
+      final handler =
+          UserHandler.uninitialized(auth: mockAuth, db: mockDatabase);
+      handler.uid = 'test-uid';
+      handler._watchedDevices = ['device-123'];
+
+      await handler.watchDevice(mockContext, 'device-123');
+
+      verify(() => mockUserRef.child('watched_devices').update(any()))
+          .called(1);
+    });
+
+    test('should handle watch device when parent key is not users', () async {
+      final handler =
+          UserHandler.uninitialized(auth: mockAuth, db: mockDatabase);
+      handler.uid = 'test-uid';
+
+      // Mock the parent reference to not have 'users' key
+      when(() => mockUserRef.parent?.key).thenReturn('other');
+
+      await handler.watchDevice(mockContext, 'device-123');
+
+      verifyNever(() => mockUserRef.child('watched_devices').update(any()));
+    });
+
+    test('should handle device initialization errors', () async {
+      when(() => mockAuth.currentUser).thenReturn(mockUser);
+      when(() => mockDatabase.ref('/users/test-uid')).thenReturn(mockUserRef);
+      when(() => mockDatabase.ref('/users/test-uid/watched_devices'))
+          .thenReturn(mockDevicesRef);
+      when(() => mockDevicesRef.get()).thenThrow(Exception('Network error'));
+
+      final handler =
+          UserHandler.uninitialized(auth: mockAuth, db: mockDatabase);
+
+      await handler.initialize();
+
+      expect(handler.initialized, isFalse);
+    });
+
+    test('should handle device listener errors', () async {
+      when(() => mockAuth.currentUser).thenReturn(mockUser);
+      when(() => mockDatabase.ref('/users/test-uid')).thenReturn(mockUserRef);
+      when(() => mockDatabase.ref('/users/test-uid/watched_devices'))
+          .thenReturn(mockDevicesRef);
+      when(() => mockDevicesRef.get()).thenAnswer((_) async => mockSnapshot);
+      when(() => mockSnapshot.children).thenReturn([]);
+      when(() => mockDevicesRef.onValue).thenThrow(Exception('Listener error'));
+
+      final handler =
+          UserHandler.uninitialized(auth: mockAuth, db: mockDatabase);
+
+      await handler.initialize();
+
+      expect(handler.initialized, isFalse);
+    });
+
+    test('should handle email verification when user is null', () async {
+      when(() => mockAuth.currentUser).thenReturn(null);
+
+      final handler =
+          UserHandler.uninitialized(auth: mockAuth, db: mockDatabase);
+
+      await handler.verifyEmail();
+
+      verifyNever(() => mockUser.sendEmailVerification());
+    });
+
+    test('should handle set username when user is null', () async {
+      when(() => mockAuth.currentUser).thenReturn(null);
+
+      final handler =
+          UserHandler.uninitialized(auth: mockAuth, db: mockDatabase);
+
+      await handler.setUsername('New Name');
+
+      verifyNever(() => mockUser.updateDisplayName(any()));
+      verifyNever(() => mockUserRef.update(any()));
+    });
+
+    test('should handle sign in with email and password exception', () async {
+      when(() => mockAuth.signInWithEmailAndPassword(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          )).thenThrow(Exception('Network error'));
+
+      final handler =
+          UserHandler.uninitialized(auth: mockAuth, db: mockDatabase);
+
+      final result = await handler.signInWithEmailAndPassword(
+          'test@example.com', 'password');
+
+      expect(result, isFalse);
+    });
+
+    test('should handle Google sign in exception', () async {
+      // Override the mock to throw exception
+      when(() => mockGoogleSignIn.signIn())
+          .thenThrow(Exception('Google Sign-In failed'));
+
+      final handler =
+          UserHandler.uninitialized(auth: mockAuth, db: mockDatabase);
+
+      final result = await handler.signInWithGoogle();
+
+      expect(result, isFalse);
     });
   });
 }
