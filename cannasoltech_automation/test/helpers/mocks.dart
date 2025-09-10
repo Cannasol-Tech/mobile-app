@@ -53,6 +53,285 @@ class MockDataSnapshot extends Mock implements DataSnapshot {}
 /// Mock DatabaseEvent for Firebase Realtime Database
 class MockDatabaseEvent extends Mock implements DatabaseEvent {}
 
+/// Mock User for Firebase Auth
+class MockUser extends Mock implements User {}
+
+/// Mock UserCredential for Firebase Auth
+class MockUserCredential extends Mock implements UserCredential {}
+
+/// Mock Firebase Storage instance
+class MockFirebaseStorage extends Mock implements FirebaseStorage {}
+
+/// Mock Reference for Firebase Storage
+class MockReference extends Mock implements Reference {}
+
+/// Mock FirebaseMessaging for push notifications
+class MockFirebaseMessaging extends Mock implements FirebaseMessaging {}
+
+/// Mock GoogleSignIn for Google authentication
+class MockGoogleSignIn extends Mock implements GoogleSignIn {}
+
+/// Mock GoogleSignInAccount
+class MockGoogleSignInAccount extends Mock implements GoogleSignInAccount {}
+
+/// Mock GoogleSignInAuthentication
+class MockGoogleSignInAuthentication extends Mock implements GoogleSignInAuthentication {}
+
+// =============================================================================
+// App-Specific Handler Mocks
+// =============================================================================
+
+/// Mock UserHandler for testing user management
+class MockUserHandler extends Mock implements UserHandler {}
+
+/// Mock SystemDataModel for testing system state
+class MockSystemDataModel extends Mock implements SystemDataModel {}
+
+/// Mock DisplayDataModel for testing display data
+class MockDisplayDataModel extends Mock implements DisplayDataModel {}
+
+/// Mock TransformModel for testing data transformation
+class MockTransformModel extends Mock implements TransformModel {}
+
+/// Mock SystemIdx for testing system indexing
+class MockSystemIdx extends Mock implements SystemIdx {}
+
+/// Mock ConfigHandler for testing configuration management
+class MockConfigHandler extends Mock implements ConfigHandler {}
+
+/// Mock StateHandler for testing state management
+class MockStateHandler extends Mock implements StateHandler {}
+
+/// Mock AlarmHandler for testing alarm management
+class MockAlarmHandler extends Mock implements AlarmHandler {}
+
+/// Mock ActiveDeviceHandler for testing device management
+class MockActiveDeviceHandler extends Mock implements ActiveDeviceHandler {}
+
+/// Mock RegisteredDeviceHandler for testing device registration
+class MockRegisteredDeviceHandler extends Mock implements RegisteredDeviceHandler {}
+
+// =============================================================================
+// Data Model Mocks
+// =============================================================================
+
+/// Mock Device for testing device data
+class MockDevice extends Mock implements Device {}
+
+/// Mock Property for testing device properties
+class MockProperty extends Mock implements Property {}
+
+/// Mock StatusMessage for testing status communications
+class MockStatusMessage extends Mock implements StatusMessage {}
+
+// =============================================================================
+// Firebase API Mock
+// =============================================================================
+
+/// Mock FirebaseApi for testing Firebase integration
+class MockFirebaseApi extends Mock implements FirebaseApi {}
+
+// =============================================================================
+// Flutter Framework Mocks
+// =============================================================================
+
+/// Mock BuildContext for widget testing
+class MockBuildContext extends Mock implements BuildContext {}
+
+/// Mock MediaQueryData for responsive design testing
+class MockMediaQueryData extends Mock implements MediaQueryData {}
+
+/// Mock NavigatorState for navigation testing
+class MockNavigatorState extends Mock implements NavigatorState {}
+
+/// Mock TextEditingController for form testing
+class MockTextEditingController extends Mock implements TextEditingController {}
+
+// =============================================================================
+// Platform Channel Mocks
+// =============================================================================
+
+/// Mock MethodChannel for platform communication testing
+class MockMethodChannel extends Mock implements MethodChannel {}
+
+// =============================================================================
+// HTTP and Network Mocks
+// =============================================================================
+
+/// Mock HTTP Client for network testing
+class MockHttpClient extends Mock implements HttpClient {}
+
+/// Mock HTTP Response for network testing
+class MockHttpResponse extends Mock implements HttpClientResponse {}
+
+// =============================================================================
+// Fallback Value Registration
+// =============================================================================
+
+/// Registers all fallback values for Mocktail
+void registerMockFallbacks() {
+  // Firebase Auth fallbacks
+  registerFallbackValue(MockUser());
+  registerFallbackValue(MockUserCredential());
+  registerFallbackValue(const AuthCredential(providerId: 'test', signInMethod: 'test'));
+  
+  // Firebase Database fallbacks
+  registerFallbackValue(MockDataSnapshot());
+  registerFallbackValue(MockDatabaseEvent());
+  
+  // Firebase Storage fallbacks
+  registerFallbackValue(MockReference());
+  
+  // Google Sign-In fallbacks
+  registerFallbackValue(MockGoogleSignInAccount());
+  registerFallbackValue(MockGoogleSignInAuthentication());
+  
+  // Flutter framework fallbacks
+  registerFallbackValue(MockBuildContext());
+  registerFallbackValue(const Size(0, 0));
+  registerFallbackValue(const Duration());
+  
+  // App-specific fallbacks
+  registerFallbackValue(MockDevice());
+  registerFallbackValue(MockProperty());
+  registerFallbackValue(MockStatusMessage());
+  
+  // Platform fallbacks
+  registerFallbackValue(LogicalKeyboardKey.space);
+}
+
+// =============================================================================
+// Mock Factory Functions
+// =============================================================================
+
+/// Creates a mock FirebaseAuth with common setup
+MockFirebaseAuth createMockFirebaseAuth({
+  bool signInSuccess = true,
+  User? user,
+}) {
+  final mock = MockFirebaseAuth();
+  final mockUser = user ?? MockUser();
+  
+  when(() => mock.currentUser).thenReturn(signInSuccess ? mockUser : null);
+  when(() => mock.authStateChanges()).thenAnswer(
+    (_) => Stream.value(signInSuccess ? mockUser : null),
+  );
+  
+  if (signInSuccess) {
+    when(() => mock.signInWithEmailAndPassword(
+      email: any(named: 'email'),
+      password: any(named: 'password'),
+    )).thenAnswer((_) async => MockUserCredential());
+    
+    when(() => mock.createUserWithEmailAndPassword(
+      email: any(named: 'email'),
+      password: any(named: 'password'),
+    )).thenAnswer((_) async => MockUserCredential());
+  } else {
+    when(() => mock.signInWithEmailAndPassword(
+      email: any(named: 'email'),
+      password: any(named: 'password'),
+    )).thenThrow(FirebaseAuthException(code: 'invalid-credentials'));
+  }
+  
+  when(() => mock.signOut()).thenAnswer((_) async {});
+  
+  return mock;
+}
+
+/// Creates a mock GoogleSignIn with common setup
+MockGoogleSignIn createMockGoogleSignIn({
+  bool signInSuccess = true,
+  GoogleSignInAccount? account,
+}) {
+  final mock = MockGoogleSignIn();
+  
+  if (signInSuccess && account != null) {
+    when(() => mock.signIn()).thenAnswer((_) async => account);
+  } else {
+    when(() => mock.signIn()).thenAnswer((_) async => null);
+  }
+  
+  when(() => mock.signOut()).thenAnswer((_) async => null);
+  
+  return mock;
+}
+
+/// Creates a mock GoogleSignInAccount with common setup
+MockGoogleSignInAccount createMockGoogleAccount({
+  String? email,
+  String? displayName,
+  String? id,
+}) {
+  final mock = MockGoogleSignInAccount();
+  final mockAuth = MockGoogleSignInAuthentication();
+  
+  when(() => mock.email).thenReturn(email ?? AuthTestData.googleEmail);
+  when(() => mock.displayName).thenReturn(displayName ?? AuthTestData.googleDisplayName);
+  when(() => mock.id).thenReturn(id ?? 'mock_google_user_id');
+  when(() => mock.authentication).thenAnswer((_) async => mockAuth);
+  
+  when(() => mockAuth.accessToken).thenReturn(AuthTestData.googleAccessToken);
+  when(() => mockAuth.idToken).thenReturn(AuthTestData.googleIdToken);
+  
+  return mock;
+}
+
+/// Creates a mock User with common setup
+MockUser createMockUser({
+  String? uid,
+  String? email,
+  String? displayName,
+  bool emailVerified = true,
+}) {
+  final mock = MockUser();
+  
+  when(() => mock.uid).thenReturn(uid ?? AuthTestData.validUserId);
+  when(() => mock.email).thenReturn(email ?? AuthTestData.validEmail);
+  when(() => mock.displayName).thenReturn(displayName ?? AuthTestData.validDisplayName);
+  when(() => mock.emailVerified).thenReturn(emailVerified);
+  when(() => mock.reload()).thenAnswer((_) async {});
+  when(() => mock.sendEmailVerification()).thenAnswer((_) async {});
+  when(() => mock.updateDisplayName(any())).thenAnswer((_) async {});
+  when(() => mock.updateEmail(any())).thenAnswer((_) async {});
+  
+  return mock;
+}
+
+/// Creates a mock UserHandler with common setup
+MockUserHandler createMockUserHandler({
+  bool initialized = true,
+  String? uid,
+  String? email,
+  String? name,
+}) {
+  final mock = MockUserHandler();
+  
+  when(() => mock.initialized).thenReturn(initialized);
+  when(() => mock.uid).thenReturn(uid ?? AuthTestData.validUserId);
+  when(() => mock.email).thenReturn(email ?? AuthTestData.validEmail);
+  when(() => mock.name).thenReturn(name ?? AuthTestData.validDisplayName);
+  when(() => mock.emailOnAlarm).thenReturn(true);
+  when(() => mock.selectedDevice).thenReturn('test-device');
+  when(() => mock.watchedDevices).thenReturn(['device1', 'device2']);
+  when(() => mock.doesAcceptTaC).thenReturn(true);
+  
+  when(() => mock.initialize()).thenAnswer((_) async {});
+  when(() => mock.signOut()).thenAnswer((_) async {});
+  when(() => mock.updateName(any())).thenAnswer((_) async {});
+  when(() => mock.updateEmail(any())).thenAnswer((_) async {});
+  when(() => mock.acceptTaC()).thenAnswer((_) async {});
+  when(() => mock.toggleEmailOnAlarm()).thenAnswer((_) async {});
+  when(() => mock.addDevice(any())).thenAnswer((_) async {});
+  when(() => mock.removeDevice(any())).thenAnswer((_) async {});
+  
+  return mock;
+}
+class MockDataSnapshot extends Mock implements DataSnapshot {}
+
+/// Mock DatabaseEvent for Firebase Realtime Database
+class MockDatabaseEvent extends Mock implements DatabaseEvent {}
+
 /// Mock Firebase Storage instance
 class MockFirebaseStorage extends Mock implements FirebaseStorage {}
 
