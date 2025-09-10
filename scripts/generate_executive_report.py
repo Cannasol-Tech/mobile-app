@@ -8,7 +8,7 @@ import json
 import os
 import sys
 import subprocess
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Any
 
@@ -127,7 +127,7 @@ def generate_executive_report():
         "repo": "mobile-app",
         "releaseTag": git_info['tag'],
         "commit": git_info['commit'],
-        "createdAt": datetime.utcnow().isoformat() + "Z",
+        "createdAt": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
         "summary": test_results["summary"],
         "scenarios": test_results["scenarios"],
         "requirements": test_results["requirements"]
