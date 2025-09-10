@@ -357,8 +357,8 @@ void main() {
       
       systemDataModel.togglePWVis();
       
-      // Note: The method has a bug with == instead of =, so visibility won't change
-      expect(systemDataModel.isPasswordVisible, isFalse);
+      // After fixing the bug in togglePWVis, visibility should now be true
+      expect(systemDataModel.isPasswordVisible, isTrue);
     });
 
     test('should set selected device from name', () {
