@@ -1,24 +1,62 @@
+/**
+ * @file banners.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief Material banner notifications and display utilities.
+ * @details Provides banner notification system for displaying status messages,
+ *          download progress, errors, and other user feedback with animations.
+ * @version 1.0
+ * @since 1.0
+ */
+
 import '../main.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_animations/simple_animations.dart';
 
+/// Standard dismiss action for banner notifications
 final SnackBarAction dismissAction = SnackBarAction(
   label: "DISMISS",
   onPressed: () => scaffoldMessengerKey
   .currentState?.hideCurrentMaterialBanner()
 );
 
+/**
+ * @brief Shows a material banner notification.
+ * @details Displays a banner using the global scaffold messenger key.
+ * @param banner MaterialBanner to display
+ * @since 1.0
+ */
 void showBanner(banner) => scaffoldMessengerKey.currentState?.showMaterialBanner(banner as MaterialBanner);
 
+/**
+ * @brief Hides the currently displayed banner notification.
+ * @details Removes the current banner using the global scaffold messenger key.
+ * @since 1.0
+ */
 void hideCurrentBanner() => scaffoldMessengerKey.currentState?.hideCurrentMaterialBanner();
 
+/**
+ * @brief Custom material banner notification widget.
+ * @details Extends MaterialBanner to provide customizable banner notifications
+ *          with background color and content styling.
+ * @since 1.0
+ */
 class BannerNotification extends MaterialBanner{
+  /// Background color and display content for the banner
   final dynamic bgColor, displayContent;
+
+  /**
+   * @brief Creates a BannerNotification with custom styling.
+   * @param key Optional widget key for identification
+   * @param actions List of actions for the banner
+   * @param bgColor Background color for the banner
+   * @param displayContent Widget content to display in the banner
+   */
   const BannerNotification({
-    super.key, 
+    super.key,
     required super.actions,
     required Color this.bgColor,
-    required Widget this.displayContent, 
+    required Widget this.displayContent,
   }) : super(
     content: displayContent,
     backgroundColor: bgColor,

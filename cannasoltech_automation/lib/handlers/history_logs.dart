@@ -1,4 +1,15 @@
 
+/**
+ * @file history_logs.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief Device run history logging and management system.
+ * @details Provides comprehensive run history tracking including performance
+ *          metrics, user attribution, timing data, and alarm history integration.
+ * @version 1.0
+ * @since 1.0
+ */
+
 import 'package:cannasoltech_automation/dialogs/log_dialog.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -10,18 +21,36 @@ import 'package:intl/intl.dart';
 
 import 'alarm_logs.dart';
 
-
-
-
+/**
+ * @brief Individual device run history log entry.
+ * @details Represents a completed device run with performance metrics,
+ *          timing information, user data, and associated alarm logs.
+ * @since 1.0
+ */
 class HistoryLog {
 
+  /// Index/ID of the history log entry
   late int index;
+
+  /// User who started this run
   late String startUser;
+
+  /// Associated alarm logs for this run
   late AlarmLogsModel alarmLog;
+
+  /// Average flow rate during the run
   late double avgFlowRate;
+
+  /// Average temperature during the run
   late double avgTemp;
+
+  /// Number of passes completed during the run
   late double numPasses;
+
+  /// Run duration in hours
   late int runHours;
+
+  /// Run duration in minutes
   late int runMinutes;
   late int runSeconds;
   late String? endTime;

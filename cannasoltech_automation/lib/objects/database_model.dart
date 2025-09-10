@@ -1,13 +1,45 @@
+/**
+ * @file database_model.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief Base database model for Firebase property management.
+ * @details Provides base class for managing Firebase properties with type-safe
+ *          getters, setters, and property value conversion utilities.
+ * @version 1.0
+ * @since 1.0
+ */
+
 import '../data_models/property.dart';
 
+/**
+ * @brief Base class for database models with Firebase property management.
+ * @details Provides common functionality for managing Firebase properties
+ *          including type-safe getters, setters, and value conversions.
+ * @since 1.0
+ */
 class DatabaseModel {
 
+  /// Map of property names to FireProperty instances
   late Map<String, FireProperty> properties = {};
 
+  /**
+   * @brief Gets a FireProperty by its variable name.
+   * @param name The property variable name
+   * @return FireProperty instance or null if not found
+   * @since 1.0
+   */
   FireProperty? getPropertyByVariableName(String name){
     return properties[name];
   }
 
+  /**
+   * @brief Gets a property value with default fallback.
+   * @details Retrieves property value if it exists, otherwise returns default.
+   * @param name The property name
+   * @param defaultVal Default value to return if property doesn't exist
+   * @return Property value or default value
+   * @since 1.0
+   */
   dynamic getPropertyValue(String name, dynamic defaultVal){
     if (properties.containsKey(name)){
       return properties[name]?.value;
@@ -15,6 +47,13 @@ class DatabaseModel {
     return defaultVal;
   }
 
+  /**
+   * @brief Gets a property value as a string.
+   * @details Converts property value to string, handling various data types.
+   * @param name The property name
+   * @return String representation of the property value
+   * @since 1.0
+   */
   String getStringPropertyValue(String name){
     dynamic value = getPropertyValue(name, "");
     if (value is String){

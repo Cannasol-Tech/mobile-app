@@ -1,28 +1,73 @@
+/**
+ * @file property.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief Firebase Realtime Database property management.
+ * @details Defines the FireProperty class for managing Firebase database properties
+ *          with standardized interfaces for reading, writing, and listening to changes.
+ * @version 1.0
+ * @since 1.0
+ */
+
+import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 
-class FireProperty{
+/**
+ * @brief Base class for Firebase Realtime Database properties.
+ * @details Provides standardized interface for managing property values and their
+ *          corresponding database references, including read/write operations.
+ * @since 1.0
+ */
+class FireProperty {
+  /// Property name identifier
   String name;
+
+  /// Current property value (dynamic type to support various data types)
   dynamic value;
-  // late String type;
+
+  /// Firebase database reference for this property
   DatabaseReference ref;
 
-  FireProperty({required this.name, required this.value, required this.ref});//, required this.type});
+  FireProperty(
+      {required this.name,
+      required this.value,
+      required this.ref}); //, required this.type});
 
   factory FireProperty.fromData(MapEntry data, DatabaseReference ref) {
-    FireProperty property = FireProperty(
-      ref: ref,
-      name: data.key,
-      value: data.value
-    );
+    FireProperty property =
+        FireProperty(ref: ref, name: data.key, value: data.value);
     return property;
   }
 
-  void setValue(value){
+  /// Updates the Firebase Realtime Database with the new value
+
+  void setValue(value) {
     ref.set(value);
   }
-}
 
-// property.ref.set(data.value);
-// property.ref.onValue.listen((DatabaseEvent event){
-//   property.value = event.snapshot.value.toString();
-// }
+  void getValue(value) {
+    ref.once().then((event) {
+      value = event.snapshot.value;
+    });
+  }
+
+  /// Listens for changes to the Firebase Realtime Database and updates the value
+  /// Returns a StreamSubscription that can be cancelled to stop listening
+  ///
+  /// The [onChange] callback is called whenever the Firebase value changes
+  /// The local [value] property is automatically updated when changes occur
+  StreamSubscription<DatabaseEvent> listenForChanges(
+      [Function(dynamic)? onChange]) {
+    return ref.onValue.listen((DatabaseEvent event) {
+      // Update the local value
+      if (event.snapshot.exists) {
+        value = event.snapshot.value;
+      } else {
+        value = null;
+      }
+
+      // Call the optional callback with the new value
+      onChange?.call(value);
+    });
+  }
+}

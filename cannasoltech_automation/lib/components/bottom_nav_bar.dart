@@ -1,11 +1,34 @@
+/**
+ * @file bottom_nav_bar.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief Bottom navigation bar component for main app navigation.
+ * @details Provides bottom navigation with Home, Configuration, System Logs,
+ *          and Settings tabs with state management integration.
+ * @version 1.0
+ * @since 1.0
+ */
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/display_data_provider.dart';
 import '../providers/system_data_provider.dart';
 
+/**
+ * @brief Bottom navigation bar widget for main application navigation.
+ * @details Stateless widget providing bottom navigation with multiple tabs
+ *          and integrated state management for navigation selection.
+ * @since 1.0
+ */
 class BottomNavBar extends StatelessWidget {
+  /**
+   * @brief Creates a BottomNavBar widget.
+   * @param key Optional widget key for identification
+   */
   BottomNavBar({super.key});
+
+  /// List of bottom navigation bar items with icons and labels
   final List<BottomNavigationBarItem> bottomNavBarItems = [
     const BottomNavigationBarItem(
       icon: Icon(Icons.home_rounded),

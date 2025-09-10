@@ -1,3 +1,14 @@
+/**
+ * @file settings_page.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief User settings and preferences management page.
+ * @details Provides user interface for managing application settings,
+ *          user preferences, device selection, and account management.
+ * @version 1.0
+ * @since 1.0
+ */
+
 import 'package:cannasoltech_automation/components/side_menu.dart';
 import 'package:cannasoltech_automation/components/system_app_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,16 +22,44 @@ import '../shared/methods.dart';
 import '../shared/snacks.dart';
 import 'reset_password.dart';
 
+/**
+ * @brief Settings page for user preferences and account management.
+ * @details Stateful widget providing interface for user settings including
+ *          device selection, notifications, and account management options.
+ * @since 1.0
+ */
 class SettingsPage extends StatefulWidget {
+  /**
+   * @brief Creates a SettingsPage widget.
+   * @param key Optional widget key for identification
+   */
   const SettingsPage({super.key});
+
+  /**
+   * @brief Creates the state for SettingsPage widget.
+   * @return _SettingsPageState instance
+   */
   @override
   State<SettingsPage> createState() => _SettingsPageState();
 }
 
+/**
+ * @brief State class for SettingsPage widget.
+ * @details Manages settings page state, user preferences, and UI interactions
+ *          for configuration and account management.
+ * @since 1.0
+ */
 class _SettingsPageState extends State<SettingsPage> {
 
+  /// Current authenticated user from Firebase Auth
   var currentUser = FirebaseAuth.instance.currentUser;
 
+  /**
+   * @brief Toggle function for settings switches.
+   * @details Placeholder toggle function for various settings options.
+   * @return bool Always returns true
+   * @since 1.0
+   */
   bool toggle(){
     return true;
   }

@@ -1,3 +1,15 @@
+/**
+ * @file system_data_provider.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief System data providers for state management in the Cannasol Technologies app.
+ * @details Contains provider classes for managing system indices, device data,
+ *          user authentication state, and application-wide state management
+ *          using Flutter's Provider pattern and ChangeNotifier.
+ * @version 1.0
+ * @since 1.0
+ */
+
 // ignore_for_file: avoid_print
 import 'dart:async';
 import '../services/logging_service.dart';
@@ -19,29 +31,61 @@ import 'package:cannasoltech_automation/pages/home/start_page.dart';
 import 'package:cannasoltech_automation/controllers/text_controllers.dart';
 import 'package:cannasoltech_automation/controllers/toggle_controllers.dart';
 
+/**
+ * @brief System index provider for managing current system component selection.
+ * @details Extends ValueNotifier to provide reactive state management for
+ *          system component indices with bounds checking and increment/decrement operations.
+ * @since 1.0
+ */
 class SystemIdx extends ValueNotifier<int> {
-  SystemIdx() : super(0); 
+  /**
+   * @brief Creates a SystemIdx instance with initial value of 0.
+   */
+  SystemIdx() : super(0);
 
+  /// Minimum allowed index value
   final int minValue = 0;
-final int maxValue = 2;
 
+  /// Maximum allowed index value
+  final int maxValue = 2;
+
+  /**
+   * @brief Increments the current index value if within bounds.
+   * @details Increases the value by 1 if it's less than maxValue.
+   * @since 1.0
+   */
   void increment() {
     if (value < maxValue) {
       value++;
     }
   }
 
+  /**
+   * @brief Decrements the current index value if within bounds.
+   * @details Decreases the value by 1 if it's greater than minValue.
+   * @since 1.0
+   */
   void decrement() {
     if (value > minValue) {
       value --;
     }
   }
 
+  /**
+   * @brief Sets the index to a specific value.
+   * @param idx The index value to set
+   * @since 1.0
+   */
   void set(int idx) {
     value = idx;
     print("DEBUG -> SystemIdx set to $idx");
   }
 
+  /**
+   * @brief Initializes the system index provider.
+   * @details Resets the value to 0 and logs initialization.
+   * @since 1.0
+   */
   void init(){
     print("DEBUG -> SystemIndex provider initialized!");
     value = 0;
