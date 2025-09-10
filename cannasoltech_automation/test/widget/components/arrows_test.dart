@@ -2,6 +2,7 @@
 //
 // Verifies that tapping arrow buttons updates SystemIdx as expected.
 
+import 'package:cannasoltech_automation/providers/system_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -47,7 +48,8 @@ void main() {
       expect(idx.value, equals(1));
     });
 
-    testWidgets('LeftPumpArrow decrements SystemIdx when > min', (tester) async {
+    testWidgets('LeftPumpArrow decrements SystemIdx when > min',
+        (tester) async {
       final (idx,) = await _pump(tester, LeftPumpArrow());
       idx.set(1);
       await tester.pump();
@@ -57,4 +59,3 @@ void main() {
     });
   });
 }
-

@@ -20,7 +20,8 @@ help:
 	@echo "  install     - Install Flutter dependencies"
 	@echo "  clean       - Clean Flutter build cache"
 	@echo "  test        - Run complete Flutter test suite"
-	@echo "  test-unit   - Run unit tests (≥85% coverage, mocking allowed)"
+	@echo "  test-un
+	it   - Run unit tests (≥85% coverage, mocking allowed)"
 	@echo "  test-widget - Run widget tests (≥85% coverage, dependency mocking allowed via Mocktail)"
 	@echo "  test-widget-compliant - Run only compliant widget tests (no violations)"
 	@echo "  test-widget-legacy - DEPRECATED: alias to test-widget"

@@ -280,5 +280,120 @@ void main() {
       expect(systemDataModel.screenHeight(context), equals(667));
       expect(systemDataModel.screenWidth(context), equals(375));
     });
+
+    test('should toggle password visibility correctly', () {
+      // Initial state should be false
+      expect(systemDataModel.isPasswordVisible, isFalse);
+
+      // Toggle to true
+      systemDataModel.togglePWVis();
+      expect(systemDataModel.isPasswordVisible, isTrue);
+
+      // Toggle back to false
+      systemDataModel.togglePWVis();
+      expect(systemDataModel.isPasswordVisible, isFalse);
+    });
+
+    test('should update current run page with no active device', () {
+      systemDataModel.updateCurrentRunPage();
+
+      expect(systemDataModel.currentRunPage, isNotNull);
+      expect(systemDataModel.bottomNavPages[0],
+          equals(systemDataModel.currentRunPage));
+    });
+
+    test('should update alarm flash with no active device', () {
+      systemDataModel.updateAlarmFlash();
+
+      // With no active device, alarm flash should remain false
+      expect(systemDataModel.alarmFlash, isFalse);
+    });
+
+    test('should clear controllers when device is null', () {
+      systemDataModel.updateDataControllers(null);
+
+      expect(systemDataModel.activeDevice, isNull);
+    });
+
+    test('should handle null active device in alarm timers', () {
+      systemDataModel.updateAlarmTimers();
+
+      // Should not throw any errors
+      expect(() => systemDataModel.updateAlarmTimers(), returnsNormally);
+    });
+
+    test('should handle dispose without listeners', () {
+      systemDataModel.authListener = null;
+      systemDataModel.devicesListener = null;
+
+      expect(() => systemDataModel.dispose(), returnsNormally);
+      expect(systemDataModel.updatingData, isFalse);
+    });
+
+    test('should update needs accept TaC correctly', () {
+      final mockUserHandler = MockUserHandler();
+
+      when(() => mockUserHandler.doesAcceptTaC).thenReturn(false);
+
+      systemDataModel.updateNeedsAcceptTaC();
+
+      expect(systemDataModel.needsAcceptTaC, isFalse);
+    });
+
+    test('should set needs accept TaC after 10 counts', () {
+      final mockUserHandler = MockUserHandler();
+
+      when(() => mockUserHandler.doesAcceptTaC).thenReturn(false);
+
+      // Simulate 10 calls
+      for (int i = 0; i < 10; i++) {
+        systemDataModel.updateNeedsAcceptTaC();
+      }
+
+      expect(systemDataModel.needsAcceptTaC, isTrue);
+    });
+
+    test('should reset TaC count when user accepts', () {
+      final mockUserHandler = MockUserHandler();
+
+      when(() => mockUserHandler.doesAcceptTaC).thenReturn(true);
+
+      systemDataModel.updateNeedsAcceptTaC();
+
+      expect(systemDataModel.needsAcceptTaC, isFalse);
+    });
+
+    test('should get run page title', () {
+      expect(systemDataModel.runPageTitle, equals(RUN_TITLE));
+    });
+
+    test('should get current run page', () {
+      expect(systemDataModel.currentRunPage, isNotNull);
+    });
+
+    test('should get is password visible', () {
+      expect(systemDataModel.isPasswordVisible, isFalse);
+    });
+
+    test('should get alarm flash', () {
+      expect(systemDataModel.alarmFlash, isFalse);
+    });
+
+    test('should get user handler', () {
+      expect(systemDataModel.userHandler, isNotNull);
+    });
+
+    test('should get auth state changes stream', () {
+      expect(systemDataModel.authStateChanges, isNotNull);
+    });
+
+    test('should get bottom nav pages', () {
+      expect(systemDataModel.bottomNavPages, isNotNull);
+      expect(systemDataModel.bottomNavPages.length, equals(4));
+    });
+
+    test('should get needs accept TaC', () {
+      expect(systemDataModel.needsAcceptTaC, isFalse);
+    });
   });
 }
