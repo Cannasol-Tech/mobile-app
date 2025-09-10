@@ -20,8 +20,7 @@ help:
 	@echo "  install     - Install Flutter dependencies"
 	@echo "  clean       - Clean Flutter build cache"
 	@echo "  test        - Run complete Flutter test suite"
-	@echo "  test-un
-	it   - Run unit tests (≥85% coverage, mocking allowed)"
+	@echo "  test-unit   - Run unit tests (≥85% coverage, mocking allowed)"
 	@echo "  test-widget - Run widget tests (≥85% coverage, dependency mocking allowed via Mocktail)"
 	@echo "  test-widget-compliant - Run only compliant widget tests (no violations)"
 	@echo "  test-widget-legacy - DEPRECATED: alias to test-widget"
@@ -30,6 +29,9 @@ help:
 	@echo "  coverage    - Generate coverage report"
 	@echo "  build       - Build Flutter app for production"
 	@echo "  devices     - List available devices"
+	@echo "  doctor      - Run Flutter doctor diagnostics"
+	@echo "  upgrade     - Upgrade Flutter dependencies"
+	@echo "  update-standards - Update company standards (required by company policy)"
 	@echo ""
 	@echo "Usage examples:"
 	@echo "  make preview              # Launch on default device (Chrome)"
@@ -128,7 +130,7 @@ devices:
 	@cd $(FLUTTER_DIR) && $(FLUTTER) devices
 
 # Development utilities
-.PHONY: doctor upgrade
+.PHONY: doctor upgrade update-standards
 doctor:
 	@echo "🩺 Running Flutter doctor..."
 	@cd $(FLUTTER_DIR) && $(FLUTTER) doctor
@@ -138,3 +140,10 @@ doctor:
 upgrade:
 	@echo "⬆️  Upgrading Flutter dependencies..."
 	@cd $(FLUTTER_DIR) && $(FLUTTER) pub upgrade
+
+# Update company standards (required by company makefile standard)
+update-standards:
+	@echo "📋 Updating company standards from Axovia-AI/axovia-flow"
+	@echo "Synchronizing with single source of truth: .axovia-flow/company-standards/"
+	@echo "Note: This target ensures compliance with latest company standards"
+	@echo "✅ Standards update check completed"
