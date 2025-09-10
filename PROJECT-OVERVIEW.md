@@ -14,7 +14,9 @@ The Cannasol Technologies Mobile Application is a comprehensive brownfield enhan
 
 ### Cannasol Technologies Mobile App Overview
 
-The application serves as a critical monitoring and control interface for industrial ultrasonic liquid processing systems used in manufacturing facilities. Unlike generic IoT platforms, this solution is purpose-built for ultrasonic processing with specialized monitoring displays, intelligent alarm management, and real-time parameter control.
+The application serves as a critical monitoring and control interface for industrial ultrasonic liquid processing systems
+used in manufacturing facilities. Unlike generic IoT platforms, this solution is purpose-built for ultrasonic processing
+with specialized monitoring displays, intelligent alarm management, and real-time parameter control.
 
 ### Key Features
 

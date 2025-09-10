@@ -8,13 +8,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 
 import 'package:cannasoltech_automation/components/notice_dialog.dart';
 
 // Import centralized test helpers
-import '../../helpers/mocks.dart';
-import '../../helpers/test_data.dart';
 import '../../helpers/test_utils.dart';
 
 void main() {
@@ -27,7 +24,7 @@ void main() {
     const testButtonText = 'Acknowledge';
 
     group('Rendering Tests', () {
-      testWidgets('should render dialog with title and message', 
+      testWidgets('should render dialog with title and message',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -56,7 +53,7 @@ void main() {
         TestAssertions.expectVisible(find.text(testMessage));
       });
 
-      testWidgets('should render default OK button', 
+      testWidgets('should render default OK button',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -83,7 +80,7 @@ void main() {
         TestAssertions.expectVisible(find.text('OK'));
       });
 
-      testWidgets('should render custom button text when provided', 
+      testWidgets('should render custom button text when provided',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -111,7 +108,7 @@ void main() {
         TestAssertions.expectVisible(find.text(testButtonText));
       });
 
-      testWidgets('should display info icon by default', 
+      testWidgets('should display info icon by default',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -138,7 +135,7 @@ void main() {
         TestAssertions.expectVisible(find.byIcon(Icons.info));
       });
 
-      testWidgets('should display warning icon when type is warning', 
+      testWidgets('should display warning icon when type is warning',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -166,7 +163,7 @@ void main() {
         TestAssertions.expectVisible(find.byIcon(Icons.warning));
       });
 
-      testWidgets('should display error icon when type is error', 
+      testWidgets('should display error icon when type is error',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -194,7 +191,7 @@ void main() {
         TestAssertions.expectVisible(find.byIcon(Icons.error));
       });
 
-      testWidgets('should display success icon when type is success', 
+      testWidgets('should display success icon when type is success',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -224,7 +221,7 @@ void main() {
     });
 
     group('Interaction Tests', () {
-      testWidgets('should close dialog when OK button is tapped', 
+      testWidgets('should close dialog when OK button is tapped',
           (WidgetTester tester) async {
         // Arrange
         await tester.pumpWidget(
@@ -258,7 +255,7 @@ void main() {
         TestAssertions.expectNotVisible(find.byType(NoticeDialog));
       });
 
-      testWidgets('should call onPressed callback when provided', 
+      testWidgets('should call onPressed callback when provided',
           (WidgetTester tester) async {
         // Arrange
         bool callbackCalled = false;
@@ -293,7 +290,7 @@ void main() {
         expect(callbackCalled, isTrue);
       });
 
-      testWidgets('should close dialog when barrier is tapped', 
+      testWidgets('should close dialog when barrier is tapped',
           (WidgetTester tester) async {
         // Arrange
         await tester.pumpWidget(
@@ -327,7 +324,7 @@ void main() {
         TestAssertions.expectNotVisible(find.byType(NoticeDialog));
       });
 
-      testWidgets('should not close when barrierDismissible is false', 
+      testWidgets('should not close when barrierDismissible is false',
           (WidgetTester tester) async {
         // Arrange
         await tester.pumpWidget(
@@ -361,7 +358,7 @@ void main() {
     });
 
     group('Accessibility Tests', () {
-      testWidgets('should have proper semantic labels', 
+      testWidgets('should have proper semantic labels',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -387,12 +384,12 @@ void main() {
         // Assert
         final okButton = find.text('OK');
         TestAssertions.expectVisible(okButton);
-        
+
         final semantics = tester.getSemantics(okButton);
         expect(semantics.label, contains('OK'));
       });
 
-      testWidgets('should be accessible via screen reader', 
+      testWidgets('should be accessible via screen reader',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -421,7 +418,7 @@ void main() {
         expect(dialog.content, isNotNull);
       });
 
-      testWidgets('should support keyboard navigation', 
+      testWidgets('should support keyboard navigation',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -451,7 +448,7 @@ void main() {
     });
 
     group('Theme and Styling Tests', () {
-      testWidgets('should apply correct colors based on notice type', 
+      testWidgets('should apply correct colors based on notice type',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -480,7 +477,7 @@ void main() {
         expect(icon.color, equals(Colors.red));
       });
 
-      testWidgets('should handle custom theme colors', 
+      testWidgets('should handle custom theme colors',
           (WidgetTester tester) async {
         // Arrange
         final customTheme = ThemeData(
@@ -519,7 +516,7 @@ void main() {
     });
 
     group('Edge Cases', () {
-      testWidgets('should handle empty title gracefully', 
+      testWidgets('should handle empty title gracefully',
           (WidgetTester tester) async {
         // Act & Assert - Should not throw
         await tester.pumpWidget(
@@ -545,7 +542,7 @@ void main() {
         TestAssertions.expectVisible(find.byType(NoticeDialog));
       });
 
-      testWidgets('should handle empty message gracefully', 
+      testWidgets('should handle empty message gracefully',
           (WidgetTester tester) async {
         // Act & Assert - Should not throw
         await tester.pumpWidget(
@@ -571,11 +568,13 @@ void main() {
         TestAssertions.expectVisible(find.byType(NoticeDialog));
       });
 
-      testWidgets('should handle very long content', 
+      testWidgets('should handle very long content',
           (WidgetTester tester) async {
         // Arrange
-        const longTitle = 'This is a very long title that should be handled properly by the dialog without causing overflow issues';
-        const longMessage = 'This is a very long message that should be handled properly by the dialog without causing overflow or layout issues. It contains multiple sentences and should wrap correctly within the dialog bounds.';
+        const longTitle =
+            'This is a very long title that should be handled properly by the dialog without causing overflow issues';
+        const longMessage =
+            'This is a very long message that should be handled properly by the dialog without causing overflow or layout issues. It contains multiple sentences and should wrap correctly within the dialog bounds.';
 
         // Act
         await tester.pumpWidget(

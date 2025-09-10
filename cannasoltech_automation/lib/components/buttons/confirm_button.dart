@@ -1,14 +1,7 @@
 import 'package:simple_animations/simple_animations.dart';
-
 import '../notice_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cannasoltech_automation/components/confirm_dialog.dart';
-import 'package:simple_animations/animation_mixin/animation_mixin.dart';
-import 'package:simple_animations/simple_animations.dart';
-import 'package:flutter/material.dart';
-import 'package:cannasoltech_automation/components/confirm_dialog.dart';
-import '../notice_dialog.dart';
-import 'package:simple_animations/animation_mixin/animation_mixin.dart';
 
 class ConfirmButton extends StatefulWidget {
   final Color color;
