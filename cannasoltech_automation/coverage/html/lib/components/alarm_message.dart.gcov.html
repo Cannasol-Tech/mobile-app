@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - lib/components/alarm_message.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory lib/components">lib/components</a> - alarm_message.dart</td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">84.1&nbsp;%</td>
+            <td class="headerCovTableEntry">63</td>
+            <td class="headerCovTableEntry">53</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2025-09-10 03:06:30</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : </span>
+<span id="L2"><span class="lineNum">       2</span>              : // ignore_for_file: no_leading_underscores_for_local_identifiers, non_constant_identifier_names</span>
+<span id="L3"><span class="lineNum">       3</span>              : </span>
+<span id="L4"><span class="lineNum">       4</span>              : import 'package:flutter/material.dart';</span>
+<span id="L5"><span class="lineNum">       5</span>              : import 'package:provider/provider.dart';</span>
+<span id="L6"><span class="lineNum">       6</span>              : import '../UserInterface/ui.dart';</span>
+<span id="L7"><span class="lineNum">       7</span>              : import '../handlers/alarm_handler.dart';</span>
+<span id="L8"><span class="lineNum">       8</span>              : import '../providers/system_data_provider.dart';</span>
+<span id="L9"><span class="lineNum">       9</span>              : import '../shared/types.dart';</span>
+<span id="L10"><span class="lineNum">      10</span>              : import '../providers/inline.dart';</span>
+<span id="L11"><span class="lineNum">      11</span>              : import 'system_elements/system_element.dart';</span>
+<span id="L12"><span class="lineNum">      12</span>              : </span>
+<span id="L13"><span class="lineNum">      13</span>              : </span>
+<span id="L14"><span class="lineNum">      14</span>              : class AlarmMessageDb {</span>
+<span id="L15"><span class="lineNum">      15</span>              :   final AlarmMessage flowMsg, tempMsg, pressurewMsg, overloadwMsg, freqLockwMsg;</span>
+<span id="L16"><span class="lineNum">      16</span>              :   </span>
+<span id="L17"><span class="lineNum">      17</span> <span class="tlaGNC">           1 :   AlarmMessageDb() :</span></span>
+<span id="L18"><span class="lineNum">      18</span>              : </span>
+<span id="L19"><span class="lineNum">      19</span> <span class="tlaGNC">           1 :     flowMsg = AlarmMessage.fromText(&quot;Flow Alarm!&quot;),</span></span>
+<span id="L20"><span class="lineNum">      20</span> <span class="tlaGNC">           1 :     tempMsg = AlarmMessage.fromText(&quot;Temperature Alarm!&quot;),</span></span>
+<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">           1 :     pressurewMsg = AlarmMessage.fromText(&quot;Pressure Alarm!&quot;),</span></span>
+<span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">           1 :     overloadwMsg = AlarmMessage.fromText(&quot;Overload Alarm!&quot;),</span></span>
+<span id="L23"><span class="lineNum">      23</span> <span class="tlaGNC">           1 :     freqLockwMsg = AlarmMessage.fromText(&quot;Frequency Lock Alarm!&quot;);</span></span>
+<span id="L24"><span class="lineNum">      24</span>              : </span>
+<span id="L25"><span class="lineNum">      25</span> <span class="tlaGNC">           2 :     AlarmMessage get flow     =&gt; flowMsg;</span></span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">           2 :     AlarmMessage get temp     =&gt; tempMsg;</span></span>
+<span id="L27"><span class="lineNum">      27</span> <span class="tlaGNC">           2 :     AlarmMessage get pressure =&gt; pressurewMsg;</span></span>
+<span id="L28"><span class="lineNum">      28</span> <span class="tlaGNC">           2 :     AlarmMessage get overload =&gt; overloadwMsg;</span></span>
+<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">           2 :     AlarmMessage get freqLock =&gt; freqLockwMsg;  </span></span>
+<span id="L30"><span class="lineNum">      30</span>              : </span>
+<span id="L31"><span class="lineNum">      31</span>              : }</span>
+<span id="L32"><span class="lineNum">      32</span>              : </span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">           1 : List&lt;AlarmMessage&gt; sonicAlarmMessages() {</span></span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">           1 :   AlarmMessageDb alarmDb = AlarmMessageDb();</span></span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">           1 :   return [</span></span>
+<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">           1 :     alarmDb.pressure, </span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">           1 :     alarmDb.overload, </span></span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">           1 :     alarmDb.freqLock </span></span>
+<span id="L39"><span class="lineNum">      39</span>              :   ];</span>
+<span id="L40"><span class="lineNum">      40</span>              : }</span>
+<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">           1 : List&lt;AlarmMessage&gt; pumpAlarmMessages() {</span></span>
+<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">           1 :   AlarmMessageDb alarmDb = AlarmMessageDb();</span></span>
+<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">           2 :   return [alarmDb.flow];</span></span>
+<span id="L44"><span class="lineNum">      44</span>              : }</span>
+<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">           1 : List&lt;AlarmMessage&gt; tankAlarmMessages() {</span></span>
+<span id="L46"><span class="lineNum">      46</span> <span class="tlaGNC">           1 :   AlarmMessageDb alarmDb = AlarmMessageDb();</span></span>
+<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">           2 :   return [alarmDb.temp];</span></span>
+<span id="L48"><span class="lineNum">      48</span>              : }</span>
+<span id="L49"><span class="lineNum">      49</span>              : </span>
+<span id="L50"><span class="lineNum">      50</span>              : class AlarmMessage extends StatelessWidget {</span>
+<span id="L51"><span class="lineNum">      51</span> <span class="tlaGNC">           1 :   const AlarmMessage(this.text, this.alarmCb, this.ignAlarmCb, {super.key});</span></span>
+<span id="L52"><span class="lineNum">      52</span>              :   final String text;</span>
+<span id="L53"><span class="lineNum">      53</span>              :   final CtxCb alarmCb;</span>
+<span id="L54"><span class="lineNum">      54</span>              :   final CtxCb ignAlarmCb;</span>
+<span id="L55"><span class="lineNum">      55</span>              : </span>
+<span id="L56"><span class="lineNum">      56</span> <span class="tlaGNC">           1 :   factory AlarmMessage.fromText(String text){</span></span>
+<span id="L57"><span class="lineNum">      57</span> <span class="tlaGNC">           1 :     Map&lt;String, (CtxCb, CtxCb)&gt; msgAlarmMap = {</span></span>
+<span id="L58"><span class="lineNum">      58</span>              :         'Flow':      </span>
+<span id="L59"><span class="lineNum">      59</span> <span class="tlaGNC">           3 :           ((ctx) =&gt; sMdB.watchAlarmVar(ctx, 'flowAlarm'),</span></span>
+<span id="L60"><span class="lineNum">      60</span> <span class="tlaGNC">           3 :            (ctx) =&gt; sMdB.watchAlarmVar(ctx, 'ignoreFlowAlarm')),</span></span>
+<span id="L61"><span class="lineNum">      61</span>              :         'Temperature':      </span>
+<span id="L62"><span class="lineNum">      62</span> <span class="tlaGNC">           3 :           ((ctx) =&gt; sMdB.watchAlarmVar(ctx, 'tempAlarm'),</span></span>
+<span id="L63"><span class="lineNum">      63</span> <span class="tlaGNC">           3 :            (ctx) =&gt; sMdB.watchAlarmVar(ctx, 'ignoreTempAlarm')),</span></span>
+<span id="L64"><span class="lineNum">      64</span>              :         'Pressure':  </span>
+<span id="L65"><span class="lineNum">      65</span> <span class="tlaGNC">           3 :           ((ctx) =&gt; sMdB.watchAlarmVar(ctx, 'pressureAlarm'),</span></span>
+<span id="L66"><span class="lineNum">      66</span> <span class="tlaGNC">           3 :            (ctx) =&gt; sMdB.watchAlarmVar(ctx, 'ignorePressureAlarm')), </span></span>
+<span id="L67"><span class="lineNum">      67</span>              :         'Overload':  </span>
+<span id="L68"><span class="lineNum">      68</span> <span class="tlaGNC">           3 :           ((ctx) =&gt; sMdB.watchAlarmVar(ctx, 'overloadAlarm'),</span></span>
+<span id="L69"><span class="lineNum">      69</span> <span class="tlaGNC">           3 :            (ctx) =&gt; sMdB.watchAlarmVar(ctx, 'ignoreOverloadAlarm')), </span></span>
+<span id="L70"><span class="lineNum">      70</span>              :         'Frequency':</span>
+<span id="L71"><span class="lineNum">      71</span> <span class="tlaGNC">           3 :           ((ctx) =&gt; sMdB.watchAlarmVar(ctx, 'freqLockAlarm'),</span></span>
+<span id="L72"><span class="lineNum">      72</span> <span class="tlaGNC">           3 :            (ctx) =&gt; sMdB.watchAlarmVar(ctx, 'ignoreFreqLockAlarm')),</span></span>
+<span id="L73"><span class="lineNum">      73</span>              :     };</span>
+<span id="L74"><span class="lineNum">      74</span>              :     CtxCb almCb, ignAlmCb;</span>
+<span id="L75"><span class="lineNum">      75</span> <span class="tlaGNC">           2 :     var cbResult = msgAlarmMap.entries.firstWhere(</span></span>
+<span id="L76"><span class="lineNum">      76</span> <span class="tlaGNC">           5 :       (entry) =&gt; entry.key.contains(text.split(' ')[0]),</span></span>
+<span id="L77"><span class="lineNum">      77</span> <span class="tlaUNC">           0 :       orElse: () =&gt; const MapEntry('', (null, null))</span></span>
+<span id="L78"><span class="lineNum">      78</span> <span class="tlaGNC">           1 :     ).value;</span></span>
+<span id="L79"><span class="lineNum">      79</span>              :     (almCb, ignAlmCb) = cbResult;</span>
+<span id="L80"><span class="lineNum">      80</span> <span class="tlaGNC">           1 :     return AlarmMessage(text, almCb, ignAlmCb);</span></span>
+<span id="L81"><span class="lineNum">      81</span>              :   }</span>
+<span id="L82"><span class="lineNum">      82</span>              : </span>
+<span id="L83"><span class="lineNum">      83</span> <span class="tlaGNC">           1 :   @override</span></span>
+<span id="L84"><span class="lineNum">      84</span>              :   Widget build(BuildContext context) {</span>
+<span id="L85"><span class="lineNum">      85</span> <span class="tlaGNC">           2 :     bool? alarm = alarmCb?.call(context);</span></span>
+<span id="L86"><span class="lineNum">      86</span> <span class="tlaGNC">           2 :     bool? ignore = ignAlarmCb?.call(context);</span></span>
+<span id="L87"><span class="lineNum">      87</span> <span class="tlaGNC">           2 :     bool flash = sMdB.alarmFlash(context);</span></span>
+<span id="L88"><span class="lineNum">      88</span>              : </span>
+<span id="L89"><span class="lineNum">      89</span>              :     if (alarm == null || ignore == null) return const SizedBox.shrink();</span>
+<span id="L90"><span class="lineNum">      90</span> <span class="tlaGNC">           1 :     bool active = (alarm &amp; !ignore);</span></span>
+<span id="L91"><span class="lineNum">      91</span> <span class="tlaGNC">           4 :     return Text(text, style: AlarmTextStyle(showText: (active &amp; flash)));</span></span>
+<span id="L92"><span class="lineNum">      92</span>              :   }</span>
+<span id="L93"><span class="lineNum">      93</span>              : }</span>
+<span id="L94"><span class="lineNum">      94</span>              : </span>
+<span id="L95"><span class="lineNum">      95</span>              : class AlarmMessageDisplay extends StatelessWidget {</span>
+<span id="L96"><span class="lineNum">      96</span>              :   final SystemElement element;</span>
+<span id="L97"><span class="lineNum">      97</span>              : </span>
+<span id="L98"><span class="lineNum">      98</span> <span class="tlaUNC">           0 :   const AlarmMessageDisplay({</span></span>
+<span id="L99"><span class="lineNum">      99</span>              :     required this.element,</span>
+<span id="L100"><span class="lineNum">     100</span>              :     super.key,</span>
+<span id="L101"><span class="lineNum">     101</span>              :   });</span>
+<span id="L102"><span class="lineNum">     102</span>              : </span>
+<span id="L103"><span class="lineNum">     103</span>              : </span>
+<span id="L104"><span class="lineNum">     104</span> <span class="tlaUNC">           0 :   @override</span></span>
+<span id="L105"><span class="lineNum">     105</span>              :   Widget build(BuildContext context) {</span>
+<span id="L106"><span class="lineNum">     106</span> <span class="tlaUNC">           0 :     return Selector&lt;SystemDataModel, AlarmsModel&gt;(</span></span>
+<span id="L107"><span class="lineNum">     107</span> <span class="tlaUNC">           0 :       selector: (_, p) =&gt; (p.activeDevice?.alarms ?? AlarmsModel()), </span></span>
+<span id="L108"><span class="lineNum">     108</span> <span class="tlaUNC">           0 :       builder: (xX_x, alarms, x_Xx) {</span></span>
+<span id="L109"><span class="lineNum">     109</span> <span class="tlaUNC">           0 :         List&lt;AlarmMessage&gt; alarmMessages = element.alarmMessages;</span></span>
+<span id="L110"><span class="lineNum">     110</span> <span class="tlaUNC">           0 :         SizedBox space = SizedBox(width: ui.size.displayWidth, height: ui.size.displayHeight * 0.2);</span></span>
+<span id="L111"><span class="lineNum">     111</span> <span class="tlaUNC">           0 :         List&lt;Widget&gt; displayWidgets = alarmMessages.expand((msg) =&gt; [space, msg]).toList();</span></span>
+<span id="L112"><span class="lineNum">     112</span> <span class="tlaUNC">           0 :         return Column(      </span></span>
+<span id="L113"><span class="lineNum">     113</span>              :           children: displayWidgets</span>
+<span id="L114"><span class="lineNum">     114</span>              :         );</span>
+<span id="L115"><span class="lineNum">     115</span>              :       },</span>
+<span id="L116"><span class="lineNum">     116</span>              :     );</span>
+<span id="L117"><span class="lineNum">     117</span>              :   }</span>
+<span id="L118"><span class="lineNum">     118</span>              : } </span>
+<span id="L119"><span class="lineNum">     119</span>              : </span>
+<span id="L120"><span class="lineNum">     120</span>              : class AlarmTextStyle extends TextStyle {</span>
+<span id="L121"><span class="lineNum">     121</span>              :   final bool showText;</span>
+<span id="L122"><span class="lineNum">     122</span> <span class="tlaGNC">           1 :   const AlarmTextStyle({required this.showText});</span></span>
+<span id="L123"><span class="lineNum">     123</span> <span class="tlaGNC">           4 :   Color get onColor =&gt; ui.colors.alarm;</span></span>
+<span id="L124"><span class="lineNum">     124</span> <span class="tlaGNC">           1 :   Color get offColor =&gt; Colors.transparent;</span></span>
+<span id="L125"><span class="lineNum">     125</span> <span class="tlaGNC">           1 :   @override</span></span>
+<span id="L126"><span class="lineNum">     126</span>              :   double get fontSize =&gt; 32;</span>
+<span id="L127"><span class="lineNum">     127</span> <span class="tlaGNC">           1 :   @override</span></span>
+<span id="L128"><span class="lineNum">     128</span>              :   FontWeight get fontWeight =&gt; FontWeight.bold;</span>
+<span id="L129"><span class="lineNum">     129</span> <span class="tlaGNC">           1 :   @override</span></span>
+<span id="L130"><span class="lineNum">     130</span> <span class="tlaGNC">           3 :   Color get color =&gt; showText ? onColor : offColor;</span></span>
+<span id="L131"><span class="lineNum">     131</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.3.2-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

@@ -1,10 +1,38 @@
+---
+id: flutter-testing-standard
+version: 1.1.0
+project_type: flutter
+coverage:
+  unit: 85
+  widget: 70
+  overall: 80
+mocking:
+  unit: allow
+  widget: allow_deps_only
+  integration: forbid
+  golden: forbid
+make_targets:
+  - test-unit
+  - test-widget
+  - test-golden
+  - test-integration
+notes:
+  - Use Mocktail for dependency mocking; do not mock widgets/rendering
+updated_at: "${DATE:-2025-09-10}"
+---
+
 # Flutter Application Testing Standard
 
 > **Note:** This document defines the official testing standard for all Flutter applications within the organization.
 
 ## Overview
 
-Flutter applications require specialized testing approaches due to their cross-platform nature and unique architecture. This standard defines the **official testing requirements** for all Flutter projects, emphasizing the use of Flutter's built-in testing framework with strict mocking limitations.  Tests should be written in a modular format to where indivudual modules can be tested in isolation.  All tests should be written in a way that allows for easy debugging and maintenance.  Each subset of tests (unit, widget, integration, and golden) should all be able to be ran independently using their respective make targets, i.e. `make test-widget`.  The entirety of the test suite should be able to be ran using the `make test` target.`
+Flutter applications require specialized testing approaches due to their cross-platform nature and unique architecture.
+This standard defines the **official testing requirements** for all Flutter projects, emphasizing the use of Flutter's built-in testing framework with strict mocking limitations.
+Tests should be written in a modular format where individual modules can be tested in isolation.
+All tests should be written in a way that allows for easy debugging and maintenance.
+Each subset of tests (unit, widget, integration, and golden) should all be able to be run independently using their respective make targets, i.e. `make test-widget`.
+The entirety of the test suite should be able to be run using the `make test` target.
 
 ---
 
@@ -15,12 +43,12 @@ Flutter applications require specialized testing approaches due to their cross-p
 - **Foundation**: Flutter's built-in testing framework (`flutter_test`) for ALL Flutter testing
 - **Coverage**: Widget tests, unit tests, golden tests (UI consistency), and integration testing foundation
 
-### Mocking Framework (Unit Tests ONLY)
+### Mocking Framework (Unit & Widget Tests)
 
-- **Standard**: Mocktail ^1.0.4 (OFFICIAL - no exceptions)
-- **Scope**: **MOCKING IS ONLY TO BE USED FOR UNIT TESTING**
-- **Prohibition**: Widget tests, integration tests, and golden tests must NOT use mocking
-- **Rationale**: Mocking in non-unit tests defeats the purpose of testing real component interactions
+- **Standard**: Mocktail ^1.0.4 (OFFICIAL)
+- **Scope**: Mocking is permitted in **unit tests** and **Flutter widget tests** for external dependencies only (e.g., network/services/platform channels, DI-provided repositories, BLoC/Provider sources).
+- **Prohibition**: Integration and golden tests must NOT use mocking. Do not mock Flutter SDK widgets or rendering pipeline; never mock UI components themselves.
+- **Rationale**: Widget tests sit between unit and integration; controlled dependency mocking enables deterministic UI behavior testing while preserving real widget rendering/interactions.
 
 ### Specialized Frameworks
 
@@ -119,31 +147,42 @@ void main() {
 
 ### 2. Widget Testing
 
-- **Framework**: `flutter_test` ONLY (NO mocking)
+- **Framework**: `flutter_test` (+ `mocktail` for dependency mocking)
 - **Coverage Requirement**: ≥70% widget coverage
 - **Scope**: UI components, user interactions, widget rendering
-- **Mocking**: **PROHIBITED** - Test real widget behavior
+- **Mocking**: Allowed for external dependencies and platform services; keep mocks at dependency boundaries (repositories, network clients, platform channels). Do not mock widgets.
 - **Location**: `test/widget/`
 
 ```dart
-// Example: Widget test without mocking
+// Example: Widget test with dependency mocking
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+
+class AuthRepository {
+  Future<bool> login(String email, String password) async => true;
+}
+
+class MockAuthRepository extends Mock implements AuthRepository {}
 
 void main() {
-  testWidgets('Login button triggers callback', (WidgetTester tester) async {
-    bool callbackTriggered = false;
-    
+  testWidgets('Login page shows error on failed auth', (WidgetTester tester) async {
+    final mockRepo = MockAuthRepository();
+    when(() => mockRepo.login(any(), any())).thenAnswer((_) async => false);
+
     await tester.pumpWidget(
       MaterialApp(
-        home: LoginButton(
-          onPressed: () => callbackTriggered = true,
-        ),
+        home: LoginPage(authRepository: mockRepo),
       ),
     );
-    
-    await tester.tap(find.byType(ElevatedButton));
-    expect(callbackTriggered, isTrue);
+
+    await tester.enterText(find.byKey(const Key('email')), 'user@example.com');
+    await tester.enterText(find.byKey(const Key('password')), 'secret');
+    await tester.tap(find.byKey(const Key('loginButton')));
+    await tester.pump();
+
+    expect(find.text('Invalid credentials'), findsOneWidget);
+    verify(() => mockRepo.login('user@example.com', 'secret')).called(1);
   });
 }
 ```
@@ -217,11 +256,11 @@ make test-unit
 # - Coverage: ≥85% requirement
 # - Mocking: Mocktail permitted
 
-# Widget Testing (no mocking)
-make test-widget  
+# Widget Testing (dependency mocking allowed)
+make test-widget
 # - Executes: flutter test test/widget/
 # - Coverage: ≥70% requirement
-# - Mocking: PROHIBITED
+# - Mocking: Allowed for external dependencies via Mocktail; do not mock widgets
 
 # Golden Testing (visual regression)
 make test-golden
@@ -248,16 +287,16 @@ make test
 ### Strictly Forbidden
 
 - ❌ Using Mockito (use Mocktail exclusively)
-- ❌ Mocking in widget tests (defeats purpose of UI testing)
 - ❌ Mocking in integration tests (defeats purpose of E2E testing)
 - ❌ Mocking in golden tests (defeats purpose of visual testing)
-- ❌ Creating mocks outside centralized helpers
+- ❌ Mocking Flutter SDK widgets/rendering pipeline
+- ❌ Creating ad-hoc mocks outside centralized helpers
 - ❌ Hardcoded test data (use centralized test_data.dart)
 
 ### Required Practices
 
 - ✅ Use Flutter's built-in testing framework as foundation
-- ✅ Use Mocktail exclusively for unit test mocking
+- ✅ Use Mocktail exclusively for unit and widget test dependency mocking
 - ✅ Centralize all mocks in `test/helpers/mocks.dart`
 - ✅ Follow testing pyramid distribution (70/20/10)
 - ✅ Maintain coverage requirements with CI/CD enforcement
@@ -287,7 +326,7 @@ make test
 All Flutter stories must pass these quality gates:
 
 - [ ] Unit tests achieve ≥85% coverage (mocking permitted)
-- [ ] Widget tests achieve ≥70% coverage (NO mocking)
+- [ ] Widget tests achieve ≥70% coverage (dependency mocking allowed)
 - [ ] Integration tests cover critical user flows (NO mocking)
 - [ ] Golden tests validate UI consistency (NO mocking)
 - [ ] All tests use Flutter's built-in testing framework

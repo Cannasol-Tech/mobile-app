@@ -21,9 +21,9 @@ help:
 	@echo "  clean       - Clean Flutter build cache"
 	@echo "  test        - Run complete Flutter test suite"
 	@echo "  test-unit   - Run unit tests (≥85% coverage, mocking allowed)"
-	@echo "  test-widget - Run widget tests (≥70% coverage, NO mocking)"
+	@echo "  test-widget - Run widget tests (≥85% coverage, dependency mocking allowed via Mocktail)"
 	@echo "  test-widget-compliant - Run only compliant widget tests (no violations)"
-	@echo "  test-widget-legacy - Run legacy widget tests (TEMPORARY - allows mocking)"
+	@echo "  test-widget-legacy - DEPRECATED: alias to test-widget"
 	@echo "  test-integration - Run integration tests"
 	@echo "  test-golden - Run golden tests (visual regression)"
 	@echo "  coverage    - Generate coverage report"
@@ -84,10 +84,15 @@ test-unit:
 	@echo "🧪 Running unit tests..."
 	@cd $(FLUTTER_DIR) && $(MAKE) test-unit
 
-# Widget tests (NO mocking - Company Standard)
+# Widget tests (dependency mocking allowed)
 test-widget:
-	@echo "🎨 Running widget tests (Company Standard - NO mocking)..."
+	@echo "🎨 Running widget tests (dependency mocking allowed via Mocktail; do not mock widgets/rendering)..."
 	@cd $(FLUTTER_DIR) && $(MAKE) test-widget
+
+# Compliant widget tests only (no violations)
+test-widget-compliant:
+	@echo "🎨✅ Running compliant widget tests only..."
+	@cd $(FLUTTER_DIR) && $(MAKE) test-widget-compliant
 
 # Legacy widget tests (TEMPORARY - allows mocking)
 test-widget-legacy:

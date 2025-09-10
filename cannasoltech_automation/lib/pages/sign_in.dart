@@ -77,16 +77,10 @@ class _SignInPage1State extends State<SignInPage1> {
 
   Future<void> signUserIn(UserHandler userHandler) async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
+      await userHandler.signInWithEmailAndPassword(
+        emailController.text,
+        passwordController.text,
       );
-      userHandler.initialized = false;
-      userHandler.initialize();
-      FirebaseApi fbApi = FirebaseApi();
-      String? token = await fbApi.getToken();
-      userHandler.setFCMToken(token);
-      fbApi.setTokenRefreshCallback(userHandler.setFCMToken);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         showErrorMessage('User not found!');
@@ -102,31 +96,11 @@ class _SignInPage1State extends State<SignInPage1> {
 
   Future<void> signInWithGoogle(UserHandler userHandler) async {
     try {
-      // Configure GoogleSignIn - let it use platform-specific client IDs from configuration
-      final GoogleSignIn googleSignIn = GoogleSignIn();
-
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      if (googleUser == null) {
+      bool success = await userHandler.signInWithGoogle();
+      if (!success) {
         showErrorMessage('Google sign-in aborted');
-        return;
       }
-
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      await FirebaseAuth.instance.signInWithCredential(credential);
-      userHandler.initialized = false;
-      userHandler.initialize();
-      FirebaseApi fbApi = FirebaseApi();
-      String? token = await fbApi.getToken();
-      userHandler.setFCMToken(token);
-      fbApi.setTokenRefreshCallback(userHandler.setFCMToken);
     } catch (error) {
-      print('Google sign-in error: $error'); // Add debugging
       showErrorMessage('Google sign-in failed: ${error.toString()}');
     }
   }

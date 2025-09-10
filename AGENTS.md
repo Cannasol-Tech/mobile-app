@@ -74,7 +74,7 @@ TODO:  Add the following directories to the project to complete the AI Decision 
 - **Verification Requirement**: For every code change, add/update tests until behavior is verified
 - Prefer fast, deterministic tests
 - Provide test plans and execution commands
-- **Critical Rule**: MOCKING IS ONLY TO BE USED FOR UNIT TESTING (never in widget, integration, or golden tests)
+- **Critical Rule**: Mocking is allowed in unit and widget tests for external dependencies only (use Mocktail). Do NOT mock Flutter SDK widgets/rendering. Mocking remains prohibited in integration and golden tests.
 
 ### Quality Gates
 
@@ -155,7 +155,7 @@ TODO:  Add the following directories to the project to complete the AI Decision 
 **Official Framework Stack:**
 
 - **Primary Testing**: `flutter_test` (SDK) - Required for ALL Flutter testing
-- **Mocking**: `mocktail` ^1.0.4 - **OFFICIAL STANDARD** (Unit tests ONLY)
+- **Mocking**: `mocktail` ^1.0.4 - **OFFICIAL STANDARD** (Unit and widget tests; dependencies only)
 - **BLoC Testing**: `bloc_test` ^9.1.7 - Required when using BLoC pattern
 - **Integration Testing**: `integration_test` (SDK) - Required for E2E testing
 - **Code Quality**: `flutter_lints` ^5.0.0 - Required
@@ -198,11 +198,11 @@ test/
 
 **Mocking Rules (CRITICAL):**
 
-- **MOCKING IS ONLY TO BE USED FOR UNIT TESTING**
-- ❌ NO mocking in widget tests (defeats purpose of UI testing)
+- ✅ Mocking allowed in unit and widget tests for external dependencies (services, repositories, platform channels) using Mocktail
+- ❌ Do NOT mock Flutter SDK widgets or the rendering pipeline
 - ❌ NO mocking in integration tests (defeats purpose of E2E testing)
 - ❌ NO mocking in golden tests (defeats purpose of visual testing)
-- ✅ Mock external dependencies in unit tests only
+- ❌ Mockito and other mocking libraries are prohibited (Mocktail only)
 
 **Make Targets (Required):**
 
@@ -213,11 +213,11 @@ make test-unit
 # - Coverage: ≥85% requirement
 # - Mocking: Mocktail permitted
 
-# Widget Testing (NO mocking)
+# Widget Testing (dependency mocking allowed)
 make test-widget
 # - Executes: flutter test test/widget/
 # - Coverage: ≥85% requirement
-# - Mocking: PROHIBITED
+# - Mocking: Allowed for external dependencies via Mocktail; do not mock widgets or rendering
 
 # Golden Testing (visual regression)
 make test-golden

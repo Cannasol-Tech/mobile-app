@@ -27,6 +27,7 @@ import 'package:cannasoltech_automation/data_models/device.dart';
 import 'package:cannasoltech_automation/handlers/config_handler.dart';
 import 'package:cannasoltech_automation/handlers/state_handler.dart';
 import 'package:cannasoltech_automation/handlers/alarm_handler.dart';
+import 'package:cannasoltech_automation/data_models/property.dart';
 import 'package:cannasoltech_automation/data_classes/status_message.dart';
 
 // =============================================================================
@@ -109,7 +110,10 @@ class MockSystemIdx extends Mock implements SystemIdx {}
 class MockFirebaseApi extends Mock implements FirebaseApi {}
 
 /// Mock Device
-class MockDevice extends Mock implements Device {}
+class MockDevice extends Mock implements Device {
+  @override
+  late StateHandler state;
+}
 
 /// Mock AlarmsModel
 class MockAlarmsModel extends Mock implements AlarmsModel {
@@ -127,6 +131,21 @@ class MockAlarmsModel extends Mock implements AlarmsModel {
 
 /// Mock ConfigHandler
 class MockConfigHandler extends Mock implements ConfigHandler {}
+
+/// Mock FireProperty
+class MockFireProperty extends Mock implements FireProperty {
+  dynamic _value;
+
+  @override
+  dynamic get value => _value;
+
+  @override
+  set value(dynamic val) => _value = val;
+
+  void setMockValue(dynamic val) {
+    _value = val;
+  }
+}
 
 /// Mock StateHandler
 class MockStateHandler extends Mock implements StateHandler {}

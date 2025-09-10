@@ -31,33 +31,33 @@ void main() {
     });
 
     group('Rendering Tests', () {
-      testWidgets('should render sign in form with all required fields', 
+      testWidgets('should render sign in form with all required fields',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
           createTestApp(
             child: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
 
         // Assert
-        TestAssertions.expectVisible(find.byType(SignInPage));
+        TestAssertions.expectVisible(find.byType(SignInPage1));
         TestAssertions.expectVisible(TestFinders.emailField);
         TestAssertions.expectVisible(TestFinders.passwordField);
         TestAssertions.expectVisible(TestFinders.signInButton);
       });
 
-      testWidgets('should display app title and branding', 
+      testWidgets('should display app title and branding',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
           createTestApp(
             child: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
@@ -67,14 +67,14 @@ void main() {
         TestAssertions.expectVisible(find.text(UITestData.signInTitle));
       });
 
-      testWidgets('should display Google Sign-In button', 
+      testWidgets('should display Google Sign-In button',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
           createTestApp(
             child: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
@@ -83,14 +83,14 @@ void main() {
         TestAssertions.expectVisible(TestFinders.googleSignInButton);
       });
 
-      testWidgets('should display forgot password link', 
+      testWidgets('should display forgot password link',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
           createTestApp(
             child: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
@@ -99,14 +99,14 @@ void main() {
         TestAssertions.expectVisible(TestFinders.forgotPasswordButton);
       });
 
-      testWidgets('should display sign up navigation link', 
+      testWidgets('should display sign up navigation link',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
           createTestApp(
             child: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
@@ -118,27 +118,27 @@ void main() {
     });
 
     group('Form Validation Tests', () {
-      testWidgets('should show error for invalid email format', 
+      testWidgets('should show error for invalid email format',
           (WidgetTester tester) async {
         // Arrange
         await tester.pumpWidget(
           createTestApp(
             child: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
 
         // Act
         await TestInteractions.enterText(
-          tester, 
-          TestFinders.emailField, 
+          tester,
+          TestFinders.emailField,
           AuthTestData.invalidEmail,
         );
         await TestInteractions.enterText(
-          tester, 
-          TestFinders.passwordField, 
+          tester,
+          TestFinders.passwordField,
           AuthTestData.validPassword,
         );
         await TestInteractions.tap(tester, TestFinders.signInButton);
@@ -148,22 +148,22 @@ void main() {
         TestAssertions.expectErrorMessage(UITestData.invalidEmailError);
       });
 
-      testWidgets('should show error for empty email', 
+      testWidgets('should show error for empty email',
           (WidgetTester tester) async {
         // Arrange
         await tester.pumpWidget(
           createTestApp(
             child: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
 
         // Act
         await TestInteractions.enterText(
-          tester, 
-          TestFinders.passwordField, 
+          tester,
+          TestFinders.passwordField,
           AuthTestData.validPassword,
         );
         await TestInteractions.tap(tester, TestFinders.signInButton);
@@ -173,22 +173,22 @@ void main() {
         TestAssertions.expectErrorMessage('Email is required');
       });
 
-      testWidgets('should show error for empty password', 
+      testWidgets('should show error for empty password',
           (WidgetTester tester) async {
         // Arrange
         await tester.pumpWidget(
           createTestApp(
             child: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
 
         // Act
         await TestInteractions.enterText(
-          tester, 
-          TestFinders.emailField, 
+          tester,
+          TestFinders.emailField,
           AuthTestData.validEmail,
         );
         await TestInteractions.tap(tester, TestFinders.signInButton);
@@ -198,14 +198,14 @@ void main() {
         TestAssertions.expectErrorMessage(UITestData.emptyPasswordError);
       });
 
-      testWidgets('should validate form before submission', 
+      testWidgets('should validate form before submission',
           (WidgetTester tester) async {
         // Arrange
         await tester.pumpWidget(
           createTestApp(
             child: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
@@ -216,25 +216,26 @@ void main() {
 
         // Assert - Should not call authentication
         verifyNever(() => authMocks.firebaseAuth.signInWithEmailAndPassword(
-          email: any(named: 'email'),
-          password: any(named: 'password'),
-        ));
+              email: any(named: 'email'),
+              password: any(named: 'password'),
+            ));
       });
     });
 
     group('Authentication Flow Tests', () {
-      testWidgets('should perform successful email sign in', 
+      testWidgets('should perform successful email sign in',
           (WidgetTester tester) async {
         // Arrange
         when(() => authMocks.userHandler.signInWithEmailAndPassword(
-          any(), any(),
-        )).thenAnswer((_) async => true);
+              any(),
+              any(),
+            )).thenAnswer((_) async => true);
 
         await tester.pumpWidget(
           createTestApp(
             child: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
@@ -244,23 +245,23 @@ void main() {
 
         // Assert
         verify(() => authMocks.userHandler.signInWithEmailAndPassword(
-          AuthTestData.validEmail,
-          AuthTestData.validPassword,
-        )).called(1);
+              AuthTestData.validEmail,
+              AuthTestData.validPassword,
+            )).called(1);
       });
 
-      testWidgets('should handle sign in failure', 
-          (WidgetTester tester) async {
+      testWidgets('should handle sign in failure', (WidgetTester tester) async {
         // Arrange
         when(() => authMocks.userHandler.signInWithEmailAndPassword(
-          any(), any(),
-        )).thenAnswer((_) async => false);
+              any(),
+              any(),
+            )).thenAnswer((_) async => false);
 
         await tester.pumpWidget(
           createTestApp(
             child: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
@@ -272,12 +273,13 @@ void main() {
         TestAssertions.expectErrorMessage(UITestData.invalidLoginError);
       });
 
-      testWidgets('should show loading indicator during sign in', 
+      testWidgets('should show loading indicator during sign in',
           (WidgetTester tester) async {
         // Arrange
         when(() => authMocks.userHandler.signInWithEmailAndPassword(
-          any(), any(),
-        )).thenAnswer((_) async {
+              any(),
+              any(),
+            )).thenAnswer((_) async {
           await Future.delayed(const Duration(milliseconds: 100));
           return true;
         });
@@ -286,20 +288,20 @@ void main() {
           createTestApp(
             child: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
 
         // Act
         await TestInteractions.enterText(
-          tester, 
-          TestFinders.emailField, 
+          tester,
+          TestFinders.emailField,
           AuthTestData.validEmail,
         );
         await TestInteractions.enterText(
-          tester, 
-          TestFinders.passwordField, 
+          tester,
+          TestFinders.passwordField,
           AuthTestData.validPassword,
         );
         await TestInteractions.tap(tester, TestFinders.signInButton);
@@ -309,8 +311,7 @@ void main() {
         TestAssertions.expectLoading();
       });
 
-      testWidgets('should perform Google sign in', 
-          (WidgetTester tester) async {
+      testWidgets('should perform Google sign in', (WidgetTester tester) async {
         // Arrange
         when(() => authMocks.userHandler.signInWithGoogle())
             .thenAnswer((_) async => true);
@@ -319,7 +320,7 @@ void main() {
           createTestApp(
             child: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
@@ -332,7 +333,7 @@ void main() {
         verify(() => authMocks.userHandler.signInWithGoogle()).called(1);
       });
 
-      testWidgets('should handle Google sign in failure', 
+      testWidgets('should handle Google sign in failure',
           (WidgetTester tester) async {
         // Arrange
         when(() => authMocks.userHandler.signInWithGoogle())
@@ -342,7 +343,7 @@ void main() {
           createTestApp(
             child: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
@@ -357,7 +358,7 @@ void main() {
     });
 
     group('Navigation Tests', () {
-      testWidgets('should navigate to sign up page', 
+      testWidgets('should navigate to sign up page',
           (WidgetTester tester) async {
         // Arrange
         bool navigatedToSignUp = false;
@@ -366,7 +367,7 @@ void main() {
           MaterialApp(
             home: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
             routes: {
               '/signup': (context) {
@@ -385,7 +386,7 @@ void main() {
         expect(navigatedToSignUp, isTrue);
       });
 
-      testWidgets('should navigate to forgot password page', 
+      testWidgets('should navigate to forgot password page',
           (WidgetTester tester) async {
         // Arrange
         bool navigatedToForgotPassword = false;
@@ -394,7 +395,7 @@ void main() {
           MaterialApp(
             home: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
             routes: {
               '/forgot-password': (context) {
@@ -415,60 +416,64 @@ void main() {
     });
 
     group('Accessibility Tests', () {
-      testWidgets('should have proper semantic labels', 
+      testWidgets('should have proper semantic labels',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
           createTestApp(
             child: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
 
         // Assert
         final emailField = tester.widget<TextField>(TestFinders.emailField);
-        final passwordField = tester.widget<TextField>(TestFinders.passwordField);
-        
+        final passwordField =
+            tester.widget<TextField>(TestFinders.passwordField);
+
         expect(emailField.decoration?.labelText, equals(UITestData.emailLabel));
-        expect(passwordField.decoration?.labelText, equals(UITestData.passwordLabel));
+        expect(passwordField.decoration?.labelText,
+            equals(UITestData.passwordLabel));
       });
 
-      testWidgets('should support keyboard navigation', 
+      testWidgets('should support keyboard navigation',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
           createTestApp(
             child: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
 
         // Assert - Check that form fields are focusable
         final emailField = tester.widget<TextField>(TestFinders.emailField);
-        final passwordField = tester.widget<TextField>(TestFinders.passwordField);
-        
+        final passwordField =
+            tester.widget<TextField>(TestFinders.passwordField);
+
         expect(emailField.focusNode, isNotNull);
         expect(passwordField.focusNode, isNotNull);
       });
     });
 
     group('Edge Cases', () {
-      testWidgets('should handle network errors gracefully', 
+      testWidgets('should handle network errors gracefully',
           (WidgetTester tester) async {
         // Arrange
         when(() => authMocks.userHandler.signInWithEmailAndPassword(
-          any(), any(),
-        )).thenThrow(Exception('Network error'));
+              any(),
+              any(),
+            )).thenThrow(Exception('Network error'));
 
         await tester.pumpWidget(
           createTestApp(
             child: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
@@ -480,13 +485,14 @@ void main() {
         TestAssertions.expectErrorMessage('Network error');
       });
 
-      testWidgets('should handle rapid form submissions', 
+      testWidgets('should handle rapid form submissions',
           (WidgetTester tester) async {
         // Arrange
         int signInCallCount = 0;
         when(() => authMocks.userHandler.signInWithEmailAndPassword(
-          any(), any(),
-        )).thenAnswer((_) async {
+              any(),
+              any(),
+            )).thenAnswer((_) async {
           signInCallCount++;
           await Future.delayed(const Duration(milliseconds: 100));
           return true;
@@ -496,19 +502,19 @@ void main() {
           createTestApp(
             child: Provider<UserHandler>.value(
               value: authMocks.userHandler,
-              child: const SignInPage(),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
 
         await TestInteractions.enterText(
-          tester, 
-          TestFinders.emailField, 
+          tester,
+          TestFinders.emailField,
           AuthTestData.validEmail,
         );
         await TestInteractions.enterText(
-          tester, 
-          TestFinders.passwordField, 
+          tester,
+          TestFinders.passwordField,
           AuthTestData.validPassword,
         );
 
