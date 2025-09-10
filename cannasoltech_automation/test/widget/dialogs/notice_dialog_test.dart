@@ -442,7 +442,11 @@ void main() {
         await tester.pumpAndSettle();
 
         // Assert - Check that button is focusable
-        final okButton = find.text('OK');
+        // Find TextButton widget directly instead of by text content
+        final okButton = find.descendant(
+          of: find.byType(TextButton),
+          matching: find.text('OK'),
+        );
         expect(tester.widget<TextButton>(okButton).focusNode, isNotNull);
       });
     });

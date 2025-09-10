@@ -9,7 +9,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:cannasoltech_automation/handlers/state_handler.dart';
-import 'package:cannasoltech_automation/data_models/device.dart';
 
 import '../../helpers/mocks.dart';
 

@@ -12,6 +12,11 @@ This document outlines the comprehensive widget testing standards for Flutter ap
 - **BLoC Testing**: `bloc_test` ^9.1.7 (state management testing)
 - **Integration**: `integration_test` (end-to-end testing)
 
+Note on mocking policy:
+- Widget tests may mock external dependencies (services, repositories, platform channels) via Mocktail to create deterministic scenarios.
+- Do NOT mock Flutter SDK widgets or the rendering pipeline.
+- Mockito and other mocking libraries are prohibited.
+
 ### Test Structure
 ```
 test/

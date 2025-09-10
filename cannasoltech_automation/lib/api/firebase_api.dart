@@ -10,10 +10,10 @@
  */
 
 import 'dart:io';
+import 'package:flutter/material.dart';
 import '../objects/logger.dart';
 import '../firebase_options.dart';
 import '../objects/alarm_notification.dart';
-import 'package:cannasoltech_automation/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -49,14 +49,18 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 class FirebaseApi {
   final GlobalKey<NavigatorState> navigatorKey;
 
-  FirebaseApi({FirebaseMessaging? firebaseMessaging, GlobalKey<NavigatorState>? navigatorKey})
-      : _firebaseMessaging = firebaseMessaging ?? FirebaseMessaging.instance,
-        navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>();
+  FirebaseApi({
+    FirebaseMessaging? firebaseMessaging,
+    GlobalKey<NavigatorState>? navigatorKey,
+    FirebaseAuth? auth,
+  })  : _firebaseMessaging = firebaseMessaging ?? FirebaseMessaging.instance,
+        navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
+        auth = auth ?? FirebaseAuth.instance;
   /// Firebase Cloud Messaging instance for handling push notifications
   final FirebaseMessaging _firebaseMessaging;
 
   /// Firebase Authentication instance for user authentication
-  FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseAuth auth;
 
   Future<void> initNotifications() async {
     if (Platform.isIOS) {
@@ -92,7 +96,7 @@ class FirebaseApi {
   Future<String?> getToken() async {
     try {
       String? token;
-      token = await FirebaseMessaging.instance.getToken();
+      token = await _firebaseMessaging.getToken();
       log.info("DEBUG -> FCM Token retrieved = $token");
       return token;
     } catch (e) {

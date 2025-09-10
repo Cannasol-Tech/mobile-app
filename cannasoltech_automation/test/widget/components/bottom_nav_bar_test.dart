@@ -27,9 +27,10 @@ void main() {
       providerMocks = MockSetup.createProviderMocks();
 
       // Setup common mock behaviors
-      when(() => providerMocks.displayDataModel.currentPageIndex).thenReturn(0);
-      when(() => providerMocks.displayDataModel.setPageIndex(any()))
-          .thenReturn(null);
+      when(() => providerMocks.displayDataModel.bottomNavSelectedItem)
+          .thenReturn(0);
+      when(() => providerMocks.displayDataModel.setBottomNavSelectedItem(any()))
+          .thenAnswer((_) => null);
     });
 
     group('Rendering Tests', () {
@@ -73,7 +74,7 @@ void main() {
       testWidgets('should highlight selected tab correctly',
           (WidgetTester tester) async {
         // Arrange
-        when(() => providerMocks.displayDataModel.currentPageIndex)
+        when(() => providerMocks.displayDataModel.bottomNavSelectedItem)
             .thenReturn(1);
 
         // Act
@@ -99,7 +100,7 @@ void main() {
       testWidgets('should navigate to home when home tab is tapped',
           (WidgetTester tester) async {
         // Arrange
-        when(() => providerMocks.displayDataModel.currentPageIndex)
+        when(() => providerMocks.displayDataModel.bottomNavSelectedItem)
             .thenReturn(1);
 
         await tester.pumpWidget(
@@ -116,13 +117,14 @@ void main() {
         await TestInteractions.tap(tester, find.text(UITestData.homeTitle));
 
         // Assert
-        verify(() => providerMocks.displayDataModel.setPageIndex(0)).called(1);
+        verify(() => providerMocks.displayDataModel.setBottomNavSelectedItem(0))
+            .called(1);
       });
 
       testWidgets('should navigate to configuration when config tab is tapped',
           (WidgetTester tester) async {
         // Arrange
-        when(() => providerMocks.displayDataModel.currentPageIndex)
+        when(() => providerMocks.displayDataModel.bottomNavSelectedItem)
             .thenReturn(0);
 
         await tester.pumpWidget(
@@ -140,14 +142,15 @@ void main() {
             tester, find.text(UITestData.configurationTitle));
 
         // Assert
-        verify(() => providerMocks.displayDataModel.setPageIndex(1)).called(1);
+        verify(() => providerMocks.displayDataModel.setBottomNavSelectedItem(1))
+            .called(1);
       });
 
       testWidgets(
-          'should not call setPageIndex when tapping already selected tab',
+          'should not call setBottomNavSelectedItem when tapping already selected tab',
           (WidgetTester tester) async {
         // Arrange
-        when(() => providerMocks.displayDataModel.currentPageIndex)
+        when(() => providerMocks.displayDataModel.bottomNavSelectedItem)
             .thenReturn(0);
 
         await tester.pumpWidget(
@@ -164,7 +167,8 @@ void main() {
         await TestInteractions.tap(tester, find.text(UITestData.homeTitle));
 
         // Assert - Should still be called as BottomNavigationBar always calls onTap
-        verify(() => providerMocks.displayDataModel.setPageIndex(0)).called(1);
+        verify(() => providerMocks.displayDataModel.setBottomNavSelectedItem(0))
+            .called(1);
       });
     });
 
@@ -172,7 +176,7 @@ void main() {
       testWidgets('should update selected tab when page index changes',
           (WidgetTester tester) async {
         // Arrange
-        when(() => providerMocks.displayDataModel.currentPageIndex)
+        when(() => providerMocks.displayDataModel.bottomNavSelectedItem)
             .thenReturn(0);
 
         await tester.pumpWidget(
@@ -192,7 +196,7 @@ void main() {
         expect(bottomNavBar.currentIndex, equals(0));
 
         // Act - Simulate page index change
-        when(() => providerMocks.displayDataModel.currentPageIndex)
+        when(() => providerMocks.displayDataModel.bottomNavSelectedItem)
             .thenReturn(1);
         providerMocks.displayDataModel.notifyListeners();
         await tester.pump();
@@ -207,7 +211,7 @@ void main() {
       testWidgets('should handle invalid page index gracefully',
           (WidgetTester tester) async {
         // Arrange
-        when(() => providerMocks.displayDataModel.currentPageIndex)
+        when(() => providerMocks.displayDataModel.bottomNavSelectedItem)
             .thenReturn(-1);
 
         // Act & Assert - Should not throw
@@ -309,7 +313,7 @@ void main() {
       testWidgets('should handle rapid tab switching',
           (WidgetTester tester) async {
         // Arrange
-        when(() => providerMocks.displayDataModel.currentPageIndex)
+        when(() => providerMocks.displayDataModel.bottomNavSelectedItem)
             .thenReturn(0);
 
         await tester.pumpWidget(

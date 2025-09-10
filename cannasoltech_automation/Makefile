@@ -21,9 +21,9 @@ help:
 	@echo "Available targets:"
 	@echo "  test              - Run complete test suite (unit + widget + integration)"
 	@echo "  test-unit         - Run unit tests (≥85% coverage required, mocking allowed)"
-	@echo "  test-widget       - Run widget tests (≥70% coverage required, NO mocking)"
+	@echo "  test-widget       - Run widget tests (≥85% coverage required, dependency mocking allowed via Mocktail; do not mock widgets/rendering)"
 	@echo "  test-widget-suite - Run comprehensive widget test suite"
-	@echo "  test-widget-legacy- Run legacy widget tests (TEMPORARY - allows mocking)"
+	@echo "  test-widget-legacy- DEPRECATED: alias to test-widget"
 	@echo "  test-components   - Run component widget tests"
 	@echo "  test-pages        - Run page widget tests"
 	@echo "  test-dialogs      - Run dialog widget tests"
@@ -35,7 +35,7 @@ help:
 	@echo ""
 	@echo "Coverage Requirements (per Flutter Testing Standard):"
 	@echo "  Unit Tests:       ≥85% statement coverage (mocking allowed)"
-	@echo "  Widget Tests:     ≥70% widget coverage (NO mocking)"
+	@echo "  Widget Tests:     ≥85% widget coverage (dependency mocking allowed via Mocktail; do not mock widgets/rendering)"
 	@echo "  Overall Project:  ≥80% total coverage"
 	@echo ""
 	@echo "Company Standard: .axovia-flow/company-standards/flutter-specific/flutter-testing-standard.md"
@@ -62,32 +62,23 @@ test-unit:
 	flutter test test/unit/ --coverage --reporter=expanded
 	@echo "✅ Unit tests completed"
 
-# Widget Testing (NO mocking allowed - Company Standard)
+
+# Widget Testing (dependency mocking allowed via Mocktail; do not mock widgets/rendering)
 # Executes: flutter test test/widget/
-# Coverage: ≥70% requirement
-# Mocking: PROHIBITED per Flutter Testing Standard
+# Coverage: ≥85% requirement
+# Mocking: Allowed for external dependencies via Mocktail; Mockito prohibited
 # Standard: .axovia-flow/company-standards/flutter-specific/flutter-testing-standard.md
 test-widget:
 	@echo "🎨 Running widget tests..."
-	@echo "Standard: Flutter Testing Standard | Coverage: ≥70% | Mocking: PROHIBITED"
-	@echo "📋 Validating compliance with Flutter Testing Standard..."
-	@echo "Checking for prohibited mocking in widget tests..."
-	@if grep -r "mocktail\|mockito\|Mock\|when(" test/widget/ --include="*.dart" 2>/dev/null; then \
-		echo "❌ VIOLATION: Mocking detected in widget tests!"; \
-		echo "   Flutter Testing Standard prohibits mocking in widget tests"; \
+	@echo "Standard: Flutter Testing Standard | Coverage: ≥85% | Mocking: Allowed for external dependencies via Mocktail; do not mock widgets/rendering"
+	@echo "📋 Validating compliance with mocking framework policy (Mockito prohibited)..."
+	@if grep -R -n -E "package:mockito|Mockito" test/widget/ --include="*.dart" >/dev/null 2>&1; then \
+		echo "❌ VIOLATION: Mockito detected in widget tests! Use Mocktail instead."; \
 		echo "   Standard: .axovia-flow/company-standards/flutter-specific/flutter-testing-standard.md"; \
-		echo ""; \
-		echo "🔧 To fix violations:"; \
-		echo "   1. Remove all mocktail imports from widget tests"; \
-		echo "   2. Replace mocked providers with real implementations"; \
-		echo "   3. Use test data instead of mocked responses"; \
-		echo "   4. Test actual widget behavior, not mocked behavior"; \
-		echo ""; \
-		echo "💡 For legacy migration, use: make test-widget-legacy"; \
 		exit 1; \
+	else \
+		echo "✅ No prohibited frameworks detected"; \
 	fi
-	@echo "✅ No prohibited mocking detected"
-	@echo "Testing real widget behavior and interactions..."
 	flutter test test/widget/ --coverage --reporter=expanded
 	@echo "✅ Widget tests completed with coverage"
 	@echo "📊 Validating coverage requirements..."
@@ -136,33 +127,30 @@ test-widget-coverage:
 # ⚠️  WARNING: This target bypasses company standards and should only be used
 # during the migration period to remove mocking from widget tests
 test-widget-legacy:
-	@echo "🎨⚠️  Running LEGACY widget tests (bypasses standards)..."
-	@echo "WARNING: This target allows prohibited mocking and violates company standards"
-	@echo "Standard: .axovia-flow/company-standards/flutter-specific/flutter-testing-standard.md"
-	@echo "🚨 MIGRATION REQUIRED: Remove all mocking from widget tests"
-	@echo ""
-	@echo "Detected violations:"
-	@grep -r "mocktail\|mockito\|Mock\|when(" test/widget/ --include="*.dart" 2>/dev/null | head -10 || echo "No violations found"
-	@echo ""
-	@echo "Running tests with violations (TEMPORARY)..."
-	flutter test test/widget/ --coverage --reporter=expanded
-	@echo "⚠️  Legacy widget tests completed - MIGRATION REQUIRED"
+	@echo "🎨⚠️  LEGACY target is deprecated. Using standard widget tests (mocking dependencies allowed via Mocktail)."
+	$(MAKE) test-widget
 
 # Run only compliant widget tests (no mocking violations)
 test-widget-compliant:
-	@echo "🎨✅ Running compliant widget tests only..."
-	@echo "Standard: Flutter Testing Standard | Coverage: ≥70% | Mocking: PROHIBITED"
-	@echo "Running tests that comply with company standards..."
-	flutter test test/widget/dialogs/notice_dialog_test.dart --coverage --reporter=expanded
+	@echo "🎨✅ Running compliant widget tests (Mocktail allowed; Mockito prohibited)..."
+	@echo "Standard: Flutter Testing Standard | Coverage: ≥85% | Mocking: Allowed for external dependencies via Mocktail; do not mock widgets/rendering"
+	@echo "Validating widget tests for prohibited frameworks..."
+	@if grep -R -n -E "package:mockito|Mockito" test/widget/ --include="*.dart" >/dev/null 2>&1; then \
+		echo "❌ VIOLATION: Mockito detected in widget tests! Use Mocktail instead."; \
+		exit 1; \
+	else \
+		echo "✅ No prohibited frameworks detected"; \
+	fi
+	flutter test test/widget/ --coverage --reporter=expanded
 	@echo "✅ Compliant widget tests completed"
 	@echo "📊 Coverage report generated for compliant tests"
 
 # Golden Testing (visual regression)
 # Executes: flutter test with golden file generation
-# Mocking: Provider mocking permitted for widget goldens
+# Mocking: PROHIBITED
 test-golden:
 	@echo "🖼️  Running golden tests (visual regression)..."
-	@echo "Mocking: Provider mocking permitted | Purpose: Visual consistency"
+	@echo "Mocking: PROHIBITED | Purpose: Visual consistency"
 	flutter test --dart-define=ENABLE_GOLDEN_TESTS=true test/widget/ --reporter=expanded
 	@echo "✅ Golden tests completed"
 

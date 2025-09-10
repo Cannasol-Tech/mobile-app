@@ -8,13 +8,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 
 import 'package:cannasoltech_automation/components/confirm_dialog.dart';
 
 // Import centralized test helpers
-import '../../helpers/mocks.dart';
-import '../../helpers/test_data.dart';
 import '../../helpers/test_utils.dart';
 
 void main() {
@@ -28,7 +25,7 @@ void main() {
     const testCancelText = 'Cancel';
 
     group('Rendering Tests', () {
-      testWidgets('should render dialog with title and message', 
+      testWidgets('should render dialog with title and message',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -57,7 +54,7 @@ void main() {
         TestAssertions.expectVisible(find.text(testMessage));
       });
 
-      testWidgets('should render default confirm and cancel buttons', 
+      testWidgets('should render default confirm and cancel buttons',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -85,7 +82,7 @@ void main() {
         TestAssertions.expectVisible(find.text('Cancel'));
       });
 
-      testWidgets('should render custom button texts when provided', 
+      testWidgets('should render custom button texts when provided',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -115,7 +112,7 @@ void main() {
         TestAssertions.expectVisible(find.text(testCancelText));
       });
 
-      testWidgets('should display warning icon when isDestructive is true', 
+      testWidgets('should display warning icon when isDestructive is true',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -145,7 +142,7 @@ void main() {
     });
 
     group('Interaction Tests', () {
-      testWidgets('should return true when confirm button is tapped', 
+      testWidgets('should return true when confirm button is tapped',
           (WidgetTester tester) async {
         // Arrange
         bool? result;
@@ -180,7 +177,7 @@ void main() {
         expect(result, isTrue);
       });
 
-      testWidgets('should return false when cancel button is tapped', 
+      testWidgets('should return false when cancel button is tapped',
           (WidgetTester tester) async {
         // Arrange
         bool? result;
@@ -215,7 +212,7 @@ void main() {
         expect(result, isFalse);
       });
 
-      testWidgets('should return null when dialog is dismissed by barrier tap', 
+      testWidgets('should return null when dialog is dismissed by barrier tap',
           (WidgetTester tester) async {
         // Arrange
         bool? result;
@@ -250,7 +247,7 @@ void main() {
         expect(result, isNull);
       });
 
-      testWidgets('should call onConfirm callback when provided', 
+      testWidgets('should call onConfirm callback when provided',
           (WidgetTester tester) async {
         // Arrange
         bool callbackCalled = false;
@@ -285,7 +282,7 @@ void main() {
         expect(callbackCalled, isTrue);
       });
 
-      testWidgets('should call onCancel callback when provided', 
+      testWidgets('should call onCancel callback when provided',
           (WidgetTester tester) async {
         // Arrange
         bool callbackCalled = false;
@@ -322,7 +319,7 @@ void main() {
     });
 
     group('Accessibility Tests', () {
-      testWidgets('should have proper semantic labels', 
+      testWidgets('should have proper semantic labels',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -348,19 +345,19 @@ void main() {
         // Assert
         final confirmButton = find.text('Confirm');
         final cancelButton = find.text('Cancel');
-        
+
         TestAssertions.expectVisible(confirmButton);
         TestAssertions.expectVisible(cancelButton);
-        
+
         // Check that buttons are properly labeled for screen readers
         final confirmSemantics = tester.getSemantics(confirmButton);
         final cancelSemantics = tester.getSemantics(cancelButton);
-        
+
         expect(confirmSemantics.label, contains('Confirm'));
         expect(cancelSemantics.label, contains('Cancel'));
       });
 
-      testWidgets('should support keyboard navigation', 
+      testWidgets('should support keyboard navigation',
           (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
@@ -384,16 +381,23 @@ void main() {
         await tester.pumpAndSettle();
 
         // Assert - Check that buttons are focusable
-        final confirmButton = find.text('Confirm');
-        final cancelButton = find.text('Cancel');
-        
+        // Find TextButton widgets directly instead of by text content
+        final confirmButton = find.descendant(
+          of: find.byType(TextButton),
+          matching: find.text('Confirm'),
+        );
+        final cancelButton = find.descendant(
+          of: find.byType(TextButton),
+          matching: find.text('Cancel'),
+        );
+
         expect(tester.widget<TextButton>(confirmButton).focusNode, isNotNull);
         expect(tester.widget<TextButton>(cancelButton).focusNode, isNotNull);
       });
     });
 
     group('Edge Cases', () {
-      testWidgets('should handle empty title gracefully', 
+      testWidgets('should handle empty title gracefully',
           (WidgetTester tester) async {
         // Act & Assert - Should not throw
         await tester.pumpWidget(
@@ -419,7 +423,7 @@ void main() {
         TestAssertions.expectVisible(find.byType(ConfirmDialog));
       });
 
-      testWidgets('should handle empty message gracefully', 
+      testWidgets('should handle empty message gracefully',
           (WidgetTester tester) async {
         // Act & Assert - Should not throw
         await tester.pumpWidget(
@@ -445,11 +449,13 @@ void main() {
         TestAssertions.expectVisible(find.byType(ConfirmDialog));
       });
 
-      testWidgets('should handle very long text content', 
+      testWidgets('should handle very long text content',
           (WidgetTester tester) async {
         // Arrange
-        const longTitle = 'This is a very long title that should be handled properly by the dialog without causing overflow issues';
-        const longMessage = 'This is a very long message that should be handled properly by the dialog without causing overflow or layout issues. It contains multiple sentences and should wrap correctly.';
+        const longTitle =
+            'This is a very long title that should be handled properly by the dialog without causing overflow issues';
+        const longMessage =
+            'This is a very long message that should be handled properly by the dialog without causing overflow or layout issues. It contains multiple sentences and should wrap correctly.';
 
         // Act
         await tester.pumpWidget(

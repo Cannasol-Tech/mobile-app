@@ -1,7 +1,7 @@
 // Alarm Message Widget Tests
 //
 // This file contains widget tests for the AlarmMessage component.
-// Tests verify UI behavior, user interactions, and widget rendering.
+// Tests verify UI behavior, alarm state management, and widget rendering.
 //
 // Testing Framework: flutter_test + mocktail
 // Standards: Follow Axovia Flow Flutter testing standards
@@ -14,6 +14,8 @@ import 'package:mocktail/mocktail.dart';
 import 'package:cannasoltech_automation/components/alarm_message.dart';
 import 'package:cannasoltech_automation/providers/system_data_provider.dart';
 import 'package:cannasoltech_automation/providers/display_data_provider.dart';
+import 'package:cannasoltech_automation/data_models/device.dart';
+import 'package:cannasoltech_automation/handlers/alarm_handler.dart';
 
 // Import centralized test helpers
 import '../../helpers/mocks.dart';
@@ -26,156 +28,57 @@ void main() {
 
   group('AlarmMessage Widget Tests', () {
     late ProviderMockSetup providerMocks;
+    late MockDevice mockDevice;
+    late MockAlarmsModel mockAlarms;
 
     setUp(() {
       providerMocks = MockSetup.createProviderMocks();
+      mockDevice = MockDevice();
+      mockAlarms = MockAlarmsModel();
+
+      // Setup device with alarms
+      when(() => mockDevice.alarms).thenReturn(mockAlarms);
+      when(() => providerMocks.systemDataModel.activeDevice)
+          .thenReturn(mockDevice);
+      when(() => providerMocks.systemDataModel.alarmFlash).thenReturn(false);
     });
 
-    group('Rendering Tests', () {
-      testWidgets('should render alarm message when alarm is active',
+    group('AlarmMessage.fromText Factory Tests', () {
+      testWidgets('should create Flow alarm message correctly',
           (WidgetTester tester) async {
         // Arrange
-        when(() => providerMocks.systemDataModel.alarmActive).thenReturn(true);
-        when(() => providerMocks.systemDataModel.alarmMessage)
-            .thenReturn('Flow alarm active');
-
-        // Act
-        await tester.pumpWidget(
-          createTestAppWithProviders(
-            child: const Scaffold(
-              body: AlarmMessage(),
-            ),
-            systemDataModel: providerMocks.systemDataModel,
-            displayDataModel: providerMocks.displayDataModel,
-          ),
-        );
-
-        // Assert
-        TestAssertions.expectVisible(find.byType(AlarmMessage));
-        TestAssertions.expectVisible(find.text('Flow alarm active'));
-      });
-
-      testWidgets('should not render alarm message when no alarm is active',
-          (WidgetTester tester) async {
-        // Arrange
-        when(() => providerMocks.systemDataModel.alarmActive).thenReturn(false);
-        when(() => providerMocks.systemDataModel.alarmMessage).thenReturn('');
-
-        // Act
-        await tester.pumpWidget(
-          createTestAppWithProviders(
-            child: const Scaffold(
-              body: AlarmMessage(),
-            ),
-            systemDataModel: providerMocks.systemDataModel,
-            displayDataModel: providerMocks.displayDataModel,
-          ),
-        );
-
-        // Assert
-        TestAssertions.expectNotVisible(find.text('Flow alarm active'));
-      });
-
-      testWidgets('should display correct alarm icon',
-          (WidgetTester tester) async {
-        // Arrange
-        when(() => providerMocks.systemDataModel.alarmActive).thenReturn(true);
-        when(() => providerMocks.systemDataModel.alarmMessage)
-            .thenReturn('Temperature alarm');
-
-        // Act
-        await tester.pumpWidget(
-          createTestAppWithProviders(
-            child: const Scaffold(
-              body: AlarmMessage(),
-            ),
-            systemDataModel: providerMocks.systemDataModel,
-            displayDataModel: providerMocks.displayDataModel,
-          ),
-        );
-
-        // Assert
-        TestAssertions.expectVisible(find.byIcon(Icons.warning));
-      });
-    });
-
-    group('Interaction Tests', () {
-      testWidgets('should handle tap interaction on alarm message',
-          (WidgetTester tester) async {
-        // Arrange
-        bool tapped = false;
-        when(() => providerMocks.systemDataModel.alarmActive).thenReturn(true);
-        when(() => providerMocks.systemDataModel.alarmMessage)
-            .thenReturn('Pressure alarm');
+        mockAlarms.setAlarmState('flowAlarm', true);
+        mockAlarms.setAlarmState('ignoreFlowAlarm', false);
+        when(() => providerMocks.systemDataModel.alarmFlash).thenReturn(true);
 
         // Act
         await tester.pumpWidget(
           createTestAppWithProviders(
             child: Scaffold(
-              body: GestureDetector(
-                onTap: () => tapped = true,
-                child: const AlarmMessage(),
-              ),
+              body: AlarmMessage.fromText('Flow Alarm!'),
             ),
             systemDataModel: providerMocks.systemDataModel,
             displayDataModel: providerMocks.displayDataModel,
           ),
         );
 
-        await TestInteractions.tap(tester, find.byType(AlarmMessage));
-
         // Assert
-        expect(tapped, isTrue);
+        TestAssertions.expectVisible(find.byType(AlarmMessage));
+        TestAssertions.expectVisible(find.text('Flow Alarm!'));
       });
-    });
 
-    group('State Management Tests', () {
-      testWidgets('should update when alarm state changes',
+      testWidgets('should create Temperature alarm message correctly',
           (WidgetTester tester) async {
         // Arrange
-        when(() => providerMocks.systemDataModel.alarmActive).thenReturn(false);
-        when(() => providerMocks.systemDataModel.alarmMessage).thenReturn('');
-
-        await tester.pumpWidget(
-          createTestAppWithProviders(
-            child: const Scaffold(
-              body: AlarmMessage(),
-            ),
-            systemDataModel: providerMocks.systemDataModel,
-            displayDataModel: providerMocks.displayDataModel,
-          ),
-        );
-
-        // Verify no alarm initially
-        TestAssertions.expectNotVisible(find.text('System alarm'));
-
-        // Act - Simulate alarm activation
-        when(() => providerMocks.systemDataModel.alarmActive).thenReturn(true);
-        when(() => providerMocks.systemDataModel.alarmMessage)
-            .thenReturn('System alarm');
-
-        // Trigger rebuild
-        providerMocks.systemDataModel.notifyListeners();
-        await tester.pump();
-
-        // Assert
-        TestAssertions.expectVisible(find.text('System alarm'));
-      });
-    });
-
-    group('Accessibility Tests', () {
-      testWidgets('should have proper accessibility labels',
-          (WidgetTester tester) async {
-        // Arrange
-        when(() => providerMocks.systemDataModel.alarmActive).thenReturn(true);
-        when(() => providerMocks.systemDataModel.alarmMessage)
-            .thenReturn('Critical alarm');
+        mockAlarms.setAlarmState('tempAlarm', true);
+        mockAlarms.setAlarmState('ignoreTempAlarm', false);
+        when(() => providerMocks.systemDataModel.alarmFlash).thenReturn(true);
 
         // Act
         await tester.pumpWidget(
           createTestAppWithProviders(
-            child: const Scaffold(
-              body: AlarmMessage(),
+            child: Scaffold(
+              body: AlarmMessage.fromText('Temperature Alarm!'),
             ),
             systemDataModel: providerMocks.systemDataModel,
             displayDataModel: providerMocks.displayDataModel,
@@ -183,76 +86,261 @@ void main() {
         );
 
         // Assert
-        final semantics = tester.getSemantics(find.byType(AlarmMessage));
-        expect(semantics.label, contains('alarm'));
+        TestAssertions.expectVisible(find.byType(AlarmMessage));
+        TestAssertions.expectVisible(find.text('Temperature Alarm!'));
+      });
+
+      testWidgets('should create Pressure alarm message correctly',
+          (WidgetTester tester) async {
+        // Arrange
+        mockAlarms.setAlarmState('pressureAlarm', true);
+        mockAlarms.setAlarmState('ignorePressureAlarm', false);
+        when(() => providerMocks.systemDataModel.alarmFlash).thenReturn(true);
+
+        // Act
+        await tester.pumpWidget(
+          createTestAppWithProviders(
+            child: Scaffold(
+              body: AlarmMessage.fromText('Pressure Alarm!'),
+            ),
+            systemDataModel: providerMocks.systemDataModel,
+            displayDataModel: providerMocks.displayDataModel,
+          ),
+        );
+
+        // Assert
+        TestAssertions.expectVisible(find.byType(AlarmMessage));
+        TestAssertions.expectVisible(find.text('Pressure Alarm!'));
+      });
+
+      testWidgets('should create Overload alarm message correctly',
+          (WidgetTester tester) async {
+        // Arrange
+        mockAlarms.setAlarmState('overloadAlarm', true);
+        mockAlarms.setAlarmState('ignoreOverloadAlarm', false);
+        when(() => providerMocks.systemDataModel.alarmFlash).thenReturn(true);
+
+        // Act
+        await tester.pumpWidget(
+          createTestAppWithProviders(
+            child: Scaffold(
+              body: AlarmMessage.fromText('Overload Alarm!'),
+            ),
+            systemDataModel: providerMocks.systemDataModel,
+            displayDataModel: providerMocks.displayDataModel,
+          ),
+        );
+
+        // Assert
+        TestAssertions.expectVisible(find.byType(AlarmMessage));
+        TestAssertions.expectVisible(find.text('Overload Alarm!'));
+      });
+
+      testWidgets('should create Frequency Lock alarm message correctly',
+          (WidgetTester tester) async {
+        // Arrange
+        mockAlarms.setAlarmState('freqLockAlarm', true);
+        mockAlarms.setAlarmState('ignoreFreqLockAlarm', false);
+        when(() => providerMocks.systemDataModel.alarmFlash).thenReturn(true);
+
+        // Act
+        await tester.pumpWidget(
+          createTestAppWithProviders(
+            child: Scaffold(
+              body: AlarmMessage.fromText('Frequency Lock Alarm!'),
+            ),
+            systemDataModel: providerMocks.systemDataModel,
+            displayDataModel: providerMocks.displayDataModel,
+          ),
+        );
+
+        // Assert
+        TestAssertions.expectVisible(find.byType(AlarmMessage));
+        TestAssertions.expectVisible(find.text('Frequency Lock Alarm!'));
+      });
+    });
+
+    group('Alarm Flash Behavior Tests', () {
+      testWidgets('should show text when alarm is active and flash is true',
+          (WidgetTester tester) async {
+        // Arrange
+        mockAlarms.setAlarmState('flowAlarm', true);
+        mockAlarms.setAlarmState('ignoreFlowAlarm', false);
+        when(() => providerMocks.systemDataModel.alarmFlash).thenReturn(true);
+
+        // Act
+        await tester.pumpWidget(
+          createTestAppWithProviders(
+            child: Scaffold(
+              body: AlarmMessage.fromText('Flow Alarm!'),
+            ),
+            systemDataModel: providerMocks.systemDataModel,
+            displayDataModel: providerMocks.displayDataModel,
+          ),
+        );
+
+        // Assert
+        final textWidget = tester.widget<Text>(find.text('Flow Alarm!'));
+        expect(textWidget.style?.color, isNot(equals(Colors.transparent)));
+      });
+
+      testWidgets('should hide text when alarm is active but flash is false',
+          (WidgetTester tester) async {
+        // Arrange
+        mockAlarms.setAlarmState('flowAlarm', true);
+        mockAlarms.setAlarmState('ignoreFlowAlarm', false);
+        when(() => providerMocks.systemDataModel.alarmFlash).thenReturn(false);
+
+        // Act
+        await tester.pumpWidget(
+          createTestAppWithProviders(
+            child: Scaffold(
+              body: AlarmMessage.fromText('Flow Alarm!'),
+            ),
+            systemDataModel: providerMocks.systemDataModel,
+            displayDataModel: providerMocks.displayDataModel,
+          ),
+        );
+
+        // Assert
+        final textWidget = tester.widget<Text>(find.text('Flow Alarm!'));
+        expect(textWidget.style?.color, equals(Colors.transparent));
+      });
+    });
+
+    group('Ignore Alarm Tests', () {
+      testWidgets('should hide text when alarm is active but ignored',
+          (WidgetTester tester) async {
+        // Arrange
+        mockAlarms.setAlarmState('flowAlarm', true);
+        mockAlarms.setAlarmState('ignoreFlowAlarm', true); // Alarm is ignored
+        when(() => providerMocks.systemDataModel.alarmFlash).thenReturn(true);
+
+        // Act
+        await tester.pumpWidget(
+          createTestAppWithProviders(
+            child: Scaffold(
+              body: AlarmMessage.fromText('Flow Alarm!'),
+            ),
+            systemDataModel: providerMocks.systemDataModel,
+            displayDataModel: providerMocks.displayDataModel,
+          ),
+        );
+
+        // Assert - Text should be transparent because alarm is ignored
+        final textWidget = tester.widget<Text>(find.text('Flow Alarm!'));
+        expect(textWidget.style?.color, equals(Colors.transparent));
+      });
+
+      testWidgets('should show text when alarm is active and not ignored',
+          (WidgetTester tester) async {
+        // Arrange
+        mockAlarms.setAlarmState('tempAlarm', true);
+        mockAlarms.setAlarmState(
+            'ignoreTempAlarm', false); // Alarm is not ignored
+        when(() => providerMocks.systemDataModel.alarmFlash).thenReturn(true);
+
+        // Act
+        await tester.pumpWidget(
+          createTestAppWithProviders(
+            child: Scaffold(
+              body: AlarmMessage.fromText('Temperature Alarm!'),
+            ),
+            systemDataModel: providerMocks.systemDataModel,
+            displayDataModel: providerMocks.displayDataModel,
+          ),
+        );
+
+        // Assert - Text should be visible because alarm is active and not ignored
+        final textWidget = tester.widget<Text>(find.text('Temperature Alarm!'));
+        expect(textWidget.style?.color, isNot(equals(Colors.transparent)));
       });
     });
 
     group('Edge Cases', () {
-      testWidgets('should handle null alarm message gracefully',
+      testWidgets('should handle no device gracefully',
           (WidgetTester tester) async {
         // Arrange
-        when(() => providerMocks.systemDataModel.alarmActive).thenReturn(true);
-        when(() => providerMocks.systemDataModel.alarmMessage).thenReturn(null);
+        when(() => providerMocks.systemDataModel.activeDevice).thenReturn(null);
+        when(() => providerMocks.systemDataModel.alarmFlash).thenReturn(true);
 
         // Act & Assert - Should not throw
         await tester.pumpWidget(
           createTestAppWithProviders(
-            child: const Scaffold(
-              body: AlarmMessage(),
+            child: Scaffold(
+              body: AlarmMessage.fromText('Flow Alarm!'),
             ),
             systemDataModel: providerMocks.systemDataModel,
             displayDataModel: providerMocks.displayDataModel,
           ),
         );
 
+        // Should render but with no alarm data
         TestAssertions.expectVisible(find.byType(AlarmMessage));
       });
 
-      testWidgets('should handle empty alarm message',
+      testWidgets('should handle alarm state when no alarm is active',
           (WidgetTester tester) async {
         // Arrange
-        when(() => providerMocks.systemDataModel.alarmActive).thenReturn(true);
-        when(() => providerMocks.systemDataModel.alarmMessage).thenReturn('');
+        mockAlarms.setAlarmState('flowAlarm', false);
+        mockAlarms.setAlarmState('ignoreFlowAlarm', false);
+        when(() => providerMocks.systemDataModel.alarmFlash).thenReturn(true);
 
         // Act
         await tester.pumpWidget(
           createTestAppWithProviders(
-            child: const Scaffold(
-              body: AlarmMessage(),
+            child: Scaffold(
+              body: AlarmMessage.fromText('Flow Alarm!'),
             ),
             systemDataModel: providerMocks.systemDataModel,
             displayDataModel: providerMocks.displayDataModel,
           ),
         );
+
+        // Assert - Text should be transparent because no alarm is active
+        final textWidget = tester.widget<Text>(find.text('Flow Alarm!'));
+        expect(textWidget.style?.color, equals(Colors.transparent));
+      });
+    });
+
+    group('AlarmMessageDb Tests', () {
+      test('should create correct alarm messages', () {
+        // Arrange & Act
+        final alarmDb = AlarmMessageDb();
 
         // Assert
-        TestAssertions.expectVisible(find.byType(AlarmMessage));
+        expect(alarmDb.flow, isA<AlarmMessage>());
+        expect(alarmDb.temp, isA<AlarmMessage>());
+        expect(alarmDb.pressure, isA<AlarmMessage>());
+        expect(alarmDb.overload, isA<AlarmMessage>());
+        expect(alarmDb.freqLock, isA<AlarmMessage>());
       });
 
-      testWidgets('should handle very long alarm messages',
-          (WidgetTester tester) async {
-        // Arrange
-        const longMessage =
-            'This is a very long alarm message that should be handled properly by the widget without causing overflow or layout issues';
-        when(() => providerMocks.systemDataModel.alarmActive).thenReturn(true);
-        when(() => providerMocks.systemDataModel.alarmMessage)
-            .thenReturn(longMessage);
-
+      test('should return correct sonic alarm messages', () {
         // Act
-        await tester.pumpWidget(
-          createTestAppWithProviders(
-            child: const Scaffold(
-              body: AlarmMessage(),
-            ),
-            systemDataModel: providerMocks.systemDataModel,
-            displayDataModel: providerMocks.displayDataModel,
-          ),
-        );
+        final sonicAlarms = sonicAlarmMessages();
 
-        // Assert - Should not overflow
-        TestAssertions.expectVisible(find.byType(AlarmMessage));
-        expect(tester.takeException(), isNull);
+        // Assert
+        expect(sonicAlarms, hasLength(3));
+        expect(sonicAlarms, everyElement(isA<AlarmMessage>()));
+      });
+
+      test('should return correct pump alarm messages', () {
+        // Act
+        final pumpAlarms = pumpAlarmMessages();
+
+        // Assert
+        expect(pumpAlarms, hasLength(1));
+        expect(pumpAlarms, everyElement(isA<AlarmMessage>()));
+      });
+
+      test('should return correct tank alarm messages', () {
+        // Act
+        final tankAlarms = tankAlarmMessages();
+
+        // Assert
+        expect(tankAlarms, hasLength(1));
+        expect(tankAlarms, everyElement(isA<AlarmMessage>()));
       });
     });
   });

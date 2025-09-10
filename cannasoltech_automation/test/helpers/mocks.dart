@@ -26,6 +26,7 @@ import 'package:cannasoltech_automation/api/firebase_api.dart';
 import 'package:cannasoltech_automation/data_models/device.dart';
 import 'package:cannasoltech_automation/handlers/config_handler.dart';
 import 'package:cannasoltech_automation/handlers/state_handler.dart';
+import 'package:cannasoltech_automation/handlers/alarm_handler.dart';
 import 'package:cannasoltech_automation/data_classes/status_message.dart';
 
 // =============================================================================
@@ -110,6 +111,20 @@ class MockFirebaseApi extends Mock implements FirebaseApi {}
 /// Mock Device
 class MockDevice extends Mock implements Device {}
 
+/// Mock AlarmsModel
+class MockAlarmsModel extends Mock implements AlarmsModel {
+  final Map<String, bool> _alarmStates = {};
+
+  void setAlarmState(String key, bool value) {
+    _alarmStates[key] = value;
+  }
+
+  @override
+  bool operator [](String key) {
+    return _alarmStates[key] ?? false;
+  }
+}
+
 /// Mock ConfigHandler
 class MockConfigHandler extends Mock implements ConfigHandler {}
 
@@ -159,6 +174,10 @@ class MockScaffoldMessengerState extends Mock
     return super.toString();
   }
 }
+
+/// Mock GlobalKey for testing navigator and other keys
+class MockGlobalKey<T extends State<StatefulWidget>> extends Mock
+    implements GlobalKey<T> {}
 
 // =============================================================================
 // Mock Registration Helper
