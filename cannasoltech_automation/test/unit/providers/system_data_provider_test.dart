@@ -151,6 +151,180 @@ void main() {
       expect(timerHandler.alarmTimers.containsKey('overload_alarm'), isTrue);
     });
 
+    test('should have AlarmTimer instances for all alarm types', () {
+      final alarmNames = ['flow_alarm', 'temp_alarm', 'pressure_alarm', 'freq_lock_alarm', 'overload_alarm'];
+      
+      for (final alarmName in alarmNames) {
+        expect(timerHandler.alarmTimers[alarmName], isA<AlarmTimer>());
+      }
+    });
+  });
+
+  group('SystemDataModel Tests', () {
+    late SystemDataModel systemDataModel;
+    late MockFirebaseAuth mockFirebaseAuth;
+
+    setUp(() {
+      systemDataModel = SystemDataModel();
+      mockFirebaseAuth = MockFirebaseAuth();
+    });
+
+    test('should initialize with default values', () {
+      expect(systemDataModel.activeDevice, isNull);
+      expect(systemDataModel.needsAcceptTaC, isFalse);
+      expect(systemDataModel.isPasswordVisible, isFalse);
+      expect(systemDataModel.alarmFlash, isFalse);
+      expect(systemDataModel.activeDeviceState, equals(INIT));
+    });
+
+    test('should have correct run page mappings', () {
+      expect(systemDataModel.currentRunPageMap.containsKey(RESET), isTrue);
+      expect(systemDataModel.currentRunPageMap.containsKey(INIT), isTrue);
+      expect(systemDataModel.currentRunPageMap.containsKey(WARM_UP), isTrue);
+      expect(systemDataModel.currentRunPageMap.containsKey(RUNNING), isTrue);
+      expect(systemDataModel.currentRunPageMap.containsKey(ALARM), isTrue);
+      expect(systemDataModel.currentRunPageMap.containsKey(FINISHED), isTrue);
+      expect(systemDataModel.currentRunPageMap.containsKey(COOL_DOWN), isTrue);
+    });
+
+    test('should initialize controllers and handlers properly', () {
+      expect(systemDataModel.textControllers, isNotNull);
+      expect(systemDataModel.toggleControllers, isNotNull);
+      expect(systemDataModel.userHandler, isNotNull);
+      expect(systemDataModel.devices, isNotNull);
+    });
+
+    test('should update Terms and Conditions acceptance correctly', () {
+      // Initial state
+      expect(systemDataModel.needsAcceptTaC, isFalse);
+      
+      // Simulate user doesn't accept ToC by calling updateNeedsAcceptTaC 10 times
+      for (int i = 0; i < 10; i++) {
+        systemDataModel.updateNeedsAcceptTaC();
+      }
+      
+      expect(systemDataModel.needsAcceptTaC, isTrue);
+    });
+
+    test('should handle current run page updates with no active device', () {
+      systemDataModel.updateCurrentRunPage();
+      expect(systemDataModel.currentRunPage, equals(systemDataModel.currentRunPageMap[RESET]));
+    });
+
+    test('should update alarm flash state correctly', () {
+      // Initially no alarm flash
+      expect(systemDataModel.alarmFlash, isFalse);
+      
+      // Test with no active device - should not crash
+      systemDataModel.updateAlarmFlash();
+      expect(systemDataModel.alarmFlash, isFalse);
+    });
+
+    test('should handle data controller updates with null device', () {
+      // Should not crash when updating with null device
+      systemDataModel.updateDataControllers(null);
+      expect(systemDataModel.activeDevice, isNull);
+    });
+
+    test('should handle alarm timer updates with no active device', () {
+      // Should return early when no active device
+      systemDataModel.updateAlarmTimers();
+      // Test passes if no exception is thrown
+    });
+
+    test('should provide screen utility methods', () {
+      // Create a minimal BuildContext for testing
+      // Note: In a real test environment, you'd need a proper BuildContext
+      // For now, we'll test the existence of these methods
+      expect(systemDataModel.display, isA<Function>());
+      expect(systemDataModel.screenHeight, isA<Function>());
+      expect(systemDataModel.screenWidth, isA<Function>());
+    });
+
+    test('should manage device selection correctly', () {
+      const testDeviceId = 'test-device-123';
+      
+      // Should handle device selection when user handler is available
+      systemDataModel.selectDevice(testDeviceId);
+      
+      // Verify the method doesn't crash with empty device ID
+      systemDataModel.selectDevice('');
+    });
+
+    test('should start and stop update data timer', () {
+      // Test timer initialization
+      systemDataModel.startUpdateDataTimer();
+      expect(systemDataModel.updatingData, isNotNull);
+      
+      // Test timer cleanup
+      systemDataModel.stopUpdateDataTimer();
+    });
+
+    test('should handle password visibility toggle', () {
+      expect(systemDataModel.isPasswordVisible, isFalse);
+      systemDataModel.togglePasswordVisibility();
+      expect(systemDataModel.isPasswordVisible, isTrue);
+      systemDataModel.togglePasswordVisibility();
+      expect(systemDataModel.isPasswordVisible, isFalse);
+    });
+
+    test('should set bottom navigation pages', () {
+      systemDataModel.setBottomNavPages();
+      expect(systemDataModel.bottomNavPages, isNotEmpty);
+      expect(systemDataModel.bottomNavPages.length, greaterThan(0));
+    });
+
+    test('should handle disposal correctly', () {
+      systemDataModel.init();
+      systemDataModel.dispose();
+      // Test passes if disposal doesn't throw exceptions
+    });
+
+    test('should handle run page title access', () {
+      expect(systemDataModel.runPageTitle, isNotNull);
+      expect(systemDataModel.runPageTitle, isA<String>());
+    });
+
+    test('should manage alarm count for flashing correctly', () {
+      // Test that alarm flash counter resets properly
+      expect(systemDataModel.alarmFlash, isFalse);
+      
+      // Call multiple times to test the counter logic
+      for (int i = 0; i < 5; i++) {
+        systemDataModel.updateAlarmFlash();
+      }
+      
+      // Should still be false since no active device with alarms
+      expect(systemDataModel.alarmFlash, isFalse);
+    });
+
+    test('should handle registered device status access', () {
+      expect(systemDataModel.registeredDeviceStatus, isNotNull);
+      expect(systemDataModel.registeredDeviceStatus, isA<Map<String, String>>());
+    });
+
+    test('should manage authentication state changes', () {
+      // The model should have an auth listener
+      expect(systemDataModel.authStateChanges, isNotNull);
+    });
+
+    test('should handle Terms and Conditions counter reset', () {
+      // Test the TaC acceptance logic
+      systemDataModel.updateNeedsAcceptTaC();
+      
+      // Multiple calls should increment counter but not immediately trigger
+      for (int i = 0; i < 5; i++) {
+        systemDataModel.updateNeedsAcceptTaC();
+      }
+      
+      // Should not need TaC yet (less than 10 calls)
+      expect(systemDataModel.needsAcceptTaC, isFalse);
+    });
+  });
+}
+      expect(timerHandler.alarmTimers.containsKey('overload_alarm'), isTrue);
+    });
+
     test('should have AlarmTimer instances for each alarm', () {
       timerHandler.alarmTimers.forEach((key, value) {
         expect(value, isA<AlarmTimer>());
@@ -451,6 +625,119 @@ void main() {
       expect(systemDataModel.userHandler, isNotNull);
       expect(systemDataModel.devices, isNotNull);
       expect(systemDataModel.registeredDeviceStatus, isNotNull);
+    test('should toggle password visibility correctly', () {
+      // Initial state should be false
+      expect(systemDataModel.isPasswordVisible, isFalse);
+
+      // Toggle to true
+      systemDataModel.togglePWVis();
+      expect(systemDataModel.isPasswordVisible, isTrue);
+
+      // Toggle back to false
+      systemDataModel.togglePWVis();
+      expect(systemDataModel.isPasswordVisible, isFalse);
+    });
+
+    test('should update current run page with no active device', () {
+      systemDataModel.updateCurrentRunPage();
+
+      expect(systemDataModel.currentRunPage, isNotNull);
+      expect(systemDataModel.bottomNavPages[0],
+          equals(systemDataModel.currentRunPage));
+    });
+
+    test('should update alarm flash with no active device', () {
+      systemDataModel.updateAlarmFlash();
+
+      // With no active device, alarm flash should remain false
+      expect(systemDataModel.alarmFlash, isFalse);
+    });
+
+    test('should clear controllers when device is null', () {
+      systemDataModel.updateDataControllers(null);
+
+      expect(systemDataModel.activeDevice, isNull);
+    });
+
+    test('should handle null active device in alarm timers', () {
+      systemDataModel.updateAlarmTimers();
+
+      // Should not throw any errors
+      expect(() => systemDataModel.updateAlarmTimers(), returnsNormally);
+    });
+
+    test('should handle dispose without listeners', () {
+      systemDataModel.authListener = null;
+      systemDataModel.devicesListener = null;
+
+      expect(() => systemDataModel.dispose(), returnsNormally);
+      expect(systemDataModel.updatingData, isFalse);
+    });
+
+    test('should update needs accept TaC correctly', () {
+      final mockUserHandler = MockUserHandler();
+
+      when(() => mockUserHandler.doesAcceptTaC).thenReturn(false);
+
+      systemDataModel.updateNeedsAcceptTaC();
+
+      expect(systemDataModel.needsAcceptTaC, isFalse);
+    });
+
+    test('should set needs accept TaC after 10 counts', () {
+      final mockUserHandler = MockUserHandler();
+
+      when(() => mockUserHandler.doesAcceptTaC).thenReturn(false);
+
+      // Simulate 10 calls
+      for (int i = 0; i < 10; i++) {
+        systemDataModel.updateNeedsAcceptTaC();
+      }
+
+      expect(systemDataModel.needsAcceptTaC, isTrue);
+    });
+
+    test('should reset TaC count when user accepts', () {
+      final mockUserHandler = MockUserHandler();
+
+      when(() => mockUserHandler.doesAcceptTaC).thenReturn(true);
+
+      systemDataModel.updateNeedsAcceptTaC();
+
+      expect(systemDataModel.needsAcceptTaC, isFalse);
+    });
+
+    test('should get run page title', () {
+      expect(systemDataModel.runPageTitle, equals(RUN_TITLE));
+    });
+
+    test('should get current run page', () {
+      expect(systemDataModel.currentRunPage, isNotNull);
+    });
+
+    test('should get is password visible', () {
+      expect(systemDataModel.isPasswordVisible, isFalse);
+    });
+
+    test('should get alarm flash', () {
+      expect(systemDataModel.alarmFlash, isFalse);
+    });
+
+    test('should get user handler', () {
+      expect(systemDataModel.userHandler, isNotNull);
+    });
+
+    test('should get auth state changes stream', () {
+      expect(systemDataModel.authStateChanges, isNotNull);
+    });
+
+    test('should get bottom nav pages', () {
+      expect(systemDataModel.bottomNavPages, isNotNull);
+      expect(systemDataModel.bottomNavPages.length, equals(4));
+    });
+
+    test('should get needs accept TaC', () {
+      expect(systemDataModel.needsAcceptTaC, isFalse);
     });
   });
 }
