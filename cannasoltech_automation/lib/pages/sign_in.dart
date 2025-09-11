@@ -10,15 +10,11 @@
 import 'package:cannasoltech_automation/api/firebase_api.dart';
 import 'package:cannasoltech_automation/components/square_tile.dart';
 import 'package:cannasoltech_automation/providers/system_data_provider.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:provider/provider.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:crypto/crypto.dart';
-import 'dart:convert';
-import 'dart:math';
 
 import '../UserInterface/ui.dart';
 import '../handlers/user_handler.dart';
@@ -105,63 +101,6 @@ class _SignInPage1State extends State<SignInPage1> {
     }
   }
 
-  /// Generate a cryptographically secure random nonce
-  String generateNonce([int length = 32]) {
-    const charset =
-        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
-    final random = Random.secure();
-    return List.generate(length, (_) => charset[random.nextInt(charset.length)])
-        .join();
-  }
-
-  /// Generate SHA256 hash of input string
-  String sha256ofString(String input) {
-    final bytes = utf8.encode(input);
-    final digest = sha256.convert(bytes);
-    return digest.toString();
-  }
-
-  Future<void> signInWithApple(UserHandler userHandler) async {
-    try {
-      // Check if Apple Sign In is available
-      final isAvailable = await SignInWithApple.isAvailable();
-      if (!isAvailable) {
-        showErrorMessage('Apple Sign In is not available on this device');
-        return;
-      }
-
-      // Generate nonce
-      final rawNonce = generateNonce();
-      final nonce = sha256ofString(rawNonce);
-
-      // Request Apple ID credential
-      final appleCredential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-        nonce: nonce,
-      );
-
-      // Create Firebase credential
-      final oauthCredential = OAuthProvider("apple.com").credential(
-        idToken: appleCredential.identityToken,
-        rawNonce: rawNonce,
-      );
-
-      // Sign in with Firebase
-      await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-      userHandler.initialized = false;
-      userHandler.initialize();
-      FirebaseApi fbApi = FirebaseApi();
-      String? token = await fbApi.getToken();
-      userHandler.setFCMToken(token);
-      fbApi.setTokenRefreshCallback(userHandler.setFCMToken);
-    } catch (error) {
-      print('Apple sign-in error: $error'); // Add debugging
-      showErrorMessage('Apple sign-in failed: ${error.toString()}');
-    }
-  }
 
   String? validateEmail(String? input) {
     final bool isValid = EmailValidator.validate(emailController.text);
@@ -341,44 +280,18 @@ class _SignInPage1State extends State<SignInPage1> {
                       ]),
                       _gap(),
                       _gap(),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            GestureDetector(
-                              onTap: () async {
-                                signInWithGoogle(Provider.of<SystemDataModel>(
-                                        context,
-                                        listen: false)
-                                    .userHandler);
-                              },
-                              child: const SquareTile(
-                                  imagePath: "assets/images/g_logo.png"),
-                            ),
-                            const SizedBox(width: 25),
-                            GestureDetector(
-                              onTap: () async {
-                                signInWithApple(Provider.of<SystemDataModel>(
-                                        context,
-                                        listen: false)
-                                    .userHandler);
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.white,
-                                ),
-                                child: const Padding(
-                                  padding: EdgeInsets.all(15.0),
-                                  child: Icon(
-                                    Icons.apple,
-                                    size: 30,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ]),
+                      Center(
+                        child: GestureDetector(
+                          onTap: () async {
+                            signInWithGoogle(Provider.of<SystemDataModel>(
+                                    context,
+                                    listen: false)
+                                .userHandler);
+                          },
+                          child: const SquareTile(
+                              imagePath: "assets/images/g_logo.png"),
+                        ),
+                      )
                       _gap(),
                       _gap(),
                       Wrap(
