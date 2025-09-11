@@ -10,19 +10,16 @@
  */
 
 import 'package:logging/logging.dart';
+import '../services/logging_service.dart';
 
+// Backward compatibility: expose LoggingService as global log
+final LoggingService _loggingService = LoggingService();
+final Logger log = _loggingService.logger;
+
+// Deprecated: Use LoggingService instead
+@deprecated
 /// Global application logger instance
 final Logger log = Logger('AppLogger');
-
-/**
- * @brief Sets up application-wide logging configuration.
- * @details Configures the root logger to capture all log levels and sets up
- *          listeners for potential external service integration (Firebase, Sentry).
- * @since 1.0
- */
 void setupLogging() {
-  Logger.root.level = Level.ALL; // Capture all log levels
-  Logger.root.onRecord.listen((record) {
-    // Optionally send logs to external services (e.g., Firebase, Sentry)
-  });
+  // LoggingService handles this internally now
 }

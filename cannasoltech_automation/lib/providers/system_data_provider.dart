@@ -12,7 +12,7 @@
 
 // ignore_for_file: avoid_print
 import 'dart:async';
-import '../objects/logger.dart';
+import '../services/logging_service.dart';
 import '../data_models/device.dart';
 import 'package:flutter/material.dart';
 import '../handlers/active_device.dart';
@@ -167,6 +167,7 @@ class TimerHandler {
 
 class SystemDataModel extends ChangeNotifier {
   // Internal private state of the system
+  LoggingService? _loggingService;
 
   Device? _activeDevice;
   Device? get activeDevice => _activeDevice;
@@ -231,7 +232,7 @@ class SystemDataModel extends ChangeNotifier {
   void init(){
     _almCount = 0;
     setBottomNavPages();
-    log.info("DEBUG -> SystemDataModel initialized");
+    _loggingService?.info("DEBUG -> SystemDataModel initialized");
     startUpdateDataTimer();
     authListener = authStateChanges.listen((event) {
       if (event == null) {
@@ -239,10 +240,15 @@ class SystemDataModel extends ChangeNotifier {
       }
     });
   }
+  
+  /// Set the logging service - called during initialization
+  void setLoggingService(LoggingService loggingService) {
+    _loggingService = loggingService;
+  }
 
   @override
   dispose() {
-    log.info("DEBUG -> SystemDataModel disposed");
+    _loggingService?.info("DEBUG -> SystemDataModel disposed");
     stopUpdateDataTimer();
     // _alarmHandler.uninitialize();
     _activeDeviceHandler.uninitialize();
@@ -253,7 +259,7 @@ class SystemDataModel extends ChangeNotifier {
   }
 
   void startUpdateDataTimer() {
-    log.info("DEBUG -> Starting update data timer");
+    _loggingService?.info("DEBUG -> Starting update data timer");
     if (_timers.updateDataTimer == null){
       _timers.updateDataTimer = Timer.periodic(
         Duration(milliseconds: (_timers.updateSeconds*1000).toInt()),
@@ -261,7 +267,7 @@ class SystemDataModel extends ChangeNotifier {
        updatingData = true;
     }
     else {
-      log.info("DEBUG -> Starting update data timer");
+      _loggingService?.info("DEBUG -> Starting update data timer");
       _timers.updateDataTimer = null;
     }
   }
@@ -322,7 +328,7 @@ class SystemDataModel extends ChangeNotifier {
     /* Updates app to reflect the current system state */
     if (_activeDevice != null && _activeDevice?.name != 'None'){
       _currentRunPage = currentRunPageMap[_activeDevice?.state.state];
-      log.info("DEBUG PAGE -> _currentRunPage = $_currentRunPage");
+      _loggingService?.info("DEBUG PAGE -> _currentRunPage = $_currentRunPage");
     }
     else {
       _currentRunPage = currentRunPageMap[RESET];
@@ -413,7 +419,7 @@ class SystemDataModel extends ChangeNotifier {
 
 
   void updateData() {
-    log.info("Updating System Data");
+    _loggingService?.info("Updating System Data");
     if (userHandler.initialized && _devices.initialized){
       _activeDeviceHandler.update(userHandler.selectedDevice);
       updateDataControllers(_activeDeviceHandler.device);
