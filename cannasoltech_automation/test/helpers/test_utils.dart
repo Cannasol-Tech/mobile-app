@@ -77,11 +77,18 @@ Widget createTestApp({
   required Widget child,
   ThemeData? theme,
   Locale? locale,
+  TextDirection? textDirection,
 }) {
   return MaterialApp(
     title: UITestData.appTitle,
     theme: theme ?? ThemeData.light(),
     locale: locale,
+    builder: textDirection != null
+        ? (context, widget) => Directionality(
+              textDirection: textDirection,
+              child: widget!,
+            )
+        : null,
     home: child,
   );
 }
