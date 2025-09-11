@@ -44,8 +44,6 @@ void main() {
           .thenAnswer((_) async => true);
       when(() => mockUserHandler.signInWithGoogle())
           .thenAnswer((_) async => true);
-      when(() => mockUserHandler.signInWithApple())
-          .thenAnswer((_) async => true);
       when(() => mockUserHandler.resetPassword(any()))
           .thenAnswer((_) async => true);
       

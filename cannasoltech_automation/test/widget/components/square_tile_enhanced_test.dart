@@ -22,7 +22,6 @@ void main() {
   group('SquareTile Widget Tests', () {
     const testImagePath = 'assets/images/test_image.png';
     const googleImagePath = 'assets/images/google.png';
-    const appleImagePath = 'assets/images/apple.png';
 
     group('Rendering Tests', () {
       testWidgets('should render SquareTile with correct image asset', (WidgetTester tester) async {
@@ -164,18 +163,6 @@ void main() {
         expect((imageWidget.image as AssetImage).assetName, equals(googleImagePath));
       });
 
-      testWidgets('should render with Apple icon asset', (WidgetTester tester) async {
-        // Act
-        await tester.pumpWidget(
-          createTestApp(
-            child: const SquareTile(imagePath: appleImagePath),
-          ),
-        );
-
-        // Assert
-        final imageWidget = tester.widget<Image>(find.byType(Image));
-        expect((imageWidget.image as AssetImage).assetName, equals(appleImagePath));
-      });
 
       testWidgets('should handle empty image path', (WidgetTester tester) async {
         // Act
@@ -260,7 +247,7 @@ void main() {
               children: const [
                 SquareTile(imagePath: googleImagePath),
                 SizedBox(width: 10),
-                SquareTile(imagePath: appleImagePath),
+                SquareTile(imagePath: testImagePath),
               ],
             ),
           ),
@@ -279,7 +266,7 @@ void main() {
               children: const [
                 SquareTile(imagePath: googleImagePath),
                 SizedBox(height: 10),
-                SquareTile(imagePath: appleImagePath),
+                SquareTile(imagePath: testImagePath),
               ],
             ),
           ),
@@ -447,8 +434,8 @@ void main() {
             child: Row(
               children: const [
                 SquareTile(imagePath: googleImagePath),
-                SquareTile(imagePath: appleImagePath),
                 SquareTile(imagePath: testImagePath),
+                SquareTile(imagePath: googleImagePath),
               ],
             ),
           ),

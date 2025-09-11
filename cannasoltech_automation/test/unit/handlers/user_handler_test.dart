@@ -1,16 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import 'package:cannasoltech_automation/handlers/user_handler.dart';
 import '../../helpers/mocks.dart';
 
 // Add missing mock classes that aren't in the mocks.dart file
 class MockUserCredential extends Mock implements UserCredential {}
-
-class FakeAppleIDCredential extends Fake
-    implements AuthorizationCredentialAppleID {}
 
 void main() {
   late MockFirebaseAuth mockAuth;
@@ -89,8 +85,6 @@ void main() {
     when(() => mockGoogleAuth.accessToken).thenReturn('access-token');
     when(() => mockGoogleAuth.idToken).thenReturn('id-token');
 
-    // Mock Apple Sign-In - avoid platform channel calls
-    // Skip Apple Sign-In tests that require platform channels
   });
 
   group('UserHandler Constructor and Initialization', () {
@@ -198,10 +192,6 @@ void main() {
       // which is complex in unit tests
     });
 
-    test('should handle Apple Sign In unavailability', () async {
-      // Skip this test as it requires platform channel mocking
-      // which is complex in unit tests
-    });
   });
 
   group('User Profile Management', () {

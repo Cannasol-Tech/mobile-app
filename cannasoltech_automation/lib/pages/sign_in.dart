@@ -7,14 +7,12 @@
 /// @version 1.0
 /// @since 1.0
 
-import 'package:cannasoltech_automation/api/firebase_api.dart';
 import 'package:cannasoltech_automation/components/square_tile.dart';
 import 'package:cannasoltech_automation/providers/system_data_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:provider/provider.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 import '../UserInterface/ui.dart';
 import '../handlers/user_handler.dart';
@@ -291,7 +289,7 @@ class _SignInPage1State extends State<SignInPage1> {
                           child: const SquareTile(
                               imagePath: "assets/images/g_logo.png"),
                         ),
-                      )
+                      ),
                       _gap(),
                       _gap(),
                       Wrap(
