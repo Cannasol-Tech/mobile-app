@@ -37,7 +37,7 @@ Feature Specifications define the **EXACT** functionality to be implemented by d
 ### File Naming Convention
 
 ```sh
-docs/agile/features/feature-{ID}-{name-kebab-case}.md
+docs/agile/features/FEATURE-{ID}-{name-kebab-case}.md
 ```
 
 ### Template Structure

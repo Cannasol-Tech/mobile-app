@@ -7,12 +7,14 @@ This document establishes mandatory communication protocols for all AI Coding Ag
 ## Executive Summary
 
 ### Core Requirements
+
 1. **Mandatory Agent ID Prefix**: Every paragraph must begin with `[AGENT-ID]`
 2. **Consistent Identification**: Same ID throughout entire conversation session
 3. **Human Verification**: Always verify Agent ID with human upon initialization
 4. **Chat History Reference**: Use conversation history to maintain ID consistency
 
 ### Business Value
+
 - **Clear Attribution**: Every communication is traceable to specific agent instances
 - **Enhanced Collaboration**: Seamless coordination between multiple specialized agents
 - **Management Visibility**: Upper management can track agent performance and decisions
@@ -53,6 +55,7 @@ When an agent has forgotten their ID:
 4. **Resume with Consistency**: Continue using the verified ID for all subsequent communication
 
 **Example Recovery Scenario:**
+
 ```
 Agent discovers ID uncertainty → Reviews chat history → Finds "[DEV-02]" in recent messages → Asks human: "Should I continue as [DEV-02]?" → Human confirms → Agent resumes with [DEV-02]
 ```
@@ -60,11 +63,13 @@ Agent discovers ID uncertainty → Reviews chat history → Finds "[DEV-02]" in 
 #### Technical Implementation Notes
 
 **Memory vs. Chat History:**
+
 - **Agent Memory**: Volatile, reset between sessions, shared across instances - DO NOT USE for ID storage
 - **Chat History**: Persistent within conversation, reliable source of truth - USE for ID reference
 - **Human Verification**: Ultimate authority for ID assignment and validation
 
 **Purpose and Benefits:**
+
 - **Multi-Agent Coordination**: Clear identification enables seamless collaboration
 - **Management Oversight**: Upper management can identify responsible agents
 - **Conversation Clarity**: Eliminates confusion in complex multi-agent workflows
@@ -78,12 +83,14 @@ Agent discovers ID uncertainty → Reviews chat history → Finds "[DEV-02]" in 
 **Required Format**: `[AGENT-ID]` immediately followed by message content
 
 **Syntax Rules:**
+
 - Square brackets are mandatory: `[` and `]`
 - No spaces within brackets: `[AGENT-ID]` not `[ AGENT-ID ]`
 - Immediate content follow: `[AGENT-ID] Message content` not `[AGENT-ID]\n\nMessage`
 - Case sensitivity: Use UPPERCASE for agent type, numbers for instance
 
 **Valid Examples:**
+
 - `[AUGGIE-01] I've completed the code analysis as requested.`
 - `[DEV-02] The authentication module is now ready for testing.`
 - `[QA-01] Quality gate status: PASS - all requirements met.`
@@ -131,7 +138,8 @@ AI Agent: [DEV-02] Architecture looks good! I'll implement the endpoint followin
 **AI Agent**: [ARCH-01] I'll monitor the implementation and provide technical guidance as needed.
 
 **AI Agent**: [DEV-02] Implementation in progress. I'll update you when the endpoint is complete and tested.
-```
+
+```md
 
 ## Agent ID Assignment and Standards
 
@@ -227,17 +235,19 @@ For specialized or domain-specific agents:
 1. **Immediate Action**: Stop current work and recover ID
 2. **Recovery Method**: Review chat history for last used ID
 3. **Verification**: Confirm with human operator before proceeding
-4. **Documentation**: Log the recovery event for audit purposes
+4. **Documentation**:   LOG the recovery event for audit purposes
 
 **Recovery Process Example:**
 ```
+
 AI Agent: I notice I may have lost track of my Agent ID. Let me review our conversation history...
 
 AI Agent: Based on our chat history, I see I was using [DEV-02]. Should I continue with this ID?
 Human: Yes, please continue as [DEV-02].
 
 AI Agent: [DEV-02] Thank you for confirming. I'll continue with [DEV-02] and resume my current task.
-```
+
+```md
 
 ## Compliance and Quality Assurance
 
@@ -286,6 +296,7 @@ This communication standard integrates seamlessly with:
 ### Development Agent Examples
 
 ```
+
 [DEV-01] I've completed the user authentication module implementation as requested.
 
 [DEV-01] The implementation includes comprehensive unit tests with 95% coverage, exceeding our 90% requirement.
@@ -293,10 +304,12 @@ This communication standard integrates seamlessly with:
 [DEV-01] All tests are passing and the module is ready for code review. The implementation follows the coding standards defined in AGENTS.md.
 
 [DEV-01] Next steps: I recommend integration testing with the frontend components before deployment.
+
 ```
 ### QA Agent Examples
 
 ```
+
 [QA-01] I've completed the comprehensive review of the authentication module and identified three areas requiring attention.
 
 [QA-01] The security validation needs additional edge case testing for malformed tokens and expired sessions.
@@ -304,11 +317,13 @@ This communication standard integrates seamlessly with:
 [QA-01] Performance testing shows acceptable response times, but I recommend load testing with 1000+ concurrent users.
 
 [QA-01] Overall quality gate status: CONCERNS - requires security test enhancement before achieving PASS status.
+
 ```
 
 ### Architect Agent Examples
 
 ```
+
 [ARCH-01] The proposed database schema changes align well with our microservices architecture principles.
 
 [ARCH-01] I recommend adding an index on the user_email column for performance optimization, and implementing database connection pooling.
@@ -316,6 +331,7 @@ This communication standard integrates seamlessly with:
 [ARCH-01] The changes maintain data consistency and follow our established patterns for user management.
 
 [ARCH-01] Architecture review complete: APPROVED with recommended optimizations noted above.
+
 ```
 
 ## Monitoring and Reporting

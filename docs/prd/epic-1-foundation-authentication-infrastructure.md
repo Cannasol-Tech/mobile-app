@@ -20,7 +20,7 @@ so that I can build cross-platform applications with cloud backend capabilities.
 ## Story 1.2 Firebase Authentication Integration
 
 As an industrial operator,
-I want to securely log into the monitoring application using my Google account,
+I want to securely LOG into the monitoring application using my Google account,
 so that I can access my authorized devices with enterprise-grade security.
 
 ### Authentication Acceptance Criteria

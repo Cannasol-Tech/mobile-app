@@ -1,10 +1,9 @@
-
 /**
  * @file alarm_logs.dart
  * @author Stephen Boyett
  * @date 2025-09-06
  * @brief Alarm logging and history management system.
- * @details Provides alarm log tracking, history management, and alarm event
+ * @details Provides alarm LOG tracking, history management, and alarm event
  *          persistence with timestamp handling and Firebase integration.
  * @version 1.0
  * @since 1.0
@@ -20,7 +19,7 @@ import '../shared/types.dart';
 import 'package:intl/intl.dart';
 
 /**
- * @brief Individual alarm log entry with timing information.
+ * @brief Individual alarm LOG entry with timing information.
  * @details Represents a single alarm event with start time, clear time,
  *          and type information, including timestamp conversion utilities.
  * @since 1.0
@@ -36,10 +35,20 @@ class AlarmLog {
   late String? clearedTime;
 
   /// Getter for start time in seconds since epoch
-  int get startSeconds => startTime != null ? DateFormat("MM/dd/yyyy HH:mm:ss").parse(startTime!).millisecondsSinceEpoch ~/ 1000 : 0;
+  int get startSeconds => startTime != null
+      ? DateFormat("MM/dd/yyyy HH:mm:ss")
+              .parse(startTime!)
+              .millisecondsSinceEpoch ~/
+          1000
+      : 0;
 
   /// Getter for cleared time in seconds since epoch
-  int get clearedSeconds => clearedTime != null ? DateFormat("MM/dd/yyyy HH:mm:ss").parse(clearedTime!).millisecondsSinceEpoch ~/ 1000 : 0;
+  int get clearedSeconds => clearedTime != null
+      ? DateFormat("MM/dd/yyyy HH:mm:ss")
+              .parse(clearedTime!)
+              .millisecondsSinceEpoch ~/
+          1000
+      : 0;
 
   /**
    * @brief Creates an AlarmLog with specified timing and type information.
@@ -75,14 +84,13 @@ class AlarmLog {
   }
 
   Text get displayText => Text(
-    "$type \n    Start: $startTime \n    Cleared: $clearedTime",
-    style: TextStyle(
-      color: clearedTime == "N/A" ? Colors.red : Colors.green,
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-    ),
-  );
-  
+        "$type \n    Start: $startTime \n    Cleared: $clearedTime",
+        style: TextStyle(
+          color: clearedTime == "N/A" ? Colors.red : Colors.green,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+      );
 }
 
 class AlarmLogsModel extends DatabaseModel {
@@ -95,31 +103,28 @@ class AlarmLogsModel extends DatabaseModel {
 
     // Build list from raw map
     List<AlarmLog> alarmLogs = [
-      for (var entry in data.entries) 
-        AlarmLog.fromMap(entry.value)
+      for (var entry in data.entries) AlarmLog.fromMap(entry.value)
     ]..sort((a, b) => (b.startTime ?? "").compareTo(a.startTime ?? ""));
 
-    log.info("DEBUG ALARMLOGS -> entries = data.entries");
+    LOG.info("DEBUG ALARM LOGS -> entries = data.entries");
     return AlarmLogsModel(logs: alarmLogs);
   }
 
   factory AlarmLogsModel.fromMap(Map<dynamic, dynamic> data) {
     // Build list from raw map
     List<AlarmLog> alarmLogs = [
-      for (var entry in data.entries) 
-        AlarmLog.fromMap(entry.value)
+      for (var entry in data.entries) AlarmLog.fromMap(entry.value)
     ]..sort((a, b) => (b.startTime ?? "").compareTo(a.startTime ?? ""));
 
-    log.info("DEBUG ALARMLOGS -> entries = data.entries");
+    LOG.info("DEBUG ALARM LOGS -> entries = data.entries");
     return AlarmLogsModel(logs: alarmLogs);
   }
-  
-  
-  getAlarmStartSeconds(alarmName){
-    for (var log in logs) {
+
+  getAlarmStartSeconds(alarmName) {
+    for (var alarmLog in logs) {
       String alarmNamePrefix = alarmName.split("_")[0].toString().toCapital();
-      if (log.type.contains(alarmNamePrefix) && log.clearedTime == "N/A") {
-        return log.startSeconds;
+      if (alarmLog.type.contains(alarmNamePrefix) && alarmLog.clearedTime == "N/A") {
+        return alarmLog.startSeconds;
       }
     }
     return 0;
@@ -133,9 +138,10 @@ class AlarmLogsModel extends DatabaseModel {
     final buffer = StringBuffer();
     for (int i = 0; i < logs.length; i++) {
       buffer.writeln('**Alarm #${i + 1}:** *${logs[i].type}*\n');
-      buffer.writeln('- **Start Time**: ${logs[i].startTime?.replaceAll('-', '/')}\n');
-      buffer.writeln('- **Cleared Time**: ${logs[i].startTime?.replaceAll('-', '/')}\n');
-
+      buffer.writeln(
+          '- **Start Time**: ${logs[i].startTime?.replaceAll('-', '/')}\n');
+      buffer.writeln(
+          '- **Cleared Time**: ${logs[i].startTime?.replaceAll('-', '/')}\n');
     }
     return buffer.toString();
   }

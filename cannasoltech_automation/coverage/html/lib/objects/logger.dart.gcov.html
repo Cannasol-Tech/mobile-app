@@ -66,7 +66,7 @@
 <span id="L4"><span class="lineNum">       4</span>              :  * @date 2025-09-06</span>
 <span id="L5"><span class="lineNum">       5</span>              :  * @brief Application logging configuration and setup.</span>
 <span id="L6"><span class="lineNum">       6</span>              :  * @details Provides centralized logging functionality for the Cannasol Technologies</span>
-<span id="L7"><span class="lineNum">       7</span>              :  *          application with configurable log levels and external service integration.</span>
+<span id="L7"><span class="lineNum">       7</span>              :  *          application with configurable LOG levels and external service integration.</span>
 <span id="L8"><span class="lineNum">       8</span>              :  * @version 1.0</span>
 <span id="L9"><span class="lineNum">       9</span>              :  * @since 1.0</span>
 <span id="L10"><span class="lineNum">      10</span>              :  */</span>
@@ -74,16 +74,16 @@
 <span id="L12"><span class="lineNum">      12</span>              : import 'package:logging/logging.dart';</span>
 <span id="L13"><span class="lineNum">      13</span>              : </span>
 <span id="L14"><span class="lineNum">      14</span>              : /// Global application logger instance</span>
-<span id="L15"><span class="lineNum">      15</span> <span class="tlaUNC">           0 : final Logger log = Logger('AppLogger');</span></span>
+<span id="L15"><span class="lineNum">      15</span> <span class="tlaUNC">           0 : final Logger LOG = Logger('AppLogger');</span></span>
 <span id="L16"><span class="lineNum">      16</span>              : </span>
 <span id="L17"><span class="lineNum">      17</span>              : /**</span>
 <span id="L18"><span class="lineNum">      18</span>              :  * @brief Sets up application-wide logging configuration.</span>
-<span id="L19"><span class="lineNum">      19</span>              :  * @details Configures the root logger to capture all log levels and sets up</span>
+<span id="L19"><span class="lineNum">      19</span>              :  * @details Configures the root logger to capture all LOG levels and sets up</span>
 <span id="L20"><span class="lineNum">      20</span>              :  *          listeners for potential external service integration (Firebase, Sentry).</span>
 <span id="L21"><span class="lineNum">      21</span>              :  * @since 1.0</span>
 <span id="L22"><span class="lineNum">      22</span>              :  */</span>
 <span id="L23"><span class="lineNum">      23</span> <span class="tlaUNC">           0 : void setupLogging() {</span></span>
-<span id="L24"><span class="lineNum">      24</span> <span class="tlaUNC">           0 :   Logger.root.level = Level.ALL; // Capture all log levels</span></span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaUNC">           0 :   Logger.root.level = Level.ALL; // Capture all LOG levels</span></span>
 <span id="L25"><span class="lineNum">      25</span> <span class="tlaUNC">           0 :   Logger.root.onRecord.listen((record) {</span></span>
 <span id="L26"><span class="lineNum">      26</span>              :     // Optionally send logs to external services (e.g., Firebase, Sentry)</span>
 <span id="L27"><span class="lineNum">      27</span>              :   });</span>

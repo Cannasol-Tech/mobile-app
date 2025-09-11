@@ -293,7 +293,7 @@
 <span id="L231"><span class="lineNum">     231</span> <span class="tlaUNC">           0 :   void init(){</span></span>
 <span id="L232"><span class="lineNum">     232</span> <span class="tlaUNC">           0 :     _almCount = 0;</span></span>
 <span id="L233"><span class="lineNum">     233</span> <span class="tlaUNC">           0 :     setBottomNavPages();</span></span>
-<span id="L234"><span class="lineNum">     234</span> <span class="tlaUNC">           0 :     log.info(&quot;DEBUG -&gt; SystemDataModel initialized&quot;);</span></span>
+<span id="L234"><span class="lineNum">     234</span> <span class="tlaUNC">           0 :     LOG.info(&quot;DEBUG -&gt; SystemDataModel initialized&quot;);</span></span>
 <span id="L235"><span class="lineNum">     235</span> <span class="tlaUNC">           0 :     startUpdateDataTimer();</span></span>
 <span id="L236"><span class="lineNum">     236</span> <span class="tlaUNC">           0 :     authListener = authStateChanges.listen((event) {</span></span>
 <span id="L237"><span class="lineNum">     237</span>              :       if (event == null) {</span>
@@ -304,7 +304,7 @@
 <span id="L242"><span class="lineNum">     242</span>              : </span>
 <span id="L243"><span class="lineNum">     243</span> <span class="tlaUNC">           0 :   @override</span></span>
 <span id="L244"><span class="lineNum">     244</span>              :   dispose() {</span>
-<span id="L245"><span class="lineNum">     245</span> <span class="tlaUNC">           0 :     log.info(&quot;DEBUG -&gt; SystemDataModel disposed&quot;);</span></span>
+<span id="L245"><span class="lineNum">     245</span> <span class="tlaUNC">           0 :     LOG.info(&quot;DEBUG -&gt; SystemDataModel disposed&quot;);</span></span>
 <span id="L246"><span class="lineNum">     246</span> <span class="tlaUNC">           0 :     stopUpdateDataTimer();</span></span>
 <span id="L247"><span class="lineNum">     247</span>              :     // _alarmHandler.uninitialize();</span>
 <span id="L248"><span class="lineNum">     248</span> <span class="tlaUNC">           0 :     _activeDeviceHandler.uninitialize();</span></span>
@@ -315,7 +315,7 @@
 <span id="L253"><span class="lineNum">     253</span>              :   }</span>
 <span id="L254"><span class="lineNum">     254</span>              : </span>
 <span id="L255"><span class="lineNum">     255</span> <span class="tlaUNC">           0 :   void startUpdateDataTimer() {</span></span>
-<span id="L256"><span class="lineNum">     256</span> <span class="tlaUNC">           0 :     log.info(&quot;DEBUG -&gt; Starting update data timer&quot;);</span></span>
+<span id="L256"><span class="lineNum">     256</span> <span class="tlaUNC">           0 :     LOG.info(&quot;DEBUG -&gt; Starting update data timer&quot;);</span></span>
 <span id="L257"><span class="lineNum">     257</span> <span class="tlaUNC">           0 :     if (_timers.updateDataTimer == null){</span></span>
 <span id="L258"><span class="lineNum">     258</span> <span class="tlaUNC">           0 :       _timers.updateDataTimer = Timer.periodic(</span></span>
 <span id="L259"><span class="lineNum">     259</span> <span class="tlaUNC">           0 :         Duration(milliseconds: (_timers.updateSeconds*1000).toInt()),</span></span>
@@ -323,7 +323,7 @@
 <span id="L261"><span class="lineNum">     261</span> <span class="tlaUNC">           0 :        updatingData = true;</span></span>
 <span id="L262"><span class="lineNum">     262</span>              :     }</span>
 <span id="L263"><span class="lineNum">     263</span>              :     else {</span>
-<span id="L264"><span class="lineNum">     264</span> <span class="tlaUNC">           0 :       log.info(&quot;DEBUG -&gt; Starting update data timer&quot;);</span></span>
+<span id="L264"><span class="lineNum">     264</span> <span class="tlaUNC">           0 :       LOG.info(&quot;DEBUG -&gt; Starting update data timer&quot;);</span></span>
 <span id="L265"><span class="lineNum">     265</span> <span class="tlaUNC">           0 :       _timers.updateDataTimer = null;</span></span>
 <span id="L266"><span class="lineNum">     266</span>              :     }</span>
 <span id="L267"><span class="lineNum">     267</span>              :   }</span>
@@ -384,7 +384,7 @@
 <span id="L322"><span class="lineNum">     322</span>              :     /* Updates app to reflect the current system state */</span>
 <span id="L323"><span class="lineNum">     323</span> <span class="tlaUNC">           0 :     if (_activeDevice != null &amp;&amp; _activeDevice?.name != 'None'){</span></span>
 <span id="L324"><span class="lineNum">     324</span> <span class="tlaUNC">           0 :       _currentRunPage = currentRunPageMap[_activeDevice?.state.state];</span></span>
-<span id="L325"><span class="lineNum">     325</span> <span class="tlaUNC">           0 :       log.info(&quot;DEBUG PAGE -&gt; _currentRunPage = $_currentRunPage&quot;);</span></span>
+<span id="L325"><span class="lineNum">     325</span> <span class="tlaUNC">           0 :       LOG.info(&quot;DEBUG PAGE -&gt; _currentRunPage = $_currentRunPage&quot;);</span></span>
 <span id="L326"><span class="lineNum">     326</span>              :     }</span>
 <span id="L327"><span class="lineNum">     327</span>              :     else {</span>
 <span id="L328"><span class="lineNum">     328</span> <span class="tlaUNC">           0 :       _currentRunPage = currentRunPageMap[RESET];</span></span>
@@ -475,7 +475,7 @@
 <span id="L413"><span class="lineNum">     413</span>              : </span>
 <span id="L414"><span class="lineNum">     414</span>              : </span>
 <span id="L415"><span class="lineNum">     415</span> <span class="tlaUNC">           0 :   void updateData() {</span></span>
-<span id="L416"><span class="lineNum">     416</span> <span class="tlaUNC">           0 :     log.info(&quot;Updating System Data&quot;);</span></span>
+<span id="L416"><span class="lineNum">     416</span> <span class="tlaUNC">           0 :     LOG.info(&quot;Updating System Data&quot;);</span></span>
 <span id="L417"><span class="lineNum">     417</span> <span class="tlaUNC">           0 :     if (userHandler.initialized &amp;&amp; _devices.initialized){</span></span>
 <span id="L418"><span class="lineNum">     418</span> <span class="tlaUNC">           0 :       _activeDeviceHandler.update(userHandler.selectedDevice);</span></span>
 <span id="L419"><span class="lineNum">     419</span> <span class="tlaUNC">           0 :       updateDataControllers(_activeDeviceHandler.device);</span></span>
@@ -495,7 +495,7 @@
 <span id="L433"><span class="lineNum">     433</span> <span class="tlaUNC">           0 :         _devices.initialize();</span></span>
 <span id="L434"><span class="lineNum">     434</span>              :       }</span>
 <span id="L435"><span class="lineNum">     435</span>              :     }</span>
-<span id="L436"><span class="lineNum">     436</span>              :     // log.info(&quot;DEBUG -&gt; Active Device = $activeDevice&quot;);</span>
+<span id="L436"><span class="lineNum">     436</span>              :     // LOG.info(&quot;DEBUG -&gt; Active Device = $activeDevice&quot;);</span>
 <span id="L437"><span class="lineNum">     437</span> <span class="tlaUNC">           0 :     notifyListeners();</span></span>
 <span id="L438"><span class="lineNum">     438</span>              :   }</span>
 <span id="L439"><span class="lineNum">     439</span>              : }</span>

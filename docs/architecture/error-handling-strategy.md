@@ -19,7 +19,7 @@ sequenceDiagram
     else Server Error
         CloudFunctions->>Firestore: Database Operation
         Firestore-->>CloudFunctions: Database Error
-        CloudFunctions->>CloudFunctions: Log Error
+        CloudFunctions->>CloudFunctions: LOG Error
         CloudFunctions-->>Flutter: 500 Internal Server Error
         Flutter->>Flutter: Parse Error
         Flutter->>User: Show Generic Error + Retry Option
@@ -87,7 +87,7 @@ class GlobalErrorHandler {
 
   static void _handleApiError(ApiException error) {
     // Show user-friendly error message
-    // Log error for debugging
+    // LOG error for debugging
     // Optionally retry based on error code
   }
 }

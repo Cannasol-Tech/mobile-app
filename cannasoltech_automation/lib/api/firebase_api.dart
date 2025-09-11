@@ -31,9 +31,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   try {
     await Firebase.initializeApp(
         name: "cannasoltech", options: DefaultFirebaseOptions.currentPlatform);
-    log.info("Handling a background message: ${message.messageId}");
+    LOG.info("Handling a background message: ${message.messageId}");
   } catch (e) {
-    log.info("Error initializing Firebase in background: $e");
+    LOG.info("Error initializing Firebase in background: $e");
   }
 }
 
@@ -56,6 +56,7 @@ class FirebaseApi {
   })  : _firebaseMessaging = firebaseMessaging ?? FirebaseMessaging.instance,
         navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         auth = auth ?? FirebaseAuth.instance;
+
   /// Firebase Cloud Messaging instance for handling push notifications
   final FirebaseMessaging _firebaseMessaging;
 
@@ -80,13 +81,13 @@ class FirebaseApi {
       // of notifications they would like to receive once the user receives a notification.
       NotificationSettings notificationSettings =
           await FirebaseMessaging.instance.requestPermission(provisional: true);
-      log.info("DEBUG -> notification settings = $notificationSettings");
+      LOG.info("DEBUG -> notification settings = $notificationSettings");
     }
 
     String? token = await getToken();
 
     if (token == null) {
-      log.info("ERROR -> Error retrieving FCM token.");
+      LOG.info("ERROR -> Error retrieving FCM token.");
     }
 
     await initPushNotifications();
@@ -97,10 +98,10 @@ class FirebaseApi {
     try {
       String? token;
       token = await _firebaseMessaging.getToken();
-      log.info("DEBUG -> FCM Token retrieved = $token");
+      LOG.info("DEBUG -> FCM Token retrieved = $token");
       return token;
     } catch (e) {
-      log.info("Error retrieving FCM token: $e");
+      LOG.info("Error retrieving FCM token: $e");
       return null;
     }
   }
@@ -113,13 +114,15 @@ class FirebaseApi {
     if (message == null) return;
 
     message.notification != null
-        ? log.info("debug -> mesage title = ${message.notification?.title}")
+        ? LOG.info("debug -> mesage title = ${message.notification?.title}")
         : null;
 
     if (message.notification != null) {
       if (['System Alarm!', 'Alarm Cleared!']
           .contains(message.notification?.title)) {
-        this.navigatorKey.currentState
+        this
+            .navigatorKey
+            .currentState
             ?.pushNamed('/push_alarm', arguments: message.data);
       }
     }
@@ -129,7 +132,7 @@ class FirebaseApi {
     if (message == null) return;
 
     message.notification != null
-        ? log.info("debug -> mesage title = ${message.notification?.title}")
+        ? LOG.info("debug -> mesage title = ${message.notification?.title}")
         : null;
 
     if (message.notification != null) {

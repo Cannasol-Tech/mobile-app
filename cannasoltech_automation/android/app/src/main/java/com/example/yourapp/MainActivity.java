@@ -16,7 +16,7 @@ public class MainActivity extends FlutterActivity {
         File logFile = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "app.log");
         Logging.setLogFile(logFile);
 
-        // Example log messages
+        // Example LOG messages
         Logging.log("Application did finish launching", Logging.LogLevel.INFO);
         Logging.log("This is a debug message", Logging.LogLevel.DEBUG);
         Logging.log("This is a warning message", Logging.LogLevel.WARNING);

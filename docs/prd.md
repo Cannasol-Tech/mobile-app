@@ -203,7 +203,7 @@ so that I can build cross-platform applications with cloud backend capabilities.
 ### Story 1.2 Firebase Authentication Integration
 
 As an industrial operator,
-I want to securely log into the monitoring application using my Google account,
+I want to securely LOG into the monitoring application using my Google account,
 so that I can access my authorized devices with enterprise-grade security.
 
 **Acceptance Criteria**
@@ -366,7 +366,7 @@ so that I can analyze alarm patterns and improve system performance.
 
 **Acceptance Criteria**
 
-1. Comprehensive alarm log with all alarm events and operator responses
+1. Comprehensive alarm LOG with all alarm events and operator responses
 2. Filtering by date range, device, alarm type, and severity level
 3. Search functionality for specific alarm events or response actions
 4. Alarm statistics and trending analysis for pattern identification

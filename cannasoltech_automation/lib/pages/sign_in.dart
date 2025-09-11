@@ -226,6 +226,7 @@ class _SignInPage1State extends State<SignInPage1> {
                       ),
                       _gap(),
                       TextFormField(
+                        key: const Key('email_field'),
                         onTapOutside: (event) =>
                             FocusManager.instance.primaryFocus?.unfocus(),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -240,6 +241,7 @@ class _SignInPage1State extends State<SignInPage1> {
                       ),
                       _gap(),
                       TextFormField(
+                        key: const Key('password_field'),
                         onTapOutside: (event) =>
                             FocusManager.instance.primaryFocus?.unfocus(),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -305,7 +307,7 @@ class _SignInPage1State extends State<SignInPage1> {
                           child: const Padding(
                             padding: EdgeInsets.all(10.0),
                             child: Text(
-                              'Sign in',
+                              'Sign In',
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
@@ -379,24 +381,26 @@ class _SignInPage1State extends State<SignInPage1> {
                           ]),
                       _gap(),
                       _gap(),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Not a member?',
-                              style: TextStyle(color: Colors.grey[700]),
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 4,
+                        children: [
+                          Text(
+                            'Not a member?',
+                            style: TextStyle(color: Colors.grey[700]),
+                          ),
+                          GestureDetector(
+                            onTap: widget.toggleFn,
+                            child: const Text(
+                              'Register now',
+                              style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold),
                             ),
-                            const SizedBox(width: 4),
-                            GestureDetector(
-                              onTap: widget.toggleFn,
-                              child: const Text(
-                                'Register now',
-                                style: TextStyle(
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ])
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ),

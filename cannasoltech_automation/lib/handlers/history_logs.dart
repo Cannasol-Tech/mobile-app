@@ -1,4 +1,3 @@
-
 /**
  * @file history_logs.dart
  * @author Stephen Boyett
@@ -22,14 +21,13 @@ import 'package:intl/intl.dart';
 import 'alarm_logs.dart';
 
 /**
- * @brief Individual device run history log entry.
+ * @brief Individual device run history LOG entry.
  * @details Represents a completed device run with performance metrics,
  *          timing information, user data, and associated alarm logs.
  * @since 1.0
  */
 class HistoryLog {
-
-  /// Index/ID of the history log entry
+  /// Index/ID of the history LOG entry
   late int index;
 
   /// User who started this run
@@ -58,22 +56,31 @@ class HistoryLog {
 
   HistoryLogDialog get dialog => HistoryLogDialog(historyLog: this);
 
-  int get startSeconds => startTime != null ? DateFormat("MM/dd/yyyy HH:mm:ss").parse(startTime!).millisecondsSinceEpoch ~/ 1000 : 0;
-  int get endSeconds => endTime != null ? DateFormat("MM/dd/yyyy HH:mm:ss").parse(endTime!).millisecondsSinceEpoch ~/ 1000 : 0;
+  int get startSeconds => startTime != null
+      ? DateFormat("MM/dd/yyyy HH:mm:ss")
+              .parse(startTime!)
+              .millisecondsSinceEpoch ~/
+          1000
+      : 0;
+  int get endSeconds => endTime != null
+      ? DateFormat("MM/dd/yyyy HH:mm:ss")
+              .parse(endTime!)
+              .millisecondsSinceEpoch ~/
+          1000
+      : 0;
 
-  HistoryLog({
-    required this.index,
-    required this.startUser,
-    required this.alarmLog,
-    required this.avgFlowRate,
-    required this.avgTemp,
-    required this.numPasses,
-    required this.runHours,
-    required this.runMinutes,
-    required this.runSeconds,
-    required this.endTime,
-    required this.startTime
-  });
+  HistoryLog(
+      {required this.index,
+      required this.startUser,
+      required this.alarmLog,
+      required this.avgFlowRate,
+      required this.avgTemp,
+      required this.numPasses,
+      required this.runHours,
+      required this.runMinutes,
+      required this.runSeconds,
+      required this.endTime,
+      required this.startTime});
 
   factory HistoryLog.fromMap(Map<dynamic, dynamic> map, int index) {
     final startEpoch = map["start_time"] ?? 0;
@@ -98,7 +105,7 @@ class HistoryLog {
     final buffer = StringBuffer();
 
     // Header
-    // buffer.writeln('# System Log #${index + 1}\n');
+    // buffer.writeln('# System LOG #${index + 1}\n');
     // buffer.writeln('');
 
     // Operator Information
@@ -113,8 +120,10 @@ class HistoryLog {
 
     // Performance Metrics
     buffer.writeln("\n");
-    buffer.writeln('**Average Flow Rate:** ${avgFlowRate.toStringAsFixed(2)} L/min \n');
-    buffer.writeln('**Average Temperature:** ${avgTemp.toStringAsFixed(2)}°C \n');
+    buffer.writeln(
+        '**Average Flow Rate:** ${avgFlowRate.toStringAsFixed(2)} L/min \n');
+    buffer
+        .writeln('**Average Temperature:** ${avgTemp.toStringAsFixed(2)}°C \n');
     buffer.writeln('**Number of Passes:** ${numPasses.toStringAsFixed(2)} \n');
     buffer.writeln("---");
     buffer.writeln('');
@@ -143,13 +152,13 @@ class HistoryLog {
   }
 
   Text get displayText => Text(
-    "System Log #${index+1} - Operator: $startUser \n    Start: $startTime \n    End: $endTime",
-    style: TextStyle(
-      color: Colors.blue.shade800,
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-    ),
-  );
+        "System LOG #${index + 1} - Operator: $startUser \n    Start: $startTime \n    End: $endTime",
+        style: TextStyle(
+          color: Colors.blue.shade800,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+      );
 
   showLogDialog(BuildContext context) {
     dialog.show(context);
@@ -165,7 +174,7 @@ class HistoryLogsModel extends DatabaseModel {
     DbMap data = getDbMap(snap);
     // Build list from raw map
     List<HistoryLog> historyLogs = [
-      for (var (idx, entry) in data.entries.indexed) 
+      for (var (idx, entry) in data.entries.indexed)
         HistoryLog.fromMap(entry.value, idx)
     ]..sort((a, b) => (b.startTime ?? "").compareTo(a.startTime ?? ""));
 

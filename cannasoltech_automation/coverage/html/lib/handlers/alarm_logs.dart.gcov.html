@@ -66,7 +66,7 @@
 <span id="L4"><span class="lineNum">       4</span>              :  * @author Stephen Boyett</span>
 <span id="L5"><span class="lineNum">       5</span>              :  * @date 2025-09-06</span>
 <span id="L6"><span class="lineNum">       6</span>              :  * @brief Alarm logging and history management system.</span>
-<span id="L7"><span class="lineNum">       7</span>              :  * @details Provides alarm log tracking, history management, and alarm event</span>
+<span id="L7"><span class="lineNum">       7</span>              :  * @details Provides alarm LOG tracking, history management, and alarm event</span>
 <span id="L8"><span class="lineNum">       8</span>              :  *          persistence with timestamp handling and Firebase integration.</span>
 <span id="L9"><span class="lineNum">       9</span>              :  * @version 1.0</span>
 <span id="L10"><span class="lineNum">      10</span>              :  * @since 1.0</span>
@@ -82,7 +82,7 @@
 <span id="L20"><span class="lineNum">      20</span>              : import 'package:intl/intl.dart';</span>
 <span id="L21"><span class="lineNum">      21</span>              : </span>
 <span id="L22"><span class="lineNum">      22</span>              : /**</span>
-<span id="L23"><span class="lineNum">      23</span>              :  * @brief Individual alarm log entry with timing information.</span>
+<span id="L23"><span class="lineNum">      23</span>              :  * @brief Individual alarm LOG entry with timing information.</span>
 <span id="L24"><span class="lineNum">      24</span>              :  * @details Represents a single alarm event with start time, clear time,</span>
 <span id="L25"><span class="lineNum">      25</span>              :  *          and type information, including timestamp conversion utilities.</span>
 <span id="L26"><span class="lineNum">      26</span>              :  * @since 1.0</span>
@@ -161,7 +161,7 @@
 <span id="L99"><span class="lineNum">      99</span> <span class="tlaUNC">           0 :         AlarmLog.fromMap(entry.value)</span></span>
 <span id="L100"><span class="lineNum">     100</span> <span class="tlaUNC">           0 :     ]..sort((a, b) =&gt; (b.startTime ?? &quot;&quot;).compareTo(a.startTime ?? &quot;&quot;));</span></span>
 <span id="L101"><span class="lineNum">     101</span>              : </span>
-<span id="L102"><span class="lineNum">     102</span> <span class="tlaUNC">           0 :     log.info(&quot;DEBUG ALARMLOGS -&gt; entries = data.entries&quot;);</span></span>
+<span id="L102"><span class="lineNum">     102</span> <span class="tlaUNC">           0 :     LOG.info(&quot;DEBUG ALARM LOGS -&gt; entries = data.entries&quot;);</span></span>
 <span id="L103"><span class="lineNum">     103</span> <span class="tlaUNC">           0 :     return AlarmLogsModel(logs: alarmLogs);</span></span>
 <span id="L104"><span class="lineNum">     104</span>              :   }</span>
 <span id="L105"><span class="lineNum">     105</span>              : </span>
@@ -172,16 +172,16 @@
 <span id="L110"><span class="lineNum">     110</span> <span class="tlaUNC">           0 :         AlarmLog.fromMap(entry.value)</span></span>
 <span id="L111"><span class="lineNum">     111</span> <span class="tlaUNC">           0 :     ]..sort((a, b) =&gt; (b.startTime ?? &quot;&quot;).compareTo(a.startTime ?? &quot;&quot;));</span></span>
 <span id="L112"><span class="lineNum">     112</span>              : </span>
-<span id="L113"><span class="lineNum">     113</span> <span class="tlaUNC">           0 :     log.info(&quot;DEBUG ALARMLOGS -&gt; entries = data.entries&quot;);</span></span>
+<span id="L113"><span class="lineNum">     113</span> <span class="tlaUNC">           0 :     LOG.info(&quot;DEBUG ALARM LOGS -&gt; entries = data.entries&quot;);</span></span>
 <span id="L114"><span class="lineNum">     114</span> <span class="tlaUNC">           0 :     return AlarmLogsModel(logs: alarmLogs);</span></span>
 <span id="L115"><span class="lineNum">     115</span>              :   }</span>
 <span id="L116"><span class="lineNum">     116</span>              :   </span>
 <span id="L117"><span class="lineNum">     117</span>              :   </span>
 <span id="L118"><span class="lineNum">     118</span> <span class="tlaUNC">           0 :   getAlarmStartSeconds(alarmName){</span></span>
-<span id="L119"><span class="lineNum">     119</span> <span class="tlaUNC">           0 :     for (var log in logs) {</span></span>
+<span id="L119"><span class="lineNum">     119</span> <span class="tlaUNC">           0 :     for (var LOG in logs) {</span></span>
 <span id="L120"><span class="lineNum">     120</span> <span class="tlaUNC">           0 :       String alarmNamePrefix = alarmName.split(&quot;_&quot;)[0].toString().toCapital();</span></span>
-<span id="L121"><span class="lineNum">     121</span> <span class="tlaUNC">           0 :       if (log.type.contains(alarmNamePrefix) &amp;&amp; log.clearedTime == &quot;N/A&quot;) {</span></span>
-<span id="L122"><span class="lineNum">     122</span> <span class="tlaUNC">           0 :         return log.startSeconds;</span></span>
+<span id="L121"><span class="lineNum">     121</span> <span class="tlaUNC">           0 :       if (log.type.contains(alarmNamePrefix) &amp;&amp; LOG.clearedTime == &quot;N/A&quot;) {</span></span>
+<span id="L122"><span class="lineNum">     122</span> <span class="tlaUNC">           0 :         return LOG.startSeconds;</span></span>
 <span id="L123"><span class="lineNum">     123</span>              :       }</span>
 <span id="L124"><span class="lineNum">     124</span>              :     }</span>
 <span id="L125"><span class="lineNum">     125</span>              :     return 0;</span>

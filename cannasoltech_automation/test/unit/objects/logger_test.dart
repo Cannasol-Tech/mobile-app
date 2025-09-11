@@ -12,10 +12,13 @@ import 'package:cannasoltech_automation/objects/logger.dart';
 
 void main() {
   group('Logger', () {
-    test('log instance should be a Logger', () {
-      expect(log, isA<Logger>());
+    // Test that the LOG instance is correctly configured
+    test('LOG instance should be a Logger', () {
+      // Assert
+      expect(LOG, isA<Logger>());
     });
 
+    // Test that the setupLogging function correctly configures the root logger
     test('setupLogging should configure the root logger', () {
       // Act
       setupLogging();

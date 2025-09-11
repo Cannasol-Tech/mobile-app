@@ -1,4 +1,3 @@
-
 /**
  * @file alarm_handler.dart
  * @author Stephen Boyett
@@ -25,7 +24,6 @@ import '../shared/types.dart';
  * @since 1.0
  */
 class IgnoredAlarmsModel {
-
   /// Flow alarm ignore status
   bool flow;
 
@@ -83,9 +81,11 @@ class IgnoredAlarmsModel {
       pressure: data['pressure'] ?? false,
       freqLock: data['freqLock'] ?? false,
       overload: data['overload'] ?? false,
-      ignored: (ignoredData != null && ignoredData is Map && ignoredData.isNotEmpty)
-          ? IgnoredAlarmsModel.fromDatabase(Map<String, dynamic>.from(ignoredData))
-          : null,
+      ignored:
+          (ignoredData != null && ignoredData is Map && ignoredData.isNotEmpty)
+              ? IgnoredAlarmsModel.fromDatabase(
+                  Map<String, dynamic>.from(ignoredData))
+              : null,
       native: data,
     );
   }
@@ -117,12 +117,11 @@ class WarningsModel {
    * @param temp Temperature warning status
    * @param native Raw database data
    */
-  WarningsModel({
-    required this.flow,
-    required this.pressure,
-    required this.temp,
-    required this.native
-  });
+  WarningsModel(
+      {required this.flow,
+      required this.pressure,
+      required this.temp,
+      required this.native});
 
   /**
    * @brief Factory constructor to create WarningsModel from database data.
@@ -135,7 +134,7 @@ class WarningsModel {
   factory WarningsModel.fromDatabase(Map<String, dynamic> data) {
     return WarningsModel(
       flow: data['flow'] as bool,
-      pressure:  data['pressure'] as bool,
+      pressure: data['pressure'] as bool,
       temp: data['temp'] as bool,
       native: data,
     );
@@ -153,7 +152,7 @@ class AlarmsModel extends DatabaseModel {
    * @brief Creates an AlarmsModel instance.
    * @param device Associated device for alarm monitoring
    */
-  AlarmsModel({ this.device }){
+  AlarmsModel({this.device}) {
     device ?? Device.noDevice();
   }
 
@@ -168,7 +167,7 @@ class AlarmsModel extends DatabaseModel {
     'freq_lock_alarm',
     'overload_alarm'
   ];
-  
+
   bool get flowWarn => getBoolPropertyValue("flow_warn");
   bool get tempWarn => getBoolPropertyValue("temp_warn");
   bool get pressureWarn => getBoolPropertyValue("pressure_warn");
@@ -178,7 +177,7 @@ class AlarmsModel extends DatabaseModel {
   bool get pressureAlarm => getBoolPropertyValue("pressure_alarm");
   bool get freqLockAlarm => getBoolPropertyValue("freq_lock_alarm");
   bool get overloadAlarm => getBoolPropertyValue("overload_alarm");
-  
+
   bool get ignoreTempAlarm => getBoolPropertyValue("ign_temp_alarm");
   bool get ignoreFlowAlarm => getBoolPropertyValue("ign_flow_alarm");
   bool get ignorePressureAlarm => getBoolPropertyValue("ign_pressure_alarm");
@@ -191,22 +190,34 @@ class AlarmsModel extends DatabaseModel {
 
   bool get sonicAlarm => (overloadAlarm || freqLockAlarm || pressureAlarm);
   bool get sonicAlarmActive => (overloadAlarm && !ignoreOverloadAlarm ||
-                                freqLockAlarm && !ignoreFreqLockAlarm ||
-                                pressureAlarm && !ignorePressureAlarm);
+      freqLockAlarm && !ignoreFreqLockAlarm ||
+      pressureAlarm && !ignorePressureAlarm);
 
-  set ignoreFlowAlarm (bool value) => properties["ign_flow_alarm"]?.ref.set(value);
-  set ignoreTempAlarm (bool value) => properties["ignore_temp_alarm"]?.ref.set(value);
-  set ignorePressureAlarm (bool value) => properties["ign_pressure_alarm"]?.ref.set(value);
-  set ignoreOverloadAlarm (bool value) => properties["ign_overload_alarm"]?.ref.set(value);
-  set ignoreFreqLockAlarm (bool value) => properties["ign_freqlock_alarm"]?.ref.set(value);
-  
+  set ignoreFlowAlarm(bool value) =>
+      properties["ign_flow_alarm"]?.ref.set(value);
+  set ignoreTempAlarm(bool value) =>
+      properties["ignore_temp_alarm"]?.ref.set(value);
+  set ignorePressureAlarm(bool value) =>
+      properties["ign_pressure_alarm"]?.ref.set(value);
+  set ignoreOverloadAlarm(bool value) =>
+      properties["ign_overload_alarm"]?.ref.set(value);
+  set ignoreFreqLockAlarm(bool value) =>
+      properties["ign_freqlock_alarm"]?.ref.set(value);
 
   late Map<String, dynamic> native;
-  List<bool> get alarms => [flowAlarm, tempAlarm, pressureAlarm, freqLockAlarm, overloadAlarm];
+  List<bool> get alarms =>
+      [flowAlarm, tempAlarm, pressureAlarm, freqLockAlarm, overloadAlarm];
 
   List<String> get activeAlarms => getActiveAlarmNames();
-  List<String> get idleAlarms => alarmNames.toSet().difference(activeAlarms.toSet()).toList();
-  bool get alarmActive => [flowAlarm, tempAlarm, pressureAlarm, freqLockAlarm, overloadAlarm].any((alarm) => alarm == true);
+  List<String> get idleAlarms =>
+      alarmNames.toSet().difference(activeAlarms.toSet()).toList();
+  bool get alarmActive => [
+        flowAlarm,
+        tempAlarm,
+        pressureAlarm,
+        freqLockAlarm,
+        overloadAlarm
+      ].any((alarm) => alarm == true);
   List<String> get ignoredAlarms => getIgnoredAlarmNames();
 
   Duration? flowAlarmTime;
@@ -215,37 +226,45 @@ class AlarmsModel extends DatabaseModel {
   Duration? freqLockAlarmTime;
   Duration? overloadAlarmTime;
 
-  factory AlarmsModel.fromDatabase(DataSnapshot snap){
+  factory AlarmsModel.fromDatabase(DataSnapshot snap) {
     DbMap data = getDbMap(snap);
     DatabaseReference propertyRef;
     AlarmsModel alarms = AlarmsModel();
-    for (var entry in data.entries){
+    for (var entry in data.entries) {
       propertyRef = snap.child(entry.key).ref;
       alarms.properties[entry.key] = FireProperty.fromData(entry, propertyRef);
     }
     return alarms;
   }
 
-  String getAlarmName(int idx){
-    if (idx >= alarmNames.length){
-      log.info("ERROR -> Invalid Alarm Index");
+  String getAlarmName(int idx) {
+    if (idx >= alarmNames.length) {
+      LOG.info("ERROR -> Invalid Alarm Index");
       return "";
     }
     return alarmNames[idx];
   }
 
-  int getAlarmIndex(String alarmName){
+  int getAlarmIndex(String alarmName) {
     return alarmNames.indexOf(alarmName);
   }
 
-  List<String> getActiveAlarmNames(){
-    return alarms.asMap().entries.where((e) => e.value)
-    .map((e) => getAlarmName(e.key)).toList();
+  List<String> getActiveAlarmNames() {
+    return alarms
+        .asMap()
+        .entries
+        .where((e) => e.value)
+        .map((e) => getAlarmName(e.key))
+        .toList();
   }
 
-  List<String> getIgnoredAlarmNames(){
-     return alarms.asMap().entries.where((e) => e.value)
-    .map((e) => getAlarmName(e.key)).toList();
+  List<String> getIgnoredAlarmNames() {
+    return alarms
+        .asMap()
+        .entries
+        .where((e) => e.value)
+        .map((e) => getAlarmName(e.key))
+        .toList();
   }
 
   void setIgnoreTempAlarm(bool value) {
@@ -263,16 +282,21 @@ class AlarmsModel extends DatabaseModel {
   void setIgnoreFreqLockAlarm(bool value) {
     setBoolPropertyValue("ign_freqlock_alarm", value);
   }
+
   void setIgnoreOverloadAlarm(bool value) {
     setBoolPropertyValue("ign_overload_alarm", value);
   }
 
-  int getActiveSonicAlarmCount () {
+  int getActiveSonicAlarmCount() {
     int alarmCount = 0;
     List<bool> sonicAlarms = [pressureAlarm, overloadAlarm, freqLockAlarm];
-    List<bool> sonicIgnore = [ignorePressureAlarm, ignoreOverloadAlarm, ignoreFreqLockAlarm];
-    for (int i = 0; i<3; i++) {
-      if (sonicAlarms[i] && !sonicIgnore[i]){
+    List<bool> sonicIgnore = [
+      ignorePressureAlarm,
+      ignoreOverloadAlarm,
+      ignoreFreqLockAlarm
+    ];
+    for (int i = 0; i < 3; i++) {
+      if (sonicAlarms[i] && !sonicIgnore[i]) {
         alarmCount++;
       }
     }
@@ -281,26 +305,43 @@ class AlarmsModel extends DatabaseModel {
 
   bool operator [](String key) {
     switch (key) {
-      case "flowWarn":         return flowWarn;
-      case "tempWarn":         return tempWarn;
-      case "pressureWarn":     return pressureWarn;
+      case "flowWarn":
+        return flowWarn;
+      case "tempWarn":
+        return tempWarn;
+      case "pressureWarn":
+        return pressureWarn;
 
-      case "flowAlarm":        return flowAlarm;
-      case "tempAlarm":        return tempAlarm;
-      case "pressureAlarm":    return pressureAlarm;
-      case "freqLockAlarm":    return freqLockAlarm;
-      case "overloadAlarm":    return overloadAlarm;
+      case "flowAlarm":
+        return flowAlarm;
+      case "tempAlarm":
+        return tempAlarm;
+      case "pressureAlarm":
+        return pressureAlarm;
+      case "freqLockAlarm":
+        return freqLockAlarm;
+      case "overloadAlarm":
+        return overloadAlarm;
 
-      case "ignoreTempAlarm":      return ignoreTempAlarm;
-      case "ignoreFlowAlarm":      return ignoreFlowAlarm;
-      case "ignorePressureAlarm":  return ignorePressureAlarm;
-      case "ignoreOverloadAlarm":  return ignoreOverloadAlarm;
-      case "ignoreFreqLockAlarm":  return ignoreFreqLockAlarm;
+      case "ignoreTempAlarm":
+        return ignoreTempAlarm;
+      case "ignoreFlowAlarm":
+        return ignoreFlowAlarm;
+      case "ignorePressureAlarm":
+        return ignorePressureAlarm;
+      case "ignoreOverloadAlarm":
+        return ignoreOverloadAlarm;
+      case "ignoreFreqLockAlarm":
+        return ignoreFreqLockAlarm;
 
-      case "tankAlarmActive":  return tankAlarmActive;
-      case "pumpAlarmActive":  return pumpAlarmActive;
-      case "sonicAlarm":       return sonicAlarm;
-      case "sonicAlarmActive": return sonicAlarmActive;
+      case "tankAlarmActive":
+        return tankAlarmActive;
+      case "pumpAlarmActive":
+        return pumpAlarmActive;
+      case "sonicAlarm":
+        return sonicAlarm;
+      case "sonicAlarmActive":
+        return sonicAlarmActive;
 
       default:
         throw ArgumentError('Unknown alarm key "$key"');

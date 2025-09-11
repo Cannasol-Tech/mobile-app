@@ -93,9 +93,9 @@
 <span id="L31"><span class="lineNum">      31</span>              :   try {</span>
 <span id="L32"><span class="lineNum">      32</span> <span class="tlaUNC">           0 :     await Firebase.initializeApp(</span></span>
 <span id="L33"><span class="lineNum">      33</span> <span class="tlaUNC">           0 :         name: &quot;cannasoltech&quot;, options: DefaultFirebaseOptions.currentPlatform);</span></span>
-<span id="L34"><span class="lineNum">      34</span> <span class="tlaUNC">           0 :     log.info(&quot;Handling a background message: ${message.messageId}&quot;);</span></span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaUNC">           0 :     LOG.info(&quot;Handling a background message: ${message.messageId}&quot;);</span></span>
 <span id="L35"><span class="lineNum">      35</span>              :   } catch (e) {</span>
-<span id="L36"><span class="lineNum">      36</span> <span class="tlaUNC">           0 :     log.info(&quot;Error initializing Firebase in background: $e&quot;);</span></span>
+<span id="L36"><span class="lineNum">      36</span> <span class="tlaUNC">           0 :     LOG.info(&quot;Error initializing Firebase in background: $e&quot;);</span></span>
 <span id="L37"><span class="lineNum">      37</span>              :   }</span>
 <span id="L38"><span class="lineNum">      38</span>              : }</span>
 <span id="L39"><span class="lineNum">      39</span>              : </span>
@@ -142,13 +142,13 @@
 <span id="L80"><span class="lineNum">      80</span>              :       // of notifications they would like to receive once the user receives a notification.</span>
 <span id="L81"><span class="lineNum">      81</span>              :       NotificationSettings notificationSettings =</span>
 <span id="L82"><span class="lineNum">      82</span> <span class="tlaUNC">           0 :           await FirebaseMessaging.instance.requestPermission(provisional: true);</span></span>
-<span id="L83"><span class="lineNum">      83</span> <span class="tlaUNC">           0 :       log.info(&quot;DEBUG -&gt; notification settings = $notificationSettings&quot;);</span></span>
+<span id="L83"><span class="lineNum">      83</span> <span class="tlaUNC">           0 :       LOG.info(&quot;DEBUG -&gt; notification settings = $notificationSettings&quot;);</span></span>
 <span id="L84"><span class="lineNum">      84</span>              :     }</span>
 <span id="L85"><span class="lineNum">      85</span>              : </span>
 <span id="L86"><span class="lineNum">      86</span> <span class="tlaUNC">           0 :     String? token = await getToken();</span></span>
 <span id="L87"><span class="lineNum">      87</span>              : </span>
 <span id="L88"><span class="lineNum">      88</span>              :     if (token == null) {</span>
-<span id="L89"><span class="lineNum">      89</span> <span class="tlaUNC">           0 :       log.info(&quot;ERROR -&gt; Error retrieving FCM token.&quot;);</span></span>
+<span id="L89"><span class="lineNum">      89</span> <span class="tlaUNC">           0 :       LOG.info(&quot;ERROR -&gt; Error retrieving FCM token.&quot;);</span></span>
 <span id="L90"><span class="lineNum">      90</span>              :     }</span>
 <span id="L91"><span class="lineNum">      91</span>              : </span>
 <span id="L92"><span class="lineNum">      92</span> <span class="tlaUNC">           0 :     await initPushNotifications();</span></span>
@@ -159,10 +159,10 @@
 <span id="L97"><span class="lineNum">      97</span>              :     try {</span>
 <span id="L98"><span class="lineNum">      98</span>              :       String? token;</span>
 <span id="L99"><span class="lineNum">      99</span> <span class="tlaUNC">           0 :       token = await _firebaseMessaging.getToken();</span></span>
-<span id="L100"><span class="lineNum">     100</span> <span class="tlaUNC">           0 :       log.info(&quot;DEBUG -&gt; FCM Token retrieved = $token&quot;);</span></span>
+<span id="L100"><span class="lineNum">     100</span> <span class="tlaUNC">           0 :       LOG.info(&quot;DEBUG -&gt; FCM Token retrieved = $token&quot;);</span></span>
 <span id="L101"><span class="lineNum">     101</span>              :       return token;</span>
 <span id="L102"><span class="lineNum">     102</span>              :     } catch (e) {</span>
-<span id="L103"><span class="lineNum">     103</span> <span class="tlaUNC">           0 :       log.info(&quot;Error retrieving FCM token: $e&quot;);</span></span>
+<span id="L103"><span class="lineNum">     103</span> <span class="tlaUNC">           0 :       LOG.info(&quot;Error retrieving FCM token: $e&quot;);</span></span>
 <span id="L104"><span class="lineNum">     104</span>              :       return null;</span>
 <span id="L105"><span class="lineNum">     105</span>              :     }</span>
 <span id="L106"><span class="lineNum">     106</span>              :   }</span>
@@ -175,7 +175,7 @@
 <span id="L113"><span class="lineNum">     113</span>              :     if (message == null) return;</span>
 <span id="L114"><span class="lineNum">     114</span>              : </span>
 <span id="L115"><span class="lineNum">     115</span> <span class="tlaUNC">           0 :     message.notification != null</span></span>
-<span id="L116"><span class="lineNum">     116</span> <span class="tlaUNC">           0 :         ? log.info(&quot;debug -&gt; mesage title = ${message.notification?.title}&quot;)</span></span>
+<span id="L116"><span class="lineNum">     116</span> <span class="tlaUNC">           0 :         ? LOG.info(&quot;debug -&gt; mesage title = ${message.notification?.title}&quot;)</span></span>
 <span id="L117"><span class="lineNum">     117</span>              :         : null;</span>
 <span id="L118"><span class="lineNum">     118</span>              : </span>
 <span id="L119"><span class="lineNum">     119</span> <span class="tlaUNC">           0 :     if (message.notification != null) {</span></span>
@@ -191,7 +191,7 @@
 <span id="L129"><span class="lineNum">     129</span>              :     if (message == null) return;</span>
 <span id="L130"><span class="lineNum">     130</span>              : </span>
 <span id="L131"><span class="lineNum">     131</span> <span class="tlaUNC">           0 :     message.notification != null</span></span>
-<span id="L132"><span class="lineNum">     132</span> <span class="tlaUNC">           0 :         ? log.info(&quot;debug -&gt; mesage title = ${message.notification?.title}&quot;)</span></span>
+<span id="L132"><span class="lineNum">     132</span> <span class="tlaUNC">           0 :         ? LOG.info(&quot;debug -&gt; mesage title = ${message.notification?.title}&quot;)</span></span>
 <span id="L133"><span class="lineNum">     133</span>              :         : null;</span>
 <span id="L134"><span class="lineNum">     134</span>              : </span>
 <span id="L135"><span class="lineNum">     135</span> <span class="tlaUNC">           0 :     if (message.notification != null) {</span></span>

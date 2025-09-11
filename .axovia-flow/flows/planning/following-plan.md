@@ -92,12 +92,12 @@ rules:
 
   # Logging and Reporting Rules
   - name: Progress Logging
-    description: Log actions, tests, commits; report periodically.
+    description:  LOG actions, tests, commits; report periodically.
     trigger: on_task_end or on_phase_end or on_request
     actions:
       - update_log: timestamps, outcomes
       - report: if_stuck notify_user
-    enforcement: Persistent log file.
+    enforcement: Persistent  LOG file.
 
   # Error Handling Rules
   - name: Handle Errors
@@ -133,7 +133,7 @@ rules:
 
 # Additional Suggested Rules
 # - Handoff Rule: On phase end, notify next agent: trigger=on_phase_merge, action=broadcast_handoff.
-# - Multi-Agent Sync: Periodic sync meetings via shared log checks.
+# - Multi-Agent Sync: Periodic sync meetings via shared  LOG checks.
 # - Plan Update Handling: If user updates plan, reset state and reassign phases.
 
 # Implementation Notes

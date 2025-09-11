@@ -58,7 +58,7 @@ logging:
   retention: "30 days"
   level: "INFO"
   
-  # Service-specific log levels (overrides global level)
+  # Service-specific  LOG levels (overrides global level)
   services:
     orchestrator: "INFO"
     director: "INFO"

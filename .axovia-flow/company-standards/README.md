@@ -813,7 +813,7 @@ To propose changes or additions to company standards:
 When reporting issues with standards import or compliance:
 
 1. **Include your import method** (submodule, direct copy, or selective)
-2. **Provide error messages** and relevant log output
+2. **Provide error messages** and relevant  LOG output
 3. **Describe your project structure** and technology stack
 4. **Include steps to reproduce** the issue
 

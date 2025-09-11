@@ -29,7 +29,6 @@ import '../objects/save_slot.dart';
 import '../shared/methods.dart';
 import '../shared/types.dart';
 
-
 /**
  * @brief Represents a Cannasol Technologies automation device.
  * @details Encapsulates all device-related data including status, configuration,
@@ -37,7 +36,7 @@ import '../shared/types.dart';
  *          and data operations such as history downloads.
  * @since 1.0
  */
-class Device{
+class Device {
   /**
    * @brief Creates a Device instance with required parameters.
    * @param status Current operational status of the device
@@ -46,9 +45,12 @@ class Device{
    * @param type Device type classification
    * @param native Raw device data from the database
    */
-  Device({
-    required this.status, required this.id, required this.name, required this.type, required this.native
-  });
+  Device(
+      {required this.status,
+      required this.id,
+      required this.name,
+      required this.type,
+      required this.native});
 
   /// Current operational status of the device (e.g., "ONLINE", "OFFLINE")
   String status;
@@ -110,12 +112,11 @@ class Device{
    */
   factory Device.noDevice() {
     return Device(
-      status: "None",
-      id: "None",
-      name: "None",
-      type: "None",
-      native: {"None": "None"}
-    );
+        status: "None",
+        id: "None",
+        name: "None",
+        type: "None",
+        native: {"None": "None"});
   }
 
   /**
@@ -126,35 +127,43 @@ class Device{
    * @return Device instance populated from database data, or noDevice() if invalid
    * @since 1.0
    */
-  factory Device.fromDatabase(DataSnapshot snap){
-      final data = getDbMap(snap);
+  factory Device.fromDatabase(DataSnapshot snap) {
+    final data = getDbMap(snap);
 
-      if (!data.containsKey('Info')){
-        return Device.noDevice();
-      }
+    if (!data.containsKey('Info')) {
+      return Device.noDevice();
+    }
 
-      Map deviceInfo = data["Info"] as Map;
-      final Map<String, dynamic> native = data;
-      final String id = deviceInfo["id"].toString();
-      final String name = deviceInfo["name"].toString();
-      final String type = deviceInfo["type"].toString();
-      final String status = deviceInfo["status"].toString();
+    Map deviceInfo = data["Info"] as Map;
+    final Map<String, dynamic> native = data;
+    final String id = deviceInfo["id"].toString();
+    final String name = deviceInfo["name"].toString();
+    final String type = deviceInfo["type"].toString();
+    final String status = deviceInfo["status"].toString();
 
-      Device newDevice = Device(status: status, id: id,  name: name, type: type, native: native);
+    Device newDevice =
+        Device(status: status, id: id, name: name, type: type, native: native);
 
-      if (snap.child('SaveSlots').exists){
-        newDevice.saveSlots = List.generate(5, (idx) => SaveSlot.fromDatabase(snap: snap.child('SaveSlots/slot_${idx+1}'), idx: idx+1, device: newDevice));
-      }
+    if (snap.child('SaveSlots').exists) {
+      newDevice.saveSlots = List.generate(
+          5,
+          (idx) => SaveSlot.fromDatabase(
+              snap: snap.child('SaveSlots/slot_${idx + 1}'),
+              idx: idx + 1,
+              device: newDevice));
+    }
 
-      newDevice.currentRun = CurrentRunModel.fromDatabase(snap.child('CurrentRun'));
-      newDevice.alarms = AlarmsModel.fromDatabase(snap.child('Alarms'));
-      newDevice.alarmLogs = AlarmLogsModel.fromDatabase(snap.child('AlarmLogs'));
-      newDevice.state = StateHandler.fromDatabase(snap.child('State'), newDevice);
-      newDevice.config = ConfigHandler.fromDatabase(snap.child('Config'), newDevice);
-      newDevice.history = HistoryLogsModel.fromDatabase(snap.child('History'));
-      newDevice.dbRef = snap.ref;
-      newDevice.initDownloadUrl();
-      return newDevice;
+    newDevice.currentRun =
+        CurrentRunModel.fromDatabase(snap.child('CurrentRun'));
+    newDevice.alarms = AlarmsModel.fromDatabase(snap.child('Alarms'));
+    newDevice.alarmLogs = AlarmLogsModel.fromDatabase(snap.child('AlarmLogs'));
+    newDevice.state = StateHandler.fromDatabase(snap.child('State'), newDevice);
+    newDevice.config =
+        ConfigHandler.fromDatabase(snap.child('Config'), newDevice);
+    newDevice.history = HistoryLogsModel.fromDatabase(snap.child('History'));
+    newDevice.dbRef = snap.ref;
+    newDevice.initDownloadUrl();
+    return newDevice;
   }
 
   /**
@@ -166,8 +175,7 @@ class Device{
   bool isOnline() {
     if (status == "ONLINE") {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -180,24 +188,24 @@ class Device{
    * @throws Exception if permission request fails
    * @since 1.0
    */
- Future<bool> requestStoragePermission() async {
-  if (Platform.isAndroid) {
-    if (await Permission.storage.request().isGranted) {
-      return true;
+  Future<bool> requestStoragePermission() async {
+    if (Platform.isAndroid) {
+      if (await Permission.storage.request().isGranted) {
+        return true;
+      }
+
+      if (await Permission.manageExternalStorage.request().isGranted) {
+        return true;
+      }
+
+      showBanner(unableToDownloadBanner("Permission denied."));
+      return false;
+    } else if (Platform.isIOS) {
+      return true; // Handle iOS permissions if necessary
     }
 
-    if (await Permission.manageExternalStorage.request().isGranted) {
-      return true;
-    }
-
-    showBanner(unableToDownloadBanner("Permission denied."));
     return false;
-  } else if (Platform.isIOS) {
-    return true; // Handle iOS permissions if necessary
   }
-
-  return false;
-}
 
   /**
    * @brief Downloads device history data to local storage.
@@ -207,55 +215,54 @@ class Device{
    * @throws Exception if download fails or storage access is denied
    * @since 1.0
    */
-Future<void> downloadDeviceHistory() async {
-  bool hasPermission = await requestStoragePermission();
-  if (!hasPermission) {
-    return;
-  }
-
-  try {
-    Directory? directory;
-    if (Platform.isAndroid) {
-      directory = Directory('/storage/emulated/0/Download');
-    } else if (Platform.isIOS) {
-      directory = await getApplicationDocumentsDirectory();
-    }
-
-    if (directory == null) {
-      showBanner(unableToDownloadBanner("Unable to access storage."));
+  Future<void> downloadDeviceHistory() async {
+    bool hasPermission = await requestStoragePermission();
+    if (!hasPermission) {
       return;
     }
 
-    String fileName = 'device_${name}_history.csv';
-    String filePath = '${directory.path}/$fileName';
+    try {
+      Directory? directory;
+      if (Platform.isAndroid) {
+        directory = Directory('/storage/emulated/0/Download');
+      } else if (Platform.isIOS) {
+        directory = await getApplicationDocumentsDirectory();
+      }
 
-    // Initialize Dio for downloading
-    Dio dio = Dio();
+      if (directory == null) {
+        showBanner(unableToDownloadBanner("Unable to access storage."));
+        return;
+      }
 
-    await dio.download(
-      _historyDownloadUrl,
-      filePath,
-      onReceiveProgress: (received, total) {
-        if (total != -1 && received < total) {
-          showBanner(downloadingDeviceHistoryBanner());
-        } else {
-          hideCurrentBanner();
-        }
-      },
-      options: Options(
-        responseType: ResponseType.bytes,
-        followRedirects: false,
-        validateStatus: (status) {
-          return status! < 500;
+      String fileName = 'device_${name}_history.csv';
+      String filePath = '${directory.path}/$fileName';
+
+      // Initialize Dio for downloading
+      Dio dio = Dio();
+
+      await dio.download(
+        _historyDownloadUrl,
+        filePath,
+        onReceiveProgress: (received, total) {
+          if (total != -1 && received < total) {
+            showBanner(downloadingDeviceHistoryBanner());
+          } else {
+            hideCurrentBanner();
+          }
         },
-      ),
-    );
-    showBanner(downloadCompleteBanner());
-  } catch (error) {
-    showBanner(downloadFailedBanner(error));
+        options: Options(
+          responseType: ResponseType.bytes,
+          followRedirects: false,
+          validateStatus: (status) {
+            return status! < 500;
+          },
+        ),
+      );
+      showBanner(downloadCompleteBanner());
+    } catch (error) {
+      showBanner(downloadFailedBanner(error));
+    }
   }
-}
-
 
   /**
    * @brief Initializes the download URL listener for device history.
@@ -264,44 +271,48 @@ Future<void> downloadDeviceHistory() async {
    * @since 1.0
    */
   void initDownloadUrl() {
-    dbRef.child('CloudLogging').child('Spreadsheet').child('download_url').onValue.listen((event) =>
-      event.snapshot.exists
-      ? _historyDownloadUrl = event.snapshot.value.toString()
-      : null
-    );
+    dbRef
+        .child('CloudLogging')
+        .child('Spreadsheet')
+        .child('download_url')
+        .onValue
+        .listen((event) => event.snapshot.exists
+            ? _historyDownloadUrl = event.snapshot.value.toString()
+            : null);
   }
 
   /**
-   * @brief Shows confirmation dialog and clears device log history.
+   * @brief Shows confirmation dialog and clears device LOG history.
    * @details Displays an alert dialog asking for user confirmation before
    *          clearing all device history data from Firebase database.
    * @param context Build context for showing the dialog
    * @since 1.0
    */
   void clearDeviceLogHistory(BuildContext context) {
-    showDialog(context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Clear Device History"),
-          content: const Text("Are you sure you want to clear the device history?"),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                dbRef.child('History').remove();
-                dbRef.child('History').set([]);
-                Navigator.of(navigatorKey.currentContext!).pop();
-              },
-              child: const Text("Yes"),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(navigatorKey.currentContext!).pop();
-              },
-              child: const Text("No"),
-            ),
-          ],
-        );
-      }
-    );
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Clear Device History"),
+            content: const Text(
+                "Are you sure you want to clear the device history?"),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  dbRef.child('History').remove();
+                  dbRef.child('History').set([]);
+                  Navigator.of(navigatorKey.currentContext!).pop();
+                },
+                child: const Text("Yes"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(navigatorKey.currentContext!).pop();
+                },
+                child: const Text("No"),
+              ),
+            ],
+          );
+        });
   }
 }

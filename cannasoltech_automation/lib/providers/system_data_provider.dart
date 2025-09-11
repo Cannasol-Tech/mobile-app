@@ -1,14 +1,12 @@
-/**
- * @file system_data_provider.dart
- * @author Stephen Boyett
- * @date 2025-09-06
- * @brief System data providers for state management in the Cannasol Technologies app.
- * @details Contains provider classes for managing system indices, device data,
- *          user authentication state, and application-wide state management
- *          using Flutter's Provider pattern and ChangeNotifier.
- * @version 1.0
- * @since 1.0
- */
+// @file system_data_provider.dart
+// @author Stephen Boyett
+// @date 2025-09-06
+// @brief System data providers for st ate management in the Cannasol Technologies app.
+// @details Contains provider classes for managing system indices, device data,
+//          user authentication state, and application-wide state management
+//          using Flutter's Provider pattern and ChangeNotifier.
+// @version 1.0
+// @since 1.0
 
 // ignore_for_file: avoid_print
 import 'dart:async';
@@ -31,16 +29,12 @@ import 'package:cannasoltech_automation/pages/home/start_page.dart';
 import 'package:cannasoltech_automation/controllers/text_controllers.dart';
 import 'package:cannasoltech_automation/controllers/toggle_controllers.dart';
 
-/**
- * @brief System index provider for managing current system component selection.
- * @details Extends ValueNotifier to provide reactive state management for
- *          system component indices with bounds checking and increment/decrement operations.
- * @since 1.0
- */
+// @brief System index provider for managing current system component selection.
+// @details Extends ValueNotifier to provide reactive state management for
+//          system component indices with bounds checking and increment/decrement operations.
+// @since 1.0
 class SystemIdx extends ValueNotifier<int> {
-  /**
-   * @brief Creates a SystemIdx instance with initial value of 0.
-   */
+  // @brief Creates a SystemIdx instance with initial value of 0.
   SystemIdx() : super(0);
 
   /// Minimum allowed index value
@@ -49,49 +43,39 @@ class SystemIdx extends ValueNotifier<int> {
   /// Maximum allowed index value
   final int maxValue = 2;
 
-  /**
-   * @brief Increments the current index value if within bounds.
-   * @details Increases the value by 1 if it's less than maxValue.
-   * @since 1.0
-   */
+  /// @brief Increments the current index value if within bounds.
+  /// @details Increases the value by 1 if it's less than maxValue.
+  /// @since 1.0
   void increment() {
     if (value < maxValue) {
       value++;
     }
   }
 
-  /**
-   * @brief Decrements the current index value if within bounds.
-   * @details Decreases the value by 1 if it's greater than minValue.
-   * @since 1.0
-   */
+  /// @brief Decrements the current index value if within bounds.
+  /// @details Decreases the value by 1 if it's greater than minValue.
+  /// @since 1.0
   void decrement() {
     if (value > minValue) {
-      value --;
+      value--;
     }
   }
 
-  /**
-   * @brief Sets the index to a specific value.
-   * @param idx The index value to set
-   * @since 1.0
-   */
+  /// @brief Sets the index to a specific value.
+  /// @param idx The index value to set
+  /// @since 1.0
   void set(int idx) {
     value = idx;
     print("DEBUG -> SystemIdx set to $idx");
   }
 
-  /**
-   * @brief Initializes the system index provider.
-   * @details Resets the value to 0 and logs initialization.
-   * @since 1.0
-   */
-  void init(){
+  /// @brief Initializes the system index provider.
+  /// @details Resets the value to 0 and logs initialization.
+  /// @since 1.0
+  void init() {
     print("DEBUG -> SystemIndex provider initialized!");
     value = 0;
   }
-
-
 }
 
 typedef ActiveDevice = Device?;
@@ -103,9 +87,8 @@ typedef ActiveDevice = Device?;
 //   FirebaseAuth auth = FirebaseAuth.instance;
 //   String selectedDevice = 'None';
 
-
 //   Stream<ActiveDevice> streamActiveDevice(String selectedDevice) async* {
-//     yield* 
+//     yield*
 //     _devicesReference.child(selectedDevice)
 //     .onValue.map((event) {
 //       if (event.snapshot.exists){
@@ -116,7 +99,6 @@ typedef ActiveDevice = Device?;
 //   }
 // }
 
-
 class AlarmTimer {
   Duration? duration;
   Timer? latch;
@@ -124,13 +106,14 @@ class AlarmTimer {
   Duration? alarmStartTime;
 
   void start() {
-    if (!started){ 
+    if (!started) {
       started = true;
       duration = const Duration(seconds: 0);
 
       latch = Timer.periodic(const Duration(seconds: 1), (timer) {
-        int runSeconds = (DateTime.now().millisecondsSinceEpoch ~/ 1000) - alarmStartTime!.inSeconds;
-        duration = Duration(seconds: runSeconds);  
+        int runSeconds = (DateTime.now().millisecondsSinceEpoch ~/ 1000) -
+            alarmStartTime!.inSeconds;
+        duration = Duration(seconds: runSeconds);
       });
     }
   }
@@ -143,6 +126,7 @@ class AlarmTimer {
     }
   }
 }
+
 class TimerHandler {
   dynamic updateDataTimer;
   double updateSeconds = 0.25;
@@ -172,13 +156,13 @@ class SystemDataModel extends ChangeNotifier {
   Device? get activeDevice => _activeDevice;
 
   Map<int, dynamic> currentRunPageMap = {
-    RESET : const StartPage(), 
-    INIT : const StartPage(), 
-    WARM_UP : const RunPage(startIndex: 0),
-    RUNNING : const RunPage(startIndex: 0),
-    ALARM : const RunPage(startIndex: 0),
-    FINISHED : const EndPage(), 
-    COOL_DOWN : const RunPage(startIndex: 0),
+    RESET: const StartPage(),
+    INIT: const StartPage(),
+    WARM_UP: const RunPage(startIndex: 0),
+    RUNNING: const RunPage(startIndex: 0),
+    ALARM: const RunPage(startIndex: 0),
+    FINISHED: const EndPage(),
+    COOL_DOWN: const RunPage(startIndex: 0),
   };
 
   Size display(BuildContext ctx) => MediaQuery.of(ctx).size;
@@ -190,9 +174,12 @@ class SystemDataModel extends ChangeNotifier {
   dynamic devicesListener;
   dynamic updatingData = false;
 
-  final ActiveDeviceHandler _activeDeviceHandler = ActiveDeviceHandler.uninitialized();
-  Map<String, String> get registeredDeviceStatus => _registeredDeviceHandler.registeredDeviceStatus; 
-  final RegisteredDeviceHandler _registeredDeviceHandler = RegisteredDeviceHandler.uninitialized();
+  final ActiveDeviceHandler _activeDeviceHandler =
+      ActiveDeviceHandler.uninitialized();
+  Map<String, String> get registeredDeviceStatus =>
+      _registeredDeviceHandler.registeredDeviceStatus;
+  final RegisteredDeviceHandler _registeredDeviceHandler =
+      RegisteredDeviceHandler.uninitialized();
   Devices get devices => _devices;
   final Devices _devices = Devices.initialize();
 
@@ -200,7 +187,7 @@ class SystemDataModel extends ChangeNotifier {
   String get runPageTitle => _runPageTitle;
 
   int? _activeDeviceState = INIT;
-  int get activeDeviceState => _activeDeviceState ?? INIT; 
+  int get activeDeviceState => _activeDeviceState ?? INIT;
 
   Widget _currentRunPage = const StartPage();
   Widget get currentRunPage => _currentRunPage;
@@ -228,10 +215,10 @@ class SystemDataModel extends ChangeNotifier {
   bool _needsAcceptTaC = false;
   bool get needsAcceptTaC => _needsAcceptTaC;
 
-  void init(){
+  void init() {
     _almCount = 0;
     setBottomNavPages();
-    log.info("DEBUG -> SystemDataModel initialized");
+    LOG.info("DEBUG -> SystemDataModel initialized");
     startUpdateDataTimer();
     authListener = authStateChanges.listen((event) {
       if (event == null) {
@@ -242,7 +229,8 @@ class SystemDataModel extends ChangeNotifier {
 
   @override
   dispose() {
-    log.info("DEBUG -> SystemDataModel disposed");
+    LOG.info("DEBUG -> SystemDataModel initialized");
+    LOG.info("DEBUG -> SystemDataModel disposed");
     stopUpdateDataTimer();
     // _alarmHandler.uninitialize();
     _activeDeviceHandler.uninitialize();
@@ -253,21 +241,22 @@ class SystemDataModel extends ChangeNotifier {
   }
 
   void startUpdateDataTimer() {
-    log.info("DEBUG -> Starting update data timer");
-    if (_timers.updateDataTimer == null){
+    LOG.info("DEBUG -> Starting update data timer");
+    if (_timers.updateDataTimer == null) {
       _timers.updateDataTimer = Timer.periodic(
-        Duration(milliseconds: (_timers.updateSeconds*1000).toInt()),
-       ((Timer t) {updateData(); }));
-       updatingData = true;
-    }
-    else {
-      log.info("DEBUG -> Starting update data timer");
+          Duration(milliseconds: (_timers.updateSeconds * 1000).toInt()),
+          ((Timer t) {
+        updateData();
+      }));
+      updatingData = true;
+    } else {
+      LOG.info("DEBUG -> Starting update data timer");
       _timers.updateDataTimer = null;
     }
   }
 
   void stopUpdateDataTimer() {
-    if (_timers.updateDataTimer != null){
+    if (_timers.updateDataTimer != null) {
       updatingData = false;
       _timers.updateDataTimer.cancel();
       _timers.updateDataTimer = null;
@@ -275,20 +264,19 @@ class SystemDataModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setBottomNavPages () {
+  void setBottomNavPages() {
     bottomNavPages = [
-      const StartPage(), 
-      const ConfigPage(), 
-      const LogPage(), 
+      const StartPage(),
+      const ConfigPage(),
+      const LogPage(),
       const AlarmPage()
     ];
   }
-  
-  void togglePWVis(){
-    if (_isPasswordVisible == true){
+
+  void togglePWVis() {
+    if (_isPasswordVisible == true) {
       _isPasswordVisible == false;
-    }
-    else {
+    } else {
       _isPasswordVisible = true;
     }
     return;
@@ -296,7 +284,7 @@ class SystemDataModel extends ChangeNotifier {
 
   void setSelectedDeviceFromName(String deviceName) {
     String deviceId = devices.nameIdMap[deviceName] ??= 'None';
-    if (_userHandler.watchedDevices.contains(deviceId) || deviceId == 'None'){
+    if (_userHandler.watchedDevices.contains(deviceId) || deviceId == 'None') {
       _userHandler.setSelectedDeviceId(deviceId);
       _activeDeviceHandler.update(deviceId);
       notifyListeners();
@@ -307,8 +295,7 @@ class SystemDataModel extends ChangeNotifier {
   void updateNeedsAcceptTaC() {
     if (userHandler.doesAcceptTaC == false) {
       TaCCount += 1;
-    }
-    else {
+    } else {
       TaCCount = 0;
       _needsAcceptTaC = false;
     }
@@ -317,30 +304,26 @@ class SystemDataModel extends ChangeNotifier {
     }
   }
 
-
-  void updateCurrentRunPage(){
+  void updateCurrentRunPage() {
     /* Updates app to reflect the current system state */
-    if (_activeDevice != null && _activeDevice?.name != 'None'){
+    if (_activeDevice != null && _activeDevice?.name != 'None') {
       _currentRunPage = currentRunPageMap[_activeDevice?.state.state];
-      log.info("DEBUG PAGE -> _currentRunPage = $_currentRunPage");
-    }
-    else {
+      LOG.info("DEBUG PAGE -> _currentRunPage = $_currentRunPage");
+    } else {
       _currentRunPage = currentRunPageMap[RESET];
     }
     bottomNavPages[0] = _currentRunPage;
   }
 
   void updateAlarmFlash() {
-    if(_activeDevice != null) {
+    if (_activeDevice != null) {
       if (_almCount < 2) {
         _almCount += 1;
-      }
-      else {
+      } else {
         _almCount = 0;
-        if (_activeDevice!.alarms.alarmActive){
+        if (_activeDevice!.alarms.alarmActive) {
           _alarmFlash = !_alarmFlash;
-        }
-        else {
+        } else {
           _alarmFlash = false;
         }
       }
@@ -348,25 +331,23 @@ class SystemDataModel extends ChangeNotifier {
   }
 
   void updateDataControllers(dynamic newDeviceData) {
-    if (newDeviceData != null && newDeviceData.name != 'None'){
-      if (_activeDevice == null || _activeDevice?.name == "None"){
+    if (newDeviceData != null && newDeviceData.name != 'None') {
+      if (_activeDevice == null || _activeDevice?.name == "None") {
         textControllers.init(newDeviceData);
         toggleControllers.init(newDeviceData);
-      }
-      else if (_activeDevice?.status == "OFFLINE"){
-          textControllers.init(newDeviceData);
-          toggleControllers.init(newDeviceData);
-      }
-      else if (_activeDevice?.status == "ONLINE" && newDeviceData.status == "OFFLINE"){
-          textControllers.clear();
-          toggleControllers.clear();
-      }
-      else {
+      } else if (_activeDevice?.status == "OFFLINE") {
+        textControllers.init(newDeviceData);
+        toggleControllers.init(newDeviceData);
+      } else if (_activeDevice?.status == "ONLINE" &&
+          newDeviceData.status == "OFFLINE") {
+        textControllers.clear();
+        toggleControllers.clear();
+      } else {
         textControllers.update(newDeviceData, _activeDevice);
         toggleControllers.update(newDeviceData, _activeDevice);
       }
-    }
-    else { // Clear text controllers because no device
+    } else {
+      // Clear text controllers because no device
       _activeDevice = null;
       textControllers.clear();
       toggleControllers.clear();
@@ -383,7 +364,7 @@ class SystemDataModel extends ChangeNotifier {
     'overload_alarm'
   ];
   */
-    if (_activeDevice == null){
+    if (_activeDevice == null) {
       return;
     }
     List<String> activeAlarms = _activeDevice!.alarms.activeAlarms;
@@ -392,29 +373,34 @@ class SystemDataModel extends ChangeNotifier {
     dynamic alarmTimers = _timers.alarmTimers;
     for (var alarmName in activeAlarms) {
       AlarmTimer alarmTimer = alarmTimers[alarmName];
-      if (alarmTimer.started == false){
+      if (alarmTimer.started == false) {
         alarmTimer.start();
       }
       AlarmLogsModel alarmLogs = _activeDevice!.alarmLogs;
-      alarmTimer.alarmStartTime = Duration(seconds: alarmLogs.getAlarmStartSeconds(alarmName)); 
+      alarmTimer.alarmStartTime =
+          Duration(seconds: alarmLogs.getAlarmStartSeconds(alarmName));
     }
-    for (var alarm in idleAlarms){
+    for (var alarm in idleAlarms) {
       AlarmTimer alarmTimer = alarmTimers[alarm];
-      if (alarmTimer.started == true){
+      if (alarmTimer.started == true) {
         alarmTimer.stop();
       }
     }
-    _activeDevice!.alarms.flowAlarmTime = _timers.alarmTimers["flow_alarm"].duration;
-    _activeDevice!.alarms.tempAlarmTime = _timers.alarmTimers["temp_alarm"].duration;
-    _activeDevice!.alarms.pressureAlarmTime = _timers.alarmTimers["pressure_alarm"].duration;
-    _activeDevice!.alarms.freqLockAlarmTime = _timers.alarmTimers["freq_lock_alarm"].duration;
-    _activeDevice!.alarms.overloadAlarmTime = _timers.alarmTimers["overload_alarm"].duration;
+    _activeDevice!.alarms.flowAlarmTime =
+        _timers.alarmTimers["flow_alarm"].duration;
+    _activeDevice!.alarms.tempAlarmTime =
+        _timers.alarmTimers["temp_alarm"].duration;
+    _activeDevice!.alarms.pressureAlarmTime =
+        _timers.alarmTimers["pressure_alarm"].duration;
+    _activeDevice!.alarms.freqLockAlarmTime =
+        _timers.alarmTimers["freq_lock_alarm"].duration;
+    _activeDevice!.alarms.overloadAlarmTime =
+        _timers.alarmTimers["overload_alarm"].duration;
   }
 
-
   void updateData() {
-    log.info("Updating System Data");
-    if (userHandler.initialized && _devices.initialized){
+    LOG.info("Updating System Data");
+    if (userHandler.initialized && _devices.initialized) {
       _activeDeviceHandler.update(userHandler.selectedDevice);
       updateDataControllers(_activeDeviceHandler.device);
       _activeDevice = _activeDeviceHandler.device;
@@ -424,16 +410,15 @@ class SystemDataModel extends ChangeNotifier {
       updateAlarmFlash();
       updateAlarmTimers();
       updateNeedsAcceptTaC();
-    }
-    else {
-      if (userHandler.initialized == false){
+    } else {
+      if (userHandler.initialized == false) {
         userHandler.initialize();
       }
-      if (_devices.initialized == false){
+      if (_devices.initialized == false) {
         _devices.initialize();
       }
     }
-    // log.info("DEBUG -> Active Device = $activeDevice");
+    // LOG.info("DEBUG -> Active Device = $activeDevice");
     notifyListeners();
   }
 }

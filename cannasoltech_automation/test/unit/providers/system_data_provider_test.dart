@@ -152,8 +152,14 @@ void main() {
     });
 
     test('should have AlarmTimer instances for all alarm types', () {
-      final alarmNames = ['flow_alarm', 'temp_alarm', 'pressure_alarm', 'freq_lock_alarm', 'overload_alarm'];
-      
+      final alarmNames = [
+        'flow_alarm',
+        'temp_alarm',
+        'pressure_alarm',
+        'freq_lock_alarm',
+        'overload_alarm'
+      ];
+
       for (final alarmName in alarmNames) {
         expect(timerHandler.alarmTimers[alarmName], isA<AlarmTimer>());
       }
@@ -197,24 +203,25 @@ void main() {
     test('should update Terms and Conditions acceptance correctly', () {
       // Initial state
       expect(systemDataModel.needsAcceptTaC, isFalse);
-      
+
       // Simulate user doesn't accept ToC by calling updateNeedsAcceptTaC 10 times
       for (int i = 0; i < 10; i++) {
         systemDataModel.updateNeedsAcceptTaC();
       }
-      
+
       expect(systemDataModel.needsAcceptTaC, isTrue);
     });
 
     test('should handle current run page updates with no active device', () {
       systemDataModel.updateCurrentRunPage();
-      expect(systemDataModel.currentRunPage, equals(systemDataModel.currentRunPageMap[RESET]));
+      expect(systemDataModel.currentRunPage,
+          equals(systemDataModel.currentRunPageMap[RESET]));
     });
 
     test('should update alarm flash state correctly', () {
       // Initially no alarm flash
       expect(systemDataModel.alarmFlash, isFalse);
-      
+
       // Test with no active device - should not crash
       systemDataModel.updateAlarmFlash();
       expect(systemDataModel.alarmFlash, isFalse);
@@ -242,29 +249,29 @@ void main() {
     });
 
     test('should manage device selection correctly', () {
-      const testDeviceId = 'test-device-123';
-      
+      const testDeviceName = 'test-device-123';
+
       // Should handle device selection when user handler is available
-      systemDataModel.selectDevice(testDeviceId);
-      
-      // Verify the method doesn't crash with empty device ID
-      systemDataModel.selectDevice('');
+      systemDataModel.setSelectedDeviceFromName(testDeviceName);
+
+      // Verify the method doesn't crash with empty device name
+      systemDataModel.setSelectedDeviceFromName('');
     });
 
     test('should start and stop update data timer', () {
       // Test timer initialization
       systemDataModel.startUpdateDataTimer();
       expect(systemDataModel.updatingData, isNotNull);
-      
+
       // Test timer cleanup
       systemDataModel.stopUpdateDataTimer();
     });
 
     test('should handle password visibility toggle', () {
       expect(systemDataModel.isPasswordVisible, isFalse);
-      systemDataModel.togglePasswordVisibility();
+      systemDataModel.togglePWVis();
       expect(systemDataModel.isPasswordVisible, isTrue);
-      systemDataModel.togglePasswordVisibility();
+      systemDataModel.togglePWVis();
       expect(systemDataModel.isPasswordVisible, isFalse);
     });
 
@@ -288,19 +295,20 @@ void main() {
     test('should manage alarm count for flashing correctly', () {
       // Test that alarm flash counter resets properly
       expect(systemDataModel.alarmFlash, isFalse);
-      
+
       // Call multiple times to test the counter logic
       for (int i = 0; i < 5; i++) {
         systemDataModel.updateAlarmFlash();
       }
-      
+
       // Should still be false since no active device with alarms
       expect(systemDataModel.alarmFlash, isFalse);
     });
 
     test('should handle registered device status access', () {
       expect(systemDataModel.registeredDeviceStatus, isNotNull);
-      expect(systemDataModel.registeredDeviceStatus, isA<Map<String, String>>());
+      expect(
+          systemDataModel.registeredDeviceStatus, isA<Map<String, String>>());
     });
 
     test('should manage authentication state changes', () {
@@ -311,262 +319,13 @@ void main() {
     test('should handle Terms and Conditions counter reset', () {
       // Test the TaC acceptance logic
       systemDataModel.updateNeedsAcceptTaC();
-      
+
       // Multiple calls should increment counter but not immediately trigger
       for (int i = 0; i < 5; i++) {
         systemDataModel.updateNeedsAcceptTaC();
       }
-      
+
       // Should not need TaC yet (less than 10 calls)
-      expect(systemDataModel.needsAcceptTaC, isFalse);
-    });
-  });
-}
-      expect(timerHandler.alarmTimers.containsKey('overload_alarm'), isTrue);
-    });
-
-    test('should have AlarmTimer instances for each alarm', () {
-      timerHandler.alarmTimers.forEach((key, value) {
-        expect(value, isA<AlarmTimer>());
-      });
-    });
-  });
-
-  group('SystemDataModel Tests', () {
-    late SystemDataModel systemDataModel;
-    late MockFirebaseAuth mockAuth;
-    late MockUserHandler mockUserHandler;
-    late MockFirebaseDatabase mockDatabase;
-
-    setUp(() {
-      mockAuth = MockFirebaseAuth();
-      mockUserHandler = MockUserHandler();
-      mockDatabase = MockFirebaseDatabase();
-
-      systemDataModel = SystemDataModel();
-
-      // Setup basic mocks
-      when(() => mockAuth.authStateChanges()).thenAnswer(
-        (_) => Stream.value(null),
-      );
-      when(() => mockUserHandler.initialized).thenReturn(false);
-      when(() => mockUserHandler.initialize()).thenAnswer((_) async {});
-    });
-
-    tearDown(() {
-      systemDataModel.dispose();
-    });
-
-    test('should initialize with default values', () {
-      expect(systemDataModel.activeDevice, isNull);
-      expect(systemDataModel.activeDeviceState, equals(INIT));
-      expect(systemDataModel.isPasswordVisible, isFalse);
-      expect(systemDataModel.alarmFlash, isFalse);
-      expect(systemDataModel.needsAcceptTaC, isFalse);
-      expect(systemDataModel.runPageTitle, equals(RUN_TITLE));
-    });
-
-    test('should initialize correctly', () {
-      systemDataModel.init();
-
-      expect(systemDataModel.bottomNavPages.length, equals(4));
-      // Timer should be started during initialization
-      expect(systemDataModel.updatingData, isTrue);
-    });
-
-    test('should start update data timer', () {
-      systemDataModel.startUpdateDataTimer();
-      expect(systemDataModel.updatingData, isTrue);
-    });
-
-    test('should stop update data timer', () {
-      systemDataModel.startUpdateDataTimer();
-      systemDataModel.stopUpdateDataTimer();
-      expect(systemDataModel.updatingData, isFalse);
-    });
-
-    test('should handle timer restart correctly', () {
-      systemDataModel.startUpdateDataTimer();
-      expect(systemDataModel.updatingData, isTrue);
-
-      // Starting again should reset the timer
-      systemDataModel.startUpdateDataTimer();
-      expect(systemDataModel.updatingData, isTrue);
-    });
-
-    test('should set bottom nav pages correctly', () {
-      systemDataModel.setBottomNavPages();
-
-      expect(systemDataModel.bottomNavPages.length, equals(4));
-      expect(systemDataModel.bottomNavPages[0], isA<Widget>());
-      expect(systemDataModel.bottomNavPages[1], isA<Widget>());
-      expect(systemDataModel.bottomNavPages[2], isA<Widget>());
-      expect(systemDataModel.bottomNavPages[3], isA<Widget>());
-    });
-
-    test('should update current run page based on device state', () {
-      systemDataModel.updateCurrentRunPage();
-
-      // With no active device, should use RESET state page
-      expect(systemDataModel.currentRunPage, isNotNull);
-    });
-
-    test('should update alarm flash correctly', () {
-      systemDataModel.updateAlarmFlash();
-
-      // With no active device, alarm flash should remain false
-      expect(systemDataModel.alarmFlash, isFalse);
-    });
-
-    test('should handle data controllers update with null device', () {
-      systemDataModel.updateDataControllers(null);
-
-      expect(systemDataModel.activeDevice, isNull);
-    });
-
-    test('should dispose correctly', () {
-      systemDataModel.init();
-      systemDataModel.dispose();
-
-      expect(systemDataModel.updatingData, isFalse);
-    });
-
-    test('should notify listeners on data update', () {
-      bool notified = false;
-      systemDataModel.addListener(() {
-        notified = true;
-      });
-
-      systemDataModel.updateData();
-
-      expect(notified, isTrue);
-    });
-
-    test('should handle screen size calculations', () {
-      final context = MockBuildContext();
-      final mediaQuery = MockMediaQueryData();
-      const testSize = Size(375, 667);
-
-      when(() => mediaQuery.size).thenReturn(testSize);
-      when(() => MediaQuery.of(context)).thenReturn(mediaQuery);
-
-      expect(systemDataModel.display(context), equals(testSize));
-      expect(systemDataModel.screenHeight(context), equals(667));
-      expect(systemDataModel.screenWidth(context), equals(375));
-    });
-
-    test('should toggle password visibility correctly', () {
-      // Initial state should be false
-      expect(systemDataModel.isPasswordVisible, isFalse);
-
-      // Toggle to true
-      systemDataModel.togglePWVis();
-      expect(systemDataModel.isPasswordVisible, isTrue);
-
-      // Toggle back to false
-      systemDataModel.togglePWVis();
-      expect(systemDataModel.isPasswordVisible, isFalse);
-    });
-
-    test('should update current run page with no active device', () {
-      systemDataModel.updateCurrentRunPage();
-
-      expect(systemDataModel.currentRunPage, isNotNull);
-      expect(systemDataModel.bottomNavPages[0],
-          equals(systemDataModel.currentRunPage));
-    });
-
-    test('should update alarm flash with no active device', () {
-      systemDataModel.updateAlarmFlash();
-
-      // With no active device, alarm flash should remain false
-      expect(systemDataModel.alarmFlash, isFalse);
-    });
-
-    test('should clear controllers when device is null', () {
-      systemDataModel.updateDataControllers(null);
-
-      expect(systemDataModel.activeDevice, isNull);
-    });
-
-    test('should handle null active device in alarm timers', () {
-      systemDataModel.updateAlarmTimers();
-
-      // Should not throw any errors
-      expect(() => systemDataModel.updateAlarmTimers(), returnsNormally);
-    });
-
-    test('should handle dispose without listeners', () {
-      systemDataModel.authListener = null;
-      systemDataModel.devicesListener = null;
-
-      expect(() => systemDataModel.dispose(), returnsNormally);
-      expect(systemDataModel.updatingData, isFalse);
-    });
-
-    test('should update needs accept TaC correctly', () {
-      final mockUserHandler = MockUserHandler();
-
-      when(() => mockUserHandler.doesAcceptTaC).thenReturn(false);
-
-      systemDataModel.updateNeedsAcceptTaC();
-
-      expect(systemDataModel.needsAcceptTaC, isFalse);
-    });
-
-    test('should set needs accept TaC after 10 counts', () {
-      final mockUserHandler = MockUserHandler();
-
-      when(() => mockUserHandler.doesAcceptTaC).thenReturn(false);
-
-      // Simulate 10 calls
-      for (int i = 0; i < 10; i++) {
-        systemDataModel.updateNeedsAcceptTaC();
-      }
-
-      expect(systemDataModel.needsAcceptTaC, isTrue);
-    });
-
-    test('should reset TaC count when user accepts', () {
-      final mockUserHandler = MockUserHandler();
-
-      when(() => mockUserHandler.doesAcceptTaC).thenReturn(true);
-
-      systemDataModel.updateNeedsAcceptTaC();
-
-      expect(systemDataModel.needsAcceptTaC, isFalse);
-    });
-
-    test('should get run page title', () {
-      expect(systemDataModel.runPageTitle, equals(RUN_TITLE));
-    });
-
-    test('should get current run page', () {
-      expect(systemDataModel.currentRunPage, isNotNull);
-    });
-
-    test('should get is password visible', () {
-      expect(systemDataModel.isPasswordVisible, isFalse);
-    });
-
-    test('should get alarm flash', () {
-      expect(systemDataModel.alarmFlash, isFalse);
-    });
-
-    test('should get user handler', () {
-      expect(systemDataModel.userHandler, isNotNull);
-    });
-
-    test('should get auth state changes stream', () {
-      expect(systemDataModel.authStateChanges, isNotNull);
-    });
-
-    test('should get bottom nav pages', () {
-      expect(systemDataModel.bottomNavPages, isNotNull);
-      expect(systemDataModel.bottomNavPages.length, equals(4));
-    });
-
-    test('should get needs accept TaC', () {
       expect(systemDataModel.needsAcceptTaC, isFalse);
     });
   });

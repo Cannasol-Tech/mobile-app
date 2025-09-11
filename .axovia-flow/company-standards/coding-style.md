@@ -168,7 +168,7 @@ import { LocalClass } from './localModule';
 ### Exception Handling
 
 - Use specific exception types, not generic `Exception`
-- Always log errors with context
+- Always  LOG errors with context
 - Fail fast - validate inputs early
 - Provide meaningful error messages
 

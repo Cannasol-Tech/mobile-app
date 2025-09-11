@@ -154,7 +154,7 @@ The application addresses the specific operational requirements of industrial ul
 - **User Authentication:** Firebase-based secure login with Google Sign-In integration and user session management
 - **Device Registration:** QR code or manual device ID registration system with user-specific device access control
 - **Basic Configuration Control:** Remote adjustment of key processing parameters (temperature setpoints, flow rates, timing parameters)
-- **Alarm History:** 30-day alarm log retention with basic filtering and search capabilities
+- **Alarm History:** 30-day alarm LOG retention with basic filtering and search capabilities
 - **Cross-Platform Support:** Native iOS and Android applications with responsive web interface for desktop access
 
 ### Out of Scope for MVP

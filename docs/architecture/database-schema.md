@@ -242,7 +242,7 @@ Historical alarm records with proper timestamp validation.
 
 ```json
 "AlarmLogs": {
-  "[LOG_ID]": {
+  "[ LOG_ID]": {
     "cleared_time": 0,              // Number: Unix timestamp when alarm was cleared (0 if active)
     "start_time": 1750200755,       // Number: Unix timestamp when alarm started
     "type": "Flow alarm",           // String: Alarm type (see Alarm Types)
@@ -561,7 +561,7 @@ const permissions = {
 - **Input Sanitization**: Validate all user inputs before database writes
 - **Type Checking**: Enforce strict typing to prevent injection attacks
 - **Rate Limiting**: Implement rate limiting for write operations
-- **Audit Logging**: Log all configuration changes with user context
+- **Audit Logging**: LOG all configuration changes with user context
 
 ### Encryption Strategy
 

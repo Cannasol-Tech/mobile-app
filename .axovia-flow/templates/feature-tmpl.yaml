@@ -392,7 +392,7 @@ sections:
         editors: [dev-agent]
 
       - id: debug-log-references
-        title: Debug Log References
+        title: Debug  LOG References
         instruction: Reference any debug logs or traces generated during development
         owner: dev-agent
         editors: [dev-agent]
