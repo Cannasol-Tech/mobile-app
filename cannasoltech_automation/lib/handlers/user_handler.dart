@@ -12,9 +12,11 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../shared/methods.dart';
 import '../shared/snacks.dart';
+import '../api/firebase_api.dart';
 
 /**
  * @brief Handles user authentication and profile management.
@@ -326,9 +328,28 @@ class UserHandler {
   /// Signs in user with Google authentication
   Future<bool> signInWithGoogle() async {
     try {
-      // Note: This is a simplified implementation
-      // In a real app, you would implement Google Sign-In properly
-      // For testing purposes, this returns true
+      // Configure GoogleSignIn - let it use platform-specific client IDs from configuration
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        return false; // User cancelled sign-in
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await auth.signInWithCredential(credential);
+      initialized = false;
+      await initialize();
+      FirebaseApi fbApi = FirebaseApi();
+      String? token = await fbApi.getToken();
+      setFCMToken(token);
+      fbApi.setTokenRefreshCallback(setFCMToken);
       return true;
     } catch (e) {
       return false;
