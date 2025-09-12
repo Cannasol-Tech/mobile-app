@@ -88,6 +88,39 @@ class _SignInPage1State extends State<SignInPage1> {
     }
   }
 
+
+  // TODO:   Revert to the previously working SignInWithGoogle method
+  // @Date:   2025-09-12
+  // @Author: Stephen Boyet
+  // @Details: This method was previously working in a production build I believe.
+  // @  -->  We should try to either revert to this method or merge it's working functionality with the new function. 
+
+  // Future<void> signInWithGoogle(UserHandler userHandler) async {
+  //   try {
+  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  //     if (googleUser == null) {
+  //       showErrorMessage('Google sign-in aborted');
+  //       return;
+  //     }
+
+  //     final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+  //     final AuthCredential credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth.accessToken,
+  //       idToken: googleAuth.idToken,
+  //     );
+
+  //     await FirebaseAuth.instance.signInWithCredential(credential);
+  //     userHandler.initialized = false;
+  //     userHandler.initialize();
+  //     FirebaseApi fbApi = FirebaseApi();
+  //     String? token = await fbApi.getToken();
+  //     userHandler.setFCMToken(token);
+  //     fbApi.setTokenRefreshCallback(userHandler.setFCMToken);
+  //   } catch (error) {
+  //     showErrorMessage('Google sign-in failed');
+  //   }
+  // }
+
   Future<void> signInWithGoogle(UserHandler userHandler) async {
     try {
       print('Starting Google Sign-In process...');
@@ -315,7 +348,7 @@ class _SignInPage1State extends State<SignInPage1> {
                             'Not a member?',
                             style: TextStyle(color: Colors.grey[700]),
                           ),
-                          GestureDetector(
+                          GestureDetector(s
                             onTap: widget.toggleFn,
                             child: const Text(
                               'Register now',

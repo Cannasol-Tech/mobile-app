@@ -26,6 +26,13 @@ The Mobile Application is a Flutter Cross Platform Application that utilizes Goo
 4. `docs/prd/*` adhere closely to the Project Requirements outlined in the sharded PRD documents here.
 
 TODO:  Add the following directories to the project to complete the AI Decision Hierarchy.
+> **Note**:  THIS SOULD BE OFFERED TO BE DONE AS AN INITIALIZATION TASK DURING THE INSTALLATION PROCESS OR IF 
+>  -- --  >     THE AGENT NOTICES THAT THE DIRECTORIES ARE MISSING IT SHOULD BE SUGGESTED AS A COMMAND TO 
+>  -- --  >     THE USER TO RUN THE FOLLOWING COMMAND: 
+**Project Initialization User AgileFlow Command**: 
+  - make: `make init-project`
+  - AgileFlowCli: `agile~flow init-project`
+
 <!-- 3. `docs/architecture/*` and PRD docs
 4. `.bmad-core/*` (only when not conflicting) --> -->
 

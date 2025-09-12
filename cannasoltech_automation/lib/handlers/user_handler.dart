@@ -1,30 +1,29 @@
-/**
- * @file user_handler.dart
- * @author Stephen Boyett
- * @date 2025-09-06
- * @brief User authentication and profile management handler.
- * @details Manages user authentication, profile data, device associations,
- *          and user preferences including email notifications and device selection.
- * @version 1.0
- * @since 1.0
- */
+/// @file user_handler.dart
+/// @author Stephen Boyett
+/// @date 2025-09-06
+/// @brief User authentication and profile management handler.
+/// @details Manages user authentication, profile data, device associations,
+///          and user preferences including email notifications and device selection.
+/// @version 1.0
+/// @since 1.0
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter/foundation.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
+import 'dart:math';
 
 import '../shared/methods.dart';
 import '../shared/snacks.dart';
 import '../api/firebase_api.dart';
 
-/**
- * @brief Handles user authentication and profile management.
- * @details Manages user authentication state, profile information, device associations,
- *          and user preferences with Firebase integration.
- * @since 1.0
- */
+/// @brief Handles user authentication and profile management.
+/// @details Manages user authentication state, profile information, device associations,
+///          and user preferences with Firebase integration.
+/// @since 1.0
 class UserHandler {
   /// User's unique identifier from Firebase Auth
   String? uid;
@@ -313,153 +312,136 @@ class UserHandler {
     return _currentUserName;
   }
 
-  /// Signs in user with email and password
+  /// @brief Sign in with email and password
+  /// @details Authenticates user with email and password, then initializes user data
+  /// @param email User's email address
+  /// @param password User's password
+  /// @return Future<bool> true if sign in successful, false otherwise
+  /// @since 1.0
   Future<bool> signInWithEmailAndPassword(String email, String password) async {
     try {
       await auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+      initialized = false;
+      await initialize();
+      FirebaseApi fbApi = FirebaseApi();
+      String? token = await fbApi.getToken();
+      setFCMToken(token);
+      fbApi.setTokenRefreshCallback(setFCMToken);
       return true;
-    } catch (e) {
-      return false;
+    } on FirebaseAuthException catch (e) {
+      // Let the UI handle the specific error display
+      rethrow;
+    } catch (error) {
+      // Let the UI handle the generic error display
+      rethrow;
     }
   }
 
-  /// Signs in user with Google authentication  
-  Future<bool> signInWithGoogle({GoogleSignIn? googleSignIn, FirebaseApi? firebaseApi}) async {
+  /// @brief Sign in with Google
+  /// @details Authenticates user with Google OAuth, then initializes user data
+  /// @return `Future<bool>` true if sign in successful, false otherwise
+  /// @since 1.0
+  Future<bool> signInWithGoogle() async {
     try {
-      print('Google Sign-In: Starting sign-in process...');
-      
-      final GoogleSignIn gs = googleSignIn ?? GoogleSignIn();
-      
-      // For web, try the recommended approach first
-      if (kIsWeb) {
-        print('Web platform detected - using optimized web flow');
-        
-        // Try silent sign-in first (recommended for web)
-        GoogleSignInAccount? googleUser = await gs.signInSilently();
-        
-        if (googleUser == null) {
-          print('Silent sign-in failed, trying interactive sign-in');
-          googleUser = await gs.signIn();
-        }
-        
-        if (googleUser == null) {
-          print('Google Sign-In: User cancelled sign-in');
-          return false;
-        }
-        
-        print('Google Sign-In: Got user account: ${googleUser.email}');
-        
-        // For web, we'll try a simpler approach with just the account info
-        // Try to use OAuthProvider directly with GoogleSignIn for web
-        try {
-          final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-          print('Google Auth tokens obtained: access=${googleAuth.accessToken != null}, id=${googleAuth.idToken != null}');
-          
-          if (googleAuth.accessToken != null) {
-            final AuthCredential credential = GoogleAuthProvider.credential(
-              accessToken: googleAuth.accessToken,
-              idToken: googleAuth.idToken, // Can be null on web
-            );
-            
-            print('Signing in to Firebase with Google credentials...');
-            final UserCredential userCredential = await auth.signInWithCredential(credential);
-            print('Firebase sign-in successful: ${userCredential.user?.email}');
-            
-            // Initialize user handler
-            initialized = false;
-            await initialize();
-            
-            final FirebaseApi fbApi = firebaseApi ?? FirebaseApi();
-            String? token = await fbApi.getToken();
-            setFCMToken(token);
-            fbApi.setTokenRefreshCallback(setFCMToken);
-            
-            return true;
-          }
-        } catch (webError) {
-          print('Web-specific auth error: $webError');
-          // Fall through to try alternative approach
-        }
-      } else {
-        // Non-web platforms (iOS, Android)
-        print('Non-web platform - using standard flow');
-        
-        final GoogleSignInAccount? googleUser = await gs.signIn();
-        if (googleUser == null) {
-          print('Google Sign-In: User cancelled sign-in');
-          return false;
-        }
+      // Configure GoogleSignIn - let it use platform-specific client IDs from configuration
+      final GoogleSignIn googleSignIn = GoogleSignIn();
 
-        print('Google Sign-In: Got user account: ${googleUser.email}');
-        
-        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-        
-        final AuthCredential credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        return false; // User cancelled sign-in
+      }
 
-        final UserCredential userCredential = await auth.signInWithCredential(credential);
-        print('Firebase sign-in successful: ${userCredential.user?.email}');
-        
-        initialized = false;
-        await initialize();
-        
-        final FirebaseApi fbApi = firebaseApi ?? FirebaseApi();
-        String? token = await fbApi.getToken();
-        setFCMToken(token);
-        fbApi.setTokenRefreshCallback(setFCMToken);
-        
-        return true;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await auth.signInWithCredential(credential);
+      initialized = false;
+      await initialize();
+      FirebaseApi fbApi = FirebaseApi();
+      String? token = await fbApi.getToken();
+      setFCMToken(token);
+      fbApi.setTokenRefreshCallback(setFCMToken);
+      return true;
+    } catch (error) {
+      // Let the UI handle the error display
+      rethrow;
+    }
+  }
+
+  /// @brief Generate a cryptographically secure random nonce
+  /// @details Creates a random string for Apple Sign In security
+  /// @param length Length of the nonce (default: 32)
+  /// @return String The generated nonce
+  /// @since 1.0
+  String _generateNonce([int length = 32]) {
+    const charset =
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+    final random = Random.secure();
+    return List.generate(length, (_) => charset[random.nextInt(charset.length)])
+        .join();
+  }
+
+  /// @brief Create SHA256 hash of a string
+  /// @details Helper method for Apple Sign In nonce hashing
+  /// @param input String to hash
+  /// @return String SHA256 hash
+  /// @since 1.0
+  String _sha256ofString(String input) {
+    final bytes = utf8.encode(input);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+
+  /// @brief Sign in with Apple
+  /// @details Authenticates user with Apple ID, then initializes user data
+  /// @return Future<bool> true if sign in successful, false otherwise
+  /// @since 1.0
+  Future<bool> signInWithApple() async {
+    try {
+      // Check if Apple Sign In is available
+      final isAvailable = await SignInWithApple.isAvailable();
+      if (!isAvailable) {
+        throw Exception('Apple Sign In is not available on this device');
       }
-      
-      // If we reach here, try a simple fallback: check if Firebase user exists
-      print('Checking if Firebase auth succeeded despite errors...');
-      await Future.delayed(Duration(seconds: 1)); // Give Firebase time to process
-      
-      if (auth.currentUser != null) {
-        print('Firebase user authenticated: ${auth.currentUser?.email}');
-        initialized = false;
-        await initialize();
-        
-        final FirebaseApi fbApi = firebaseApi ?? FirebaseApi();
-        String? token = await fbApi.getToken();
-        setFCMToken(token);
-        fbApi.setTokenRefreshCallback(setFCMToken);
-        
-        return true;
-      }
-      
-      print('No Firebase user found - sign-in failed');
-      return false;
-      
-    } catch (e) {
-      print('Google Sign-In Error: $e');
-      print('Error type: ${e.runtimeType}');
-      
-      // Final fallback: check if the user got authenticated anyway
-      if (auth.currentUser != null) {
-        print('Error occurred but user is authenticated: ${auth.currentUser?.email}');
-        
-        try {
-          initialized = false;
-          await initialize();
-          
-          final FirebaseApi fbApi = firebaseApi ?? FirebaseApi();
-          String? token = await fbApi.getToken();
-          setFCMToken(token);
-          fbApi.setTokenRefreshCallback(setFCMToken);
-          
-          return true;
-        } catch (initError) {
-          print('Error during initialization: $initError');
-        }
-      }
-      
-      return false;
+
+      // Generate nonce
+      final rawNonce = _generateNonce();
+      final nonce = _sha256ofString(rawNonce);
+
+      // Request Apple ID credential
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: nonce,
+      );
+
+      // Create Firebase credential
+      final oauthCredential = OAuthProvider("apple.com").credential(
+        idToken: appleCredential.identityToken,
+        rawNonce: rawNonce,
+      );
+
+      // Sign in with Firebase
+      await auth.signInWithCredential(oauthCredential);
+      initialized = false;
+      await initialize();
+      FirebaseApi fbApi = FirebaseApi();
+      String? token = await fbApi.getToken();
+      setFCMToken(token);
+      fbApi.setTokenRefreshCallback(setFCMToken);
+      return true;
+    } catch (error) {
+      // Let the UI handle the error display
+      rethrow;
     }
   }
 }
