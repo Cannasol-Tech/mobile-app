@@ -333,25 +333,43 @@ class UserHandler {
 
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
+        print('Google Sign-In: User cancelled sign-in');
         return false; // User cancelled sign-in
       }
 
+      print('Google Sign-In: Got user account: ${googleUser.email}');
+      
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
+      
+      print('Google Sign-In: Got authentication tokens');
+      print('Access Token available: ${googleAuth.accessToken != null}');
+      print('ID Token available: ${googleAuth.idToken != null}');
+      
+      // Create Firebase credential
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
+      print('Google Sign-In: Created Firebase credential, signing in...');
       await auth.signInWithCredential(credential);
+      print('Google Sign-In: Firebase sign-in successful');
+      
       initialized = false;
       await initialize();
+      print('Google Sign-In: User handler initialized');
+      
       FirebaseApi fbApi = FirebaseApi();
       String? token = await fbApi.getToken();
       setFCMToken(token);
       fbApi.setTokenRefreshCallback(setFCMToken);
+      print('Google Sign-In: FCM token set up');
+      
       return true;
     } catch (e) {
+      print('Google Sign-In Error: $e');
+      print('Error type: ${e.runtimeType}');
       return false;
     }
   }

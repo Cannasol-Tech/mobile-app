@@ -90,11 +90,16 @@ class _SignInPage1State extends State<SignInPage1> {
 
   Future<void> signInWithGoogle(UserHandler userHandler) async {
     try {
+      print('Starting Google Sign-In process...');
       bool success = await userHandler.signInWithGoogle();
       if (!success) {
-        showErrorMessage('Google sign-in aborted');
+        print('Google Sign-In returned false');
+        showErrorMessage('Google sign-in was cancelled or failed. Please try again.');
+      } else {
+        print('Google Sign-In completed successfully');
       }
     } catch (error) {
+      print('Google Sign-In exception: $error');
       showErrorMessage('Google sign-in failed: ${error.toString()}');
     }
   }
