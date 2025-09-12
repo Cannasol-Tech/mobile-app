@@ -325,15 +325,13 @@ class UserHandler {
     }
   }
 
-  /// Signs in user with Google authentication
+  /// Signs in user with Google authentication  
   Future<bool> signInWithGoogle() async {
     try {
-      // Configure GoogleSignIn with minimal scopes - avoid People API
-      final GoogleSignIn googleSignIn = GoogleSignIn(
-        scopes: ['email', 'profile'], // Basic scopes only
-      );
-
       print('Google Sign-In: Starting sign-in process...');
+      
+      // Try the simpler Google Sign-In without additional scopes
+      final GoogleSignIn googleSignIn = GoogleSignIn();
       
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
@@ -343,16 +341,47 @@ class UserHandler {
 
       print('Google Sign-In: Got user account: ${googleUser.email}');
       
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      // Get authentication tokens, but handle People API errors gracefully
+      GoogleSignInAuthentication? googleAuth;
+      try {
+        googleAuth = await googleUser.authentication;
+        print('Google Sign-In: Got authentication tokens successfully');
+      } catch (authError) {
+        print('Google Sign-In: Error getting auth tokens: $authError');
+        
+        // If it's a People API error, we can still try to use what we have
+        if (authError.toString().contains('People API')) {
+          print('People API error during auth - trying alternative approach');
+          
+          // For web, we might be able to get basic info without People API
+          // Check if we have a signed-in user already in Firebase
+          await Future.delayed(Duration(milliseconds: 500)); // Give Firebase time
+          if (auth.currentUser != null) {
+            print('Firebase user already signed in: ${auth.currentUser?.email}');
+            
+            initialized = false;
+            await initialize();
+            
+            FirebaseApi fbApi = FirebaseApi();
+            String? token = await fbApi.getToken();
+            setFCMToken(token);
+            fbApi.setTokenRefreshCallback(setFCMToken);
+            
+            return true;
+          }
+        }
+        
+        // If we can't recover, re-throw the error
+        throw authError;
+      }
       
-      print('Google Sign-In: Got authentication tokens');
       print('Access Token available: ${googleAuth.accessToken != null}');
       print('ID Token available: ${googleAuth.idToken != null}');
       
-      // For web, idToken might be null - that's expected and OK for Firebase Auth
+      // Create Firebase credential (idToken can be null on web)
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken, // Can be null on web
+        idToken: googleAuth.idToken,
       );
 
       print('Google Sign-In: Created Firebase credential, signing in...');
@@ -375,28 +404,6 @@ class UserHandler {
     } catch (e) {
       print('Google Sign-In Error: $e');
       print('Error type: ${e.runtimeType}');
-      
-      // If it's a People API error, that's expected - we don't need it for basic auth
-      if (e.toString().contains('People API')) {
-        print('People API error detected - this is expected for basic Firebase Auth');
-        // The error occurs after successful Firebase authentication
-        // Check if the user is actually signed in to Firebase
-        if (auth.currentUser != null) {
-          print('Firebase user is signed in despite People API error: ${auth.currentUser?.email}');
-          
-          // Initialize user data since Firebase auth succeeded
-          initialized = false;
-          await initialize();
-          
-          FirebaseApi fbApi = FirebaseApi();
-          String? token = await fbApi.getToken();
-          setFCMToken(token);
-          fbApi.setTokenRefreshCallback(setFCMToken);
-          
-          return true; // Success!
-        }
-      }
-      
       return false;
     }
   }
