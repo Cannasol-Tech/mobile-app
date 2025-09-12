@@ -330,8 +330,10 @@ class UserHandler {
     try {
       print('Google Sign-In: Starting sign-in process...');
       
-      // Try the simpler Google Sign-In without additional scopes
-      final GoogleSignIn googleSignIn = GoogleSignIn();
+      // Configure Google Sign-In to avoid People API calls
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        scopes: ['email'], // Minimal scope to avoid People API
+      );
       
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
