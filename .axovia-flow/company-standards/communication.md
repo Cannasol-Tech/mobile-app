@@ -30,7 +30,8 @@ This document establishes mandatory communication protocols for all AI Coding Ag
 Every AI Coding Agent MUST prefix EVERY paragraph with their assigned Agent ID using the format `[AGENT-ID]`. No exceptions.
 
 **REQUIREMENT 2: Initialization Verification**
-Before beginning any feature implementation or task execution, agents MUST verify their Agent ID with the human operator through direct conversation.
+Before beginning any feature implementation or task execution, agents MUST verify their Agent ID with the human operator
+through direct conversation.
 
 **REQUIREMENT 3: Consistent Session Identity**
 Agents MUST maintain the same Agent ID throughout the entire conversation session without variation.

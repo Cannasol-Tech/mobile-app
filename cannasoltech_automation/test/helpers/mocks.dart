@@ -6,6 +6,7 @@
 // Testing Framework: mocktail
 // Standards: Follow TESTING-STANDARDS.md guidelines
 
+import 'package:cannasoltech_automation/data_models/data.dart' show Devices;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
