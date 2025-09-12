@@ -13,6 +13,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart';
 
 import '../shared/methods.dart';
 import '../shared/snacks.dart';
@@ -330,37 +331,44 @@ class UserHandler {
     try {
       print('Google Sign-In: Starting sign-in process...');
       
-      // Configure Google Sign-In to avoid People API calls
-      final GoogleSignIn googleSignIn = GoogleSignIn(
-        scopes: ['email'], // Minimal scope to avoid People API
-      );
+      final GoogleSignIn googleSignIn = GoogleSignIn();
       
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      if (googleUser == null) {
-        print('Google Sign-In: User cancelled sign-in');
-        return false; // User cancelled sign-in
-      }
-
-      print('Google Sign-In: Got user account: ${googleUser.email}');
-      
-      // Get authentication tokens, but handle People API errors gracefully
-      GoogleSignInAuthentication? googleAuth;
-      try {
-        googleAuth = await googleUser.authentication;
-        print('Google Sign-In: Got authentication tokens successfully');
-      } catch (authError) {
-        print('Google Sign-In: Error getting auth tokens: $authError');
+      // For web, try the recommended approach first
+      if (kIsWeb) {
+        print('Web platform detected - using optimized web flow');
         
-        // If it's a People API error, we can still try to use what we have
-        if (authError.toString().contains('People API')) {
-          print('People API error during auth - trying alternative approach');
+        // Try silent sign-in first (recommended for web)
+        GoogleSignInAccount? googleUser = await googleSignIn.signInSilently();
+        
+        if (googleUser == null) {
+          print('Silent sign-in failed, trying interactive sign-in');
+          googleUser = await googleSignIn.signIn();
+        }
+        
+        if (googleUser == null) {
+          print('Google Sign-In: User cancelled sign-in');
+          return false;
+        }
+        
+        print('Google Sign-In: Got user account: ${googleUser.email}');
+        
+        // For web, we'll try a simpler approach with just the account info
+        // Try to use OAuthProvider directly with GoogleSignIn for web
+        try {
+          final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+          print('Google Auth tokens obtained: access=${googleAuth.accessToken != null}, id=${googleAuth.idToken != null}');
           
-          // For web, we might be able to get basic info without People API
-          // Check if we have a signed-in user already in Firebase
-          await Future.delayed(Duration(milliseconds: 500)); // Give Firebase time
-          if (auth.currentUser != null) {
-            print('Firebase user already signed in: ${auth.currentUser?.email}');
+          if (googleAuth.accessToken != null) {
+            final AuthCredential credential = GoogleAuthProvider.credential(
+              accessToken: googleAuth.accessToken,
+              idToken: googleAuth.idToken, // Can be null on web
+            );
             
+            print('Signing in to Firebase with Google credentials...');
+            final UserCredential userCredential = await auth.signInWithCredential(credential);
+            print('Firebase sign-in successful: ${userCredential.user?.email}');
+            
+            // Initialize user handler
             initialized = false;
             await initialize();
             
@@ -371,41 +379,86 @@ class UserHandler {
             
             return true;
           }
+        } catch (webError) {
+          print('Web-specific auth error: $webError');
+          // Fall through to try alternative approach
         }
+      } else {
+        // Non-web platforms (iOS, Android)
+        print('Non-web platform - using standard flow');
         
-        // If we can't recover, re-throw the error
-        throw authError;
+        final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+        if (googleUser == null) {
+          print('Google Sign-In: User cancelled sign-in');
+          return false;
+        }
+
+        print('Google Sign-In: Got user account: ${googleUser.email}');
+        
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+        
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        final UserCredential userCredential = await auth.signInWithCredential(credential);
+        print('Firebase sign-in successful: ${userCredential.user?.email}');
+        
+        initialized = false;
+        await initialize();
+        
+        FirebaseApi fbApi = FirebaseApi();
+        String? token = await fbApi.getToken();
+        setFCMToken(token);
+        fbApi.setTokenRefreshCallback(setFCMToken);
+        
+        return true;
       }
       
-      print('Access Token available: ${googleAuth.accessToken != null}');
-      print('ID Token available: ${googleAuth.idToken != null}');
+      // If we reach here, try a simple fallback: check if Firebase user exists
+      print('Checking if Firebase auth succeeded despite errors...');
+      await Future.delayed(Duration(seconds: 1)); // Give Firebase time to process
       
-      // Create Firebase credential (idToken can be null on web)
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      print('Google Sign-In: Created Firebase credential, signing in...');
-      final UserCredential userCredential = await auth.signInWithCredential(credential);
-      print('Google Sign-In: Firebase sign-in successful for user: ${userCredential.user?.email}');
+      if (auth.currentUser != null) {
+        print('Firebase user authenticated: ${auth.currentUser?.email}');
+        initialized = false;
+        await initialize();
+        
+        FirebaseApi fbApi = FirebaseApi();
+        String? token = await fbApi.getToken();
+        setFCMToken(token);
+        fbApi.setTokenRefreshCallback(setFCMToken);
+        
+        return true;
+      }
       
-      // Re-initialize user handler with new user data
-      initialized = false;
-      await initialize();
-      print('Google Sign-In: User handler initialized successfully');
+      print('No Firebase user found - sign-in failed');
+      return false;
       
-      // Set up FCM token for notifications
-      FirebaseApi fbApi = FirebaseApi();
-      String? token = await fbApi.getToken();
-      setFCMToken(token);
-      fbApi.setTokenRefreshCallback(setFCMToken);
-      print('Google Sign-In: FCM token configured');
-      
-      return true;
     } catch (e) {
       print('Google Sign-In Error: $e');
       print('Error type: ${e.runtimeType}');
+      
+      // Final fallback: check if the user got authenticated anyway
+      if (auth.currentUser != null) {
+        print('Error occurred but user is authenticated: ${auth.currentUser?.email}');
+        
+        try {
+          initialized = false;
+          await initialize();
+          
+          FirebaseApi fbApi = FirebaseApi();
+          String? token = await fbApi.getToken();
+          setFCMToken(token);
+          fbApi.setTokenRefreshCallback(setFCMToken);
+          
+          return true;
+        } catch (initError) {
+          print('Error during initialization: $initError');
+        }
+      }
+      
       return false;
     }
   }
