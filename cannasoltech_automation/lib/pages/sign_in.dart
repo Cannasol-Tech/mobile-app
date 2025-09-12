@@ -209,18 +209,20 @@ class _SignInPage1State extends State<SignInPage1> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          GestureDetector(
-                              child: Text(
-                                'Forgot Password?',
-                                style: TextStyle(color: Colors.grey[600]),
-                              ),
-                              onTap: () => {
-                                    Navigator.of(context).pop(),
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const ResetPasswordPage())),
-                                  })
+                          Flexible(
+                            child: GestureDetector(
+                                child: Text(
+                                  'Forgot Password?',
+                                  style: TextStyle(color: Colors.grey[600]),
+                                ),
+                                onTap: () => {
+                                      Navigator.of(context).pop(),
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const ResetPasswordPage())),
+                                    }),
+                          )
                         ],
                       ),
                       // _gap(),
@@ -242,6 +244,7 @@ class _SignInPage1State extends State<SignInPage1> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
+                          key: const Key('primary_sign_in_button'),
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(4)),
@@ -272,9 +275,14 @@ class _SignInPage1State extends State<SignInPage1> {
                           child:
                               Divider(thickness: 0.5, color: Colors.grey[400]),
                         ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Text("Or continue with"),
+                        Flexible(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Text(
+                              "Or continue with",
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
                         Expanded(
                           child:
@@ -285,6 +293,7 @@ class _SignInPage1State extends State<SignInPage1> {
                       _gap(),
                       Center(
                         child: GestureDetector(
+                          key: const Key('google_sign_in_button'),
                           onTap: () async {
                             signInWithGoogle(Provider.of<SystemDataModel>(
                                     context,

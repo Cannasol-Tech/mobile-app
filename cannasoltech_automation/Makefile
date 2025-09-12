@@ -151,13 +151,61 @@ test-widget-compliant:
 test-golden:
 	@echo "🖼️  Running golden tests (visual regression)..."
 	@echo "Mocking: PROHIBITED | Purpose: Visual consistency"
-	flutter test --dart-define=ENABLE_GOLDEN_TESTS=true test/widget/ --reporter=expanded
+	@echo "🔎 Checking for baseline golden images in test/golden/screenshots ..."
+	@if ls -1 test/golden/screenshots/*.png >/dev/null 2>&1; then \
+		echo "📦 Baseline goldens found."; \
+	else \
+		echo "⚠️  No baseline golden images found in test/golden/screenshots"; \
+		if [ -n "$$CI" ]; then \
+			echo "❌ CI detected and no baseline images found. Add baselines under test/golden/screenshots or run: make update-goldens"; \
+			exit 1; \
+		else \
+			read -p "Create baseline images now? (y/N): " confirm; \
+			if [ "$$confirm" = "y" ]; then \
+				echo "🔄 Generating baseline golden images..."; \
+				FILES=$$(find test -type f -name "*golden*_test.dart"); \
+				if [ -z "$$FILES" ]; then echo "❌ No golden tests found"; exit 1; fi; \
+				flutter test --dart-define=ENABLE_GOLDEN_TESTS=true --update-goldens $$FILES --reporter=expanded; \
+				echo "✅ Baseline golden images created."; \
+			else \
+				echo "❌ Golden baselines missing. Aborting. Run: make update-goldens"; \
+				exit 1; \
+			fi; \
+		fi; \
+	fi
+	FILES=$$(find test -type f -name "*golden*_test.dart"); \
+	if [ -z "$$FILES" ]; then echo "❌ No golden tests found"; exit 1; fi; \
+	flutter test --dart-define=ENABLE_GOLDEN_TESTS=true $$FILES --reporter=expanded
 	@echo "✅ Golden tests completed"
 
 # Golden tests for specific components
 test-golden-components:
 	@echo "🖼️  Running component golden tests..."
-	flutter test --dart-define=ENABLE_GOLDEN_TESTS=true test/widget/components/ --reporter=expanded
+	@echo "🔎 Checking for baseline golden images in test/golden/screenshots ..."
+	@if ls -1 test/golden/screenshots/*.png >/dev/null 2>&1; then \
+		echo "📦 Baseline goldens found."; \
+	else \
+		echo "⚠️  No baseline golden images found in test/golden/screenshots"; \
+		if [ -n "$$CI" ]; then \
+			echo "❌ CI detected and no baseline images found. Add baselines under test/golden/screenshots or run: make update-goldens-components"; \
+			exit 1; \
+		else \
+			read -p "Create baseline images now? (y/N): " confirm; \
+			if [ "$$confirm" = "y" ]; then \
+				echo "🔄 Generating baseline golden images..."; \
+				FILES=$$(find test/widget/components -type f -name "*golden*_test.dart"); \
+				if [ -z "$$FILES" ]; then echo "❌ No component golden tests found"; exit 1; fi; \
+				flutter test --dart-define=ENABLE_GOLDEN_TESTS=true --update-goldens $$FILES --reporter=expanded; \
+				echo "✅ Baseline golden images created."; \
+			else \
+				echo "❌ Golden baselines missing. Aborting. Run: make update-goldens-components"; \
+				exit 1; \
+			fi; \
+		fi; \
+	fi
+	FILES=$$(find test/widget/components -type f -name "*golden*_test.dart"); \
+	if [ -z "$$FILES" ]; then echo "❌ No component golden tests found"; exit 1; fi; \
+	flutter test --dart-define=ENABLE_GOLDEN_TESTS=true $$FILES --reporter=expanded
 	@echo "✅ Component golden tests completed"
 
 # Update golden files (use with caution)
@@ -165,7 +213,9 @@ update-goldens:
 	@echo "🔄 Updating golden files..."
 	@echo "⚠️  WARNING: This will update all golden reference images"
 	@read -p "Are you sure? (y/N): " confirm && [ "$$confirm" = "y" ] || exit 1
-	flutter test --dart-define=ENABLE_GOLDEN_TESTS=true --update-goldens test/widget/
+	@FILES=$$(find test -type f -name "*golden*_test.dart"); \
+	if [ -z "$$FILES" ]; then echo "❌ No golden tests found"; exit 1; fi; \
+	flutter test --dart-define=ENABLE_GOLDEN_TESTS=true --update-goldens $$FILES
 	@echo "✅ Golden files updated"
 
 # Update golden files for specific components
@@ -173,7 +223,9 @@ update-goldens-components:
 	@echo "🔄 Updating component golden files..."
 	@echo "⚠️  WARNING: This will update component golden reference images"
 	@read -p "Are you sure? (y/N): " confirm && [ "$$confirm" = "y" ] || exit 1
-	flutter test --dart-define=ENABLE_GOLDEN_TESTS=true --update-goldens test/widget/components/
+	@FILES=$$(find test/widget/components -type f -name "*golden*_test.dart"); \
+	if [ -z "$$FILES" ]; then echo "❌ No component golden tests found"; exit 1; fi; \
+	flutter test --dart-define=ENABLE_GOLDEN_TESTS=true --update-goldens $$FILES
 	@echo "✅ Component golden files updated"
 
 # Integration Testing (end-to-end)

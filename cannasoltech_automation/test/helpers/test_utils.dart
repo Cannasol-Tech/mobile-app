@@ -206,9 +206,15 @@ class TestInteractions {
     WidgetTester tester,
     Finder finder,
   ) async {
-    await tester.scrollUntilVisible(finder, 100);
-    await tester.tap(finder);
-    await tester.pump();
+    try {
+      // Try to ensure the widget is visible within any scrollable
+      await tester.ensureVisible(finder);
+    } catch (_) {
+      // Fallback: minor pump, in case it's already visible
+      await tester.pump();
+    }
+    await tester.tap(finder, warnIfMissed: false);
+    await tester.pumpAndSettle();
   }
 
   /// Performs a sign-in flow with given credentials

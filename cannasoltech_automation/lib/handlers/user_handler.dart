@@ -327,22 +327,22 @@ class UserHandler {
   }
 
   /// Signs in user with Google authentication  
-  Future<bool> signInWithGoogle() async {
+  Future<bool> signInWithGoogle({GoogleSignIn? googleSignIn, FirebaseApi? firebaseApi}) async {
     try {
       print('Google Sign-In: Starting sign-in process...');
       
-      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignIn gs = googleSignIn ?? GoogleSignIn();
       
       // For web, try the recommended approach first
       if (kIsWeb) {
         print('Web platform detected - using optimized web flow');
         
         // Try silent sign-in first (recommended for web)
-        GoogleSignInAccount? googleUser = await googleSignIn.signInSilently();
+        GoogleSignInAccount? googleUser = await gs.signInSilently();
         
         if (googleUser == null) {
           print('Silent sign-in failed, trying interactive sign-in');
-          googleUser = await googleSignIn.signIn();
+          googleUser = await gs.signIn();
         }
         
         if (googleUser == null) {
@@ -372,7 +372,7 @@ class UserHandler {
             initialized = false;
             await initialize();
             
-            FirebaseApi fbApi = FirebaseApi();
+            final FirebaseApi fbApi = firebaseApi ?? FirebaseApi();
             String? token = await fbApi.getToken();
             setFCMToken(token);
             fbApi.setTokenRefreshCallback(setFCMToken);
@@ -387,7 +387,7 @@ class UserHandler {
         // Non-web platforms (iOS, Android)
         print('Non-web platform - using standard flow');
         
-        final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+        final GoogleSignInAccount? googleUser = await gs.signIn();
         if (googleUser == null) {
           print('Google Sign-In: User cancelled sign-in');
           return false;
@@ -408,7 +408,7 @@ class UserHandler {
         initialized = false;
         await initialize();
         
-        FirebaseApi fbApi = FirebaseApi();
+        final FirebaseApi fbApi = firebaseApi ?? FirebaseApi();
         String? token = await fbApi.getToken();
         setFCMToken(token);
         fbApi.setTokenRefreshCallback(setFCMToken);
@@ -425,7 +425,7 @@ class UserHandler {
         initialized = false;
         await initialize();
         
-        FirebaseApi fbApi = FirebaseApi();
+        final FirebaseApi fbApi = firebaseApi ?? FirebaseApi();
         String? token = await fbApi.getToken();
         setFCMToken(token);
         fbApi.setTokenRefreshCallback(setFCMToken);
@@ -448,7 +448,7 @@ class UserHandler {
           initialized = false;
           await initialize();
           
-          FirebaseApi fbApi = FirebaseApi();
+          final FirebaseApi fbApi = firebaseApi ?? FirebaseApi();
           String? token = await fbApi.getToken();
           setFCMToken(token);
           fbApi.setTokenRefreshCallback(setFCMToken);

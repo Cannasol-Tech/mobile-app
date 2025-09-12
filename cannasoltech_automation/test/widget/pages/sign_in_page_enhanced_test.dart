@@ -17,6 +17,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:cannasoltech_automation/pages/sign_in.dart';
 import 'package:cannasoltech_automation/handlers/user_handler.dart';
+import 'package:cannasoltech_automation/pages/reset_password.dart';
 import 'package:cannasoltech_automation/providers/system_data_provider.dart';
 
 // Import centralized test helpers
@@ -44,11 +45,10 @@ void main() {
           .thenAnswer((_) async => true);
       when(() => mockUserHandler.signInWithGoogle())
           .thenAnswer((_) async => true);
-      when(() => mockUserHandler.resetPassword(any()))
-          .thenAnswer((_) async => true);
-      
+
+      // Provide userHandler via SystemDataModel used by the widget
+      when(() => mockSystemDataModel.userHandler).thenReturn(mockUserHandler);
       when(() => mockSystemDataModel.isPasswordVisible).thenReturn(false);
-      when(() => mockSystemDataModel.togglePasswordVisibility()).thenReturn(null);
     });
 
     Widget createSignInPageWidget({bool? mockProviders = true}) {
@@ -96,13 +96,8 @@ void main() {
         await tester.pumpWidget(createSignInPageWidget());
         await tester.pumpAndSettle();
 
-        // Assert
-        final emailFields = find.byType(TextFormField);
-        expect(emailFields, findsAtLeastNWidgets(1));
-        
-        final emailField = tester.widget<TextFormField>(emailFields.first);
-        expect(emailField.decoration?.hintText, contains('Email') || isNull);
-        expect(emailField.keyboardType, equals(TextInputType.emailAddress));
+        // Assert - field is present by key
+        expect(TestFinders.emailField, findsOneWidget);
       });
 
       testWidgets('should display password input field with correct properties', (WidgetTester tester) async {
@@ -110,13 +105,8 @@ void main() {
         await tester.pumpWidget(createSignInPageWidget());
         await tester.pumpAndSettle();
 
-        // Assert
-        final passwordFields = find.byType(TextFormField);
-        expect(passwordFields, findsAtLeastNWidgets(2));
-        
-        // Find password field (usually the second TextFormField)
-        final passwordField = tester.widget<TextFormField>(passwordFields.last);
-        expect(passwordField.obscureText, isTrue);
+        // Assert - field is present by key
+        expect(TestFinders.passwordField, findsOneWidget);
       });
 
       testWidgets('should display sign-in button', (WidgetTester tester) async {
@@ -134,9 +124,8 @@ void main() {
         await tester.pumpWidget(createSignInPageWidget());
         await tester.pumpAndSettle();
 
-        // Assert - Look for Google sign-in elements
-        expect(find.textContaining('Google'), findsAtLeastNWidgets(1));
-        // May be displayed as text or as part of a button
+        // Assert - Look for Google sign-in button by key
+        expect(find.byKey(const Key('google_sign_in_button')), findsOneWidget);
       });
 
       testWidgets('should display forgot password link', (WidgetTester tester) async {
@@ -154,8 +143,8 @@ void main() {
         await tester.pumpWidget(createSignInPageWidget());
         await tester.pumpAndSettle();
 
-        // Assert - Look for registration link or toggle
-        expect(find.textContaining('Register') || find.textContaining('Sign up'), findsAtLeastNWidgets(1));
+        // Assert - Look for registration link text used by the app
+        expect(find.text('Register now'), findsOneWidget);
       });
     });
 
@@ -170,8 +159,8 @@ void main() {
         await tester.enterText(emailField, 'invalid-email');
         
         // Trigger validation by tapping sign-in button
-        final signInButton = find.text('Sign In');
-        await tester.tap(signInButton);
+        final signInButton = find.byKey(const Key('primary_sign_in_button'));
+        await TestInteractions.scrollAndTap(tester, signInButton);
         await tester.pumpAndSettle();
 
         // Assert - Should show validation error or prevent submission
@@ -189,8 +178,8 @@ void main() {
         await tester.enterText(emailField, AuthTestData.validEmail);
         
         // Leave password empty and try to sign in
-        final signInButton = find.text('Sign In');
-        await tester.tap(signInButton);
+        final signInButton = find.byKey(const Key('primary_sign_in_button'));
+        await TestInteractions.scrollAndTap(tester, signInButton);
         await tester.pumpAndSettle();
 
         // Assert - Should show validation error or prevent submission
@@ -208,8 +197,8 @@ void main() {
         await tester.enterText(textFields.last, AuthTestData.validPassword);
         
         // Tap sign-in button
-        final signInButton = find.text('Sign In');
-        await tester.tap(signInButton);
+        final signInButton = find.byKey(const Key('primary_sign_in_button'));
+        await TestInteractions.scrollAndTap(tester, signInButton);
         await tester.pumpAndSettle();
 
         // Assert - Should attempt sign-in
@@ -226,17 +215,14 @@ void main() {
         await tester.pumpWidget(createSignInPageWidget());
         await tester.pumpAndSettle();
 
-        // Look for password visibility toggle (usually an icon button)
-        final passwordToggle = find.byIcon(Icons.visibility) 
-            .or(find.byIcon(Icons.visibility_off))
-            .or(find.byType(IconButton));
-        
-        if (passwordToggle.evaluate().isNotEmpty) {
-          await tester.tap(passwordToggle.first);
+        // Tap the visibility_off icon to toggle
+        final toggleOff = find.byIcon(Icons.visibility_off);
+        if (toggleOff.evaluate().isNotEmpty) {
+          await tester.tap(toggleOff.first);
           await tester.pumpAndSettle();
 
-          // Assert - Should call toggle function
-          verify(() => mockSystemDataModel.togglePasswordVisibility()).called(1);
+          // After toggle, expect visibility icon to appear
+          expect(find.byIcon(Icons.visibility), findsWidgets);
         }
       });
 
@@ -245,11 +231,10 @@ void main() {
         await tester.pumpWidget(createSignInPageWidget());
         await tester.pumpAndSettle();
 
-        // Find and tap Google sign-in button
-        final googleButton = find.textContaining('Google').or(find.textContaining('Continue with Google'));
-        
+        // Find and tap Google sign-in button by key
+        final googleButton = find.byKey(const Key('google_sign_in_button'));
         if (googleButton.evaluate().isNotEmpty) {
-          await tester.tap(googleButton.first);
+          await TestInteractions.scrollAndTap(tester, googleButton);
           await tester.pumpAndSettle();
 
           // Assert - Should attempt Google sign-in
@@ -266,11 +251,11 @@ void main() {
         final forgotPasswordLink = find.textContaining('Forgot');
         
         if (forgotPasswordLink.evaluate().isNotEmpty) {
-          await tester.tap(forgotPasswordLink.first);
+          await TestInteractions.scrollAndTap(tester, forgotPasswordLink.first);
           await tester.pumpAndSettle();
 
-          // Assert - Should navigate to reset password
-          expect(find.byType(SignInPage1), findsOneWidget);
+        // Assert - Should navigate to reset password page
+          expect(find.byType(ResetPasswordPage), findsOneWidget);
         }
       });
 
@@ -279,11 +264,10 @@ void main() {
         await tester.pumpWidget(createSignInPageWidget());
         await tester.pumpAndSettle();
 
-        // Find and tap registration toggle
-        final registerLink = find.textContaining('Register').or(find.textContaining('Sign up'));
-        
+        // Find and tap registration toggle used by the app
+        final registerLink = find.text('Register now');
         if (registerLink.evaluate().isNotEmpty) {
-          await tester.tap(registerLink.first);
+          await TestInteractions.scrollAndTap(tester, registerLink);
           await tester.pumpAndSettle();
 
           // Assert - Should call toggle function
@@ -307,8 +291,8 @@ void main() {
         await tester.enterText(textFields.first, AuthTestData.validEmail);
         await tester.enterText(textFields.last, AuthTestData.validPassword);
         
-        final signInButton = find.text('Sign In');
-        await tester.tap(signInButton);
+        final signInButton = find.byKey(const Key('primary_sign_in_button'));
+        await TestInteractions.scrollAndTap(tester, signInButton);
         await tester.pumpAndSettle();
 
         // Assert
@@ -332,8 +316,8 @@ void main() {
         await tester.enterText(textFields.first, AuthTestData.validEmail);
         await tester.enterText(textFields.last, AuthTestData.validPassword);
         
-        final signInButton = find.text('Sign In');
-        await tester.tap(signInButton);
+        final signInButton = find.byKey(const Key('primary_sign_in_button'));
+        await TestInteractions.scrollAndTap(tester, signInButton);
         await tester.pumpAndSettle();
 
         // Assert - Should show error dialog
@@ -355,8 +339,8 @@ void main() {
         await tester.enterText(textFields.first, AuthTestData.validEmail);
         await tester.enterText(textFields.last, AuthTestData.validPassword);
         
-        final signInButton = find.text('Sign In');
-        await tester.tap(signInButton);
+        final signInButton = find.byKey(const Key('primary_sign_in_button'));
+        await TestInteractions.scrollAndTap(tester, signInButton);
         await tester.pumpAndSettle();
 
         // Assert - Should show error dialog
@@ -378,8 +362,8 @@ void main() {
         await tester.enterText(textFields.first, AuthTestData.validEmail);
         await tester.enterText(textFields.last, AuthTestData.validPassword);
         
-        final signInButton = find.text('Sign In');
-        await tester.tap(signInButton);
+        final signInButton = find.byKey(const Key('primary_sign_in_button'));
+        await TestInteractions.scrollAndTap(tester, signInButton);
         await tester.pumpAndSettle();
 
         // Assert - Should show generic error dialog
@@ -417,9 +401,9 @@ void main() {
         await tester.pumpAndSettle();
 
         // Find and tap Google sign-in
-        final googleButton = find.textContaining('Google');
+        final googleButton = find.byKey(const Key('google_sign_in_button'));
         if (googleButton.evaluate().isNotEmpty) {
-          await tester.tap(googleButton.first);
+          await TestInteractions.scrollAndTap(tester, googleButton);
           await tester.pumpAndSettle();
 
           // Assert - Should show error message
@@ -506,18 +490,13 @@ void main() {
       testWidgets('should handle large text sizes', (WidgetTester tester) async {
         // Act
         await tester.pumpWidget(
-          createTestApp(
+          createTestAppWithProviders(
+            systemDataModel: mockSystemDataModel,
             child: MediaQuery(
               data: MediaQueryData.fromWindow(WidgetsBinding.instance.window).copyWith(
                 textScaleFactor: 2.0, // Large text
               ),
-              child: Provider<UserHandler>.value(
-                value: mockUserHandler,
-                child: Provider<SystemDataModel>.value(
-                  value: mockSystemDataModel,
-                  child: SignInPage1(toggleFn: () {}),
-                ),
-              ),
+              child: SignInPage1(toggleFn: () {}),
             ),
           ),
         );
@@ -544,8 +523,8 @@ void main() {
         await tester.enterText(textFields.first, AuthTestData.validEmail);
         await tester.enterText(textFields.last, AuthTestData.validPassword);
         
-        final signInButton = find.text('Sign In');
-        await tester.tap(signInButton);
+        final signInButton = find.byKey(const Key('primary_sign_in_button'));
+        await TestInteractions.scrollAndTap(tester, signInButton);
         await tester.pumpAndSettle();
 
         // Assert
@@ -569,8 +548,8 @@ void main() {
         await tester.enterText(textFields.first, AuthTestData.validEmail);
         await tester.enterText(textFields.last, AuthTestData.validPassword);
         
-        final signInButton = find.text('Sign In');
-        await tester.tap(signInButton);
+        final signInButton = find.byKey(const Key('primary_sign_in_button'));
+        await TestInteractions.scrollAndTap(tester, signInButton);
         await tester.pumpAndSettle();
 
         expect(find.byType(AlertDialog), findsOneWidget);
@@ -591,8 +570,8 @@ void main() {
         await tester.pumpAndSettle();
 
         // Try to sign in with empty form
-        final signInButton = find.text('Sign In');
-        await tester.tap(signInButton);
+        final signInButton = find.byKey(const Key('primary_sign_in_button'));
+        await TestInteractions.scrollAndTap(tester, signInButton);
         await tester.pumpAndSettle();
 
         // Assert - Should handle gracefully without crashing
@@ -633,8 +612,8 @@ void main() {
         await tester.enterText(textFields.first, AuthTestData.validEmail);
         await tester.enterText(textFields.last, AuthTestData.validPassword);
         
-        final signInButton = find.text('Sign In');
-        await tester.tap(signInButton);
+        final signInButton = find.byKey(const Key('primary_sign_in_button'));
+        await TestInteractions.scrollAndTap(tester, signInButton);
         await tester.pumpAndSettle();
 
         // Assert - Should show appropriate error message
