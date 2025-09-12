@@ -93,7 +93,16 @@ class MockGoogleSignInAuthentication extends Mock
 class MockUserHandler extends Mock implements UserHandler {}
 
 /// Mock SystemDataModel for testing system state
-class MockSystemDataModel extends Mock implements SystemDataModel {}
+class MockSystemDataModel extends Mock implements SystemDataModel {
+  bool _alarmFlash = false;
+  
+  @override
+  bool get alarmFlash => _alarmFlash;
+  
+  void setAlarmFlash(bool value) {
+    _alarmFlash = value;
+  }
+}
 
 /// Mock DisplayDataModel for testing display data
 class MockDisplayDataModel extends Mock implements DisplayDataModel {}
@@ -197,11 +206,83 @@ class MockGlobalKey<T extends State<StatefulWidget>> extends Mock
 
 /// Mock AlarmsModel
 class MockAlarmsModel extends Mock implements AlarmsModel {
-  final Map<String, bool> _alarmStates = {};
+  final Map<String, bool> _alarmStates = {
+    'flowWarn': false,
+    'tempWarn': false,
+    'pressureWarn': false,
+    'flowAlarm': false,
+    'tempAlarm': false,
+    'pressureAlarm': false,
+    'freqLockAlarm': false,
+    'overloadAlarm': false,
+    'ignoreTempAlarm': false,
+    'ignoreFlowAlarm': false,
+    'ignorePressureAlarm': false,
+    'ignoreOverloadAlarm': false,
+    'ignoreFreqLockAlarm': false,
+    'tankAlarmActive': false,
+    'pumpAlarmActive': false,
+    'sonicAlarm': false,
+    'sonicAlarmActive': false,
+  };
 
   void setAlarmState(String key, bool value) {
     _alarmStates[key] = value;
   }
+
+  @override
+  bool get flowWarn => _alarmStates['flowWarn'] ?? false;
+  
+  @override
+  bool get tempWarn => _alarmStates['tempWarn'] ?? false;
+  
+  @override
+  bool get pressureWarn => _alarmStates['pressureWarn'] ?? false;
+  
+  @override
+  bool get flowAlarm => _alarmStates['flowAlarm'] ?? false;
+  
+  @override
+  bool get tempAlarm => _alarmStates['tempAlarm'] ?? false;
+  
+  @override
+  bool get pressureAlarm => _alarmStates['pressureAlarm'] ?? false;
+  
+  @override
+  bool get freqLockAlarm => _alarmStates['freqLockAlarm'] ?? false;
+  
+  @override
+  bool get overloadAlarm => _alarmStates['overloadAlarm'] ?? false;
+  
+  @override
+  bool get ignoreTempAlarm => _alarmStates['ignoreTempAlarm'] ?? false;
+  
+  @override
+  bool get ignoreFlowAlarm => _alarmStates['ignoreFlowAlarm'] ?? false;
+  
+  @override
+  bool get ignorePressureAlarm => _alarmStates['ignorePressureAlarm'] ?? false;
+  
+  @override
+  bool get ignoreOverloadAlarm => _alarmStates['ignoreOverloadAlarm'] ?? false;
+  
+  @override
+  bool get ignoreFreqLockAlarm => _alarmStates['ignoreFreqLockAlarm'] ?? false;
+  
+  @override
+  bool get tankAlarmActive => _alarmStates['tankAlarmActive'] ?? false;
+  
+  @override
+  bool get pumpAlarmActive => _alarmStates['pumpAlarmActive'] ?? false;
+  
+  @override
+  bool get sonicAlarm => _alarmStates['sonicAlarm'] ?? false;
+  
+  @override
+  bool get sonicAlarmActive => _alarmStates['sonicAlarmActive'] ?? false;
+  
+  @override
+  bool get alarmActive => flowAlarm || tempAlarm || pressureAlarm || freqLockAlarm || overloadAlarm;
 
   @override
   bool operator [](String key) {

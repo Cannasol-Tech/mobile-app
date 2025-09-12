@@ -328,9 +328,13 @@ class UserHandler {
   /// Signs in user with Google authentication
   Future<bool> signInWithGoogle() async {
     try {
-      // Configure GoogleSignIn - let it use platform-specific client IDs from configuration
-      final GoogleSignIn googleSignIn = GoogleSignIn();
+      // Configure GoogleSignIn with minimal scopes - avoid People API
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        scopes: ['email', 'profile'], // Basic scopes only
+      );
 
+      print('Google Sign-In: Starting sign-in process...');
+      
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
         print('Google Sign-In: User cancelled sign-in');
@@ -339,37 +343,60 @@ class UserHandler {
 
       print('Google Sign-In: Got user account: ${googleUser.email}');
       
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       
       print('Google Sign-In: Got authentication tokens');
       print('Access Token available: ${googleAuth.accessToken != null}');
       print('ID Token available: ${googleAuth.idToken != null}');
       
-      // Create Firebase credential
+      // For web, idToken might be null - that's expected and OK for Firebase Auth
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+        idToken: googleAuth.idToken, // Can be null on web
       );
 
       print('Google Sign-In: Created Firebase credential, signing in...');
-      await auth.signInWithCredential(credential);
-      print('Google Sign-In: Firebase sign-in successful');
+      final UserCredential userCredential = await auth.signInWithCredential(credential);
+      print('Google Sign-In: Firebase sign-in successful for user: ${userCredential.user?.email}');
       
+      // Re-initialize user handler with new user data
       initialized = false;
       await initialize();
-      print('Google Sign-In: User handler initialized');
+      print('Google Sign-In: User handler initialized successfully');
       
+      // Set up FCM token for notifications
       FirebaseApi fbApi = FirebaseApi();
       String? token = await fbApi.getToken();
       setFCMToken(token);
       fbApi.setTokenRefreshCallback(setFCMToken);
-      print('Google Sign-In: FCM token set up');
+      print('Google Sign-In: FCM token configured');
       
       return true;
     } catch (e) {
       print('Google Sign-In Error: $e');
       print('Error type: ${e.runtimeType}');
+      
+      // If it's a People API error, that's expected - we don't need it for basic auth
+      if (e.toString().contains('People API')) {
+        print('People API error detected - this is expected for basic Firebase Auth');
+        // The error occurs after successful Firebase authentication
+        // Check if the user is actually signed in to Firebase
+        if (auth.currentUser != null) {
+          print('Firebase user is signed in despite People API error: ${auth.currentUser?.email}');
+          
+          // Initialize user data since Firebase auth succeeded
+          initialized = false;
+          await initialize();
+          
+          FirebaseApi fbApi = FirebaseApi();
+          String? token = await fbApi.getToken();
+          setFCMToken(token);
+          fbApi.setTokenRefreshCallback(setFCMToken);
+          
+          return true; // Success!
+        }
+      }
+      
       return false;
     }
   }
