@@ -9,8 +9,8 @@ void main() {
     testWidgets('light theme - nominal sample', (tester) async {
       final widget = GoldenUtils.appWrapper(
         themeMode: ThemeMode.light,
-        child: SizedBox(
-          width: 320,
+child: SizedBox(
+          width: 480,
           height: 120,
           child: const DisplaySysValUnits(
             text: 'Frequency',
@@ -32,8 +32,8 @@ void main() {
     testWidgets('dark theme - nominal sample', (tester) async {
       final widget = GoldenUtils.appWrapper(
         themeMode: ThemeMode.dark,
-        child: SizedBox(
-          width: 320,
+child: SizedBox(
+          width: 480,
           height: 120,
           child: const DisplaySysValUnits(
             text: 'Frequency',
