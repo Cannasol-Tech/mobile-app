@@ -348,7 +348,7 @@ class _SignInPage1State extends State<SignInPage1> {
                             'Not a member?',
                             style: TextStyle(color: Colors.grey[700]),
                           ),
-                          GestureDetector(s
+                          GestureDetector(
                             onTap: widget.toggleFn,
                             child: const Text(
                               'Register now',

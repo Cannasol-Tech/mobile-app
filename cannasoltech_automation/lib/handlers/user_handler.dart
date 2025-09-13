@@ -11,10 +11,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:crypto/crypto.dart';
-import 'dart:convert';
-import 'dart:math';
 
 import '../shared/methods.dart';
 import '../shared/snacks.dart';
@@ -375,73 +371,4 @@ class UserHandler {
     }
   }
 
-  /// @brief Generate a cryptographically secure random nonce
-  /// @details Creates a random string for Apple Sign In security
-  /// @param length Length of the nonce (default: 32)
-  /// @return String The generated nonce
-  /// @since 1.0
-  String _generateNonce([int length = 32]) {
-    const charset =
-        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
-    final random = Random.secure();
-    return List.generate(length, (_) => charset[random.nextInt(charset.length)])
-        .join();
-  }
-
-  /// @brief Create SHA256 hash of a string
-  /// @details Helper method for Apple Sign In nonce hashing
-  /// @param input String to hash
-  /// @return String SHA256 hash
-  /// @since 1.0
-  String _sha256ofString(String input) {
-    final bytes = utf8.encode(input);
-    final digest = sha256.convert(bytes);
-    return digest.toString();
-  }
-
-  /// @brief Sign in with Apple
-  /// @details Authenticates user with Apple ID, then initializes user data
-  /// @return Future<bool> true if sign in successful, false otherwise
-  /// @since 1.0
-  Future<bool> signInWithApple() async {
-    try {
-      // Check if Apple Sign In is available
-      final isAvailable = await SignInWithApple.isAvailable();
-      if (!isAvailable) {
-        throw Exception('Apple Sign In is not available on this device');
-      }
-
-      // Generate nonce
-      final rawNonce = _generateNonce();
-      final nonce = _sha256ofString(rawNonce);
-
-      // Request Apple ID credential
-      final appleCredential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-        nonce: nonce,
-      );
-
-      // Create Firebase credential
-      final oauthCredential = OAuthProvider("apple.com").credential(
-        idToken: appleCredential.identityToken,
-        rawNonce: rawNonce,
-      );
-
-      // Sign in with Firebase
-      await auth.signInWithCredential(oauthCredential);
-      initialized = false;
-      await initialize();
-      FirebaseApi fbApi = FirebaseApi();
-      String? token = await fbApi.getToken();
-      setFCMToken(token);
-      fbApi.setTokenRefreshCallback(setFCMToken);
-      return true;
-    } catch (error) {
-      // Let the UI handle the error display
-      rethrow;
-    }
-  }
 }
