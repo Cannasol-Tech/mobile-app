@@ -1,16 +1,31 @@
+/**
+ * @file property.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief Firebase Realtime Database property management.
+ * @details Defines the FireProperty class for managing Firebase database properties
+ *          with standardized interfaces for reading, writing, and listening to changes.
+ * @version 1.0
+ * @since 1.0
+ */
+
 import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 
+/**
+ * @brief Base class for Firebase Realtime Database properties.
+ * @details Provides standardized interface for managing property values and their
+ *          corresponding database references, including read/write operations.
+ * @since 1.0
+ */
 class FireProperty {
-  /// @brief The base class for a Firebase Realtime Database Property.
-  ///
-  /// This class serves as the Base Abstract Class for all data being
-  /// sent/read through the Firebase Realtime Database. It provides
-  /// a standardized interface for managing property values and their
-  /// corresponding database references.
-
+  /// Property name identifier
   String name;
+
+  /// Current property value (dynamic type to support various data types)
   dynamic value;
+
+  /// Firebase database reference for this property
   DatabaseReference ref;
 
   FireProperty(

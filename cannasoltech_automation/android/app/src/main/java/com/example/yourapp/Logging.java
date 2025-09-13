@@ -40,7 +40,7 @@ public class Logging {
                 try (FileWriter writer = new FileWriter(logFile, true)) {
                     writer.write(logMessage + "\n");
                 } catch (IOException e) {
-                    Log.e("Logging", "Failed to write to log file", e);
+                    Log.e("Logging", "Failed to write to LOG file", e);
                 }
             }
         }

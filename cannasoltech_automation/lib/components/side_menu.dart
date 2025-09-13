@@ -1,3 +1,14 @@
+/**
+ * @file side_menu.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief Side navigation menu with animated components and user options.
+ * @details Provides side drawer navigation with animated spin card, device selection,
+ *          user settings, and various application options and links.
+ * @version 1.0
+ * @since 1.0
+ */
+
 import 'package:cannasoltech_automation/providers/display_data_provider.dart';
 import 'package:cannasoltech_automation/components/sign_out_button.dart';
 import 'package:cannasoltech_automation/components/dropdown_menu.dart';
@@ -15,10 +26,27 @@ import '../handlers/user_handler.dart';
 import 'buttons/confirm_button.dart';
 import 'buttons/page_button.dart';
 
-
+/**
+ * @brief Animated spinning card component for side menu.
+ * @details Stateless widget that creates an animated gradient card with
+ *          rotation effects using the TransformModel provider.
+ * @since 1.0
+ */
 class SpinCard extends StatelessWidget {
+  /**
+   * @brief Creates a SpinCard widget.
+   * @param key Optional widget key for identification
+   */
   const SpinCard({super.key});
-  
+
+  /**
+   * @brief Builds the animated spinning card widget.
+   * @details Creates a container with animated gradient background that
+   *          rotates based on the TransformModel state.
+   * @param context Build context for the widget
+   * @return Widget representing the animated spin card
+   * @since 1.0
+   */
   @override
   Widget build(BuildContext context) {
           return Consumer<TransformModel>(builder: (context, value, child) => Container(

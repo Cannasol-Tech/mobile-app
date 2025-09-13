@@ -1,3 +1,14 @@
+/**
+ * @file state_handler.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief Device state management and monitoring handler.
+ * @details Manages device operational state, runtime tracking, sensor readings,
+ *          and system status monitoring with real-time Firebase integration.
+ * @version 1.0
+ * @since 1.0
+ */
+
 import 'package:cannasoltech_automation/data_classes/status_message.dart';
 import 'package:cannasoltech_automation/objects/database_model.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -6,26 +17,56 @@ import '../data_models/property.dart';
 import '../shared/methods.dart';
 import '../shared/types.dart';
 
-
+/**
+ * @brief Handles device state management and monitoring.
+ * @details Extends DatabaseModel to provide real-time device state tracking,
+ *          sensor readings, runtime monitoring, and system status management.
+ * @since 1.0
+ */
 class StateHandler extends DatabaseModel{
+  /**
+   * @brief Creates a StateHandler instance.
+   * @param device Associated device instance for state management
+   */
   StateHandler({this.device});
+
+  /// Associated device instance
   dynamic device;
 
+  /// Getter for device online status
   bool get isOnline => device != null ? device.isOnline() : false;
 
+  /// Getter for current device state
   int get state => getIntPropertyValue('state');
+
+  /// Getter for runtime hours
   int get runHours => getIntPropertyValue('run_hours');
+
+  /// Getter for runtime minutes
   int get runMinutes => getIntPropertyValue('run_minutes');
+
+  /// Getter for runtime seconds
   int get runSeconds => getIntPropertyValue('run_seconds');
-    
+
+  /// Getter for formatted runtime string (HH:MM:SS)
   String get runTime => "$runHours:${padZeros((runMinutes % 60), 2)}:${padZeros((runSeconds % 60), 2)}";
 
+  /// Getter for frequency lock status
   bool get freqLock => getBoolPropertyValue('freq_lock');
+
+  /// Getter for parameters validation status
   bool get paramsValid => getBoolPropertyValue('params_valid');
+
+  /// Getter for alarms cleared status
   bool get alarmsCleared => getBoolPropertyValue('alarms_cleared');
 
+  /// Getter for current flow rate reading
   double get flow => getDoublePropertyValue('flow');
+
+  /// Getter for current pressure reading
   double get pressure => getDoublePropertyValue('pressure');
+
+  /// Getter for current temperature reading
   double get temperature => getDoublePropertyValue('temperature');
 
   double get avgTemp => getDoublePropertyValue('avg_temp');

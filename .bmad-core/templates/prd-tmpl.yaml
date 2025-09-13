@@ -16,7 +16,7 @@ sections:
   - id: goals-context
     title: Goals and Background Context
     instruction: |
-      Ask if Project Brief document is available. If NO Project Brief exists, STRONGLY recommend creating one first using project-brief-tmpl (it provides essential foundation: problem statement, target users, success metrics, MVP scope, constraints). If user insists on PRD without brief, gather this information during Goals section. If Project Brief exists, review and use it to populate Goals (bullet list of desired outcomes) and Background Context (1-2 paragraphs on what this solves and why) so we can determine what is and is not in scope for PRD mvp. Either way this is critical to determine the requirements. Include Change Log table.
+      Ask if Project Brief document is available. If NO Project Brief exists, STRONGLY recommend creating one first using project-brief-tmpl (it provides essential foundation: problem statement, target users, success metrics, MVP scope, constraints). If user insists on PRD without brief, gather this information during Goals section. If Project Brief exists, review and use it to populate Goals (bullet list of desired outcomes) and Background Context (1-2 paragraphs on what this solves and why) so we can determine what is and is not in scope for PRD mvp. Either way this is critical to determine the requirements. Include Change  LOG table.
     sections:
       - id: goals
         title: Goals

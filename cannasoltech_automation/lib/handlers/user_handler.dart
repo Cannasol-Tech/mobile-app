@@ -1,50 +1,96 @@
+/// @file user_handler.dart
+/// @author Stephen Boyett
+/// @date 2025-09-06
+/// @brief User authentication and profile management handler.
+/// @details Manages user authentication, profile data, device associations,
+///          and user preferences including email notifications and device selection.
+/// @version 1.0
+/// @since 1.0
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../shared/methods.dart';
 import '../shared/snacks.dart';
+import '../api/firebase_api.dart';
 
-class UserHandler{
-
+/// @brief Handles user authentication and profile management.
+/// @details Manages user authentication state, profile information, device associations,
+///          and user preferences with Firebase integration.
+/// @since 1.0
+class UserHandler {
+  /// User's unique identifier from Firebase Auth
   String? uid;
-  dynamic auth = FirebaseAuth.instance;
 
-  /* Settings */ 
+  /// Firebase Authentication instance
+  final FirebaseAuth auth;
+
+  /// Device token for push notifications
   dynamic _deviceToken;
+
+  /// Flag indicating if the handler is initialized
   bool initialized = false;
+
+  /// Firebase database instance
+  final FirebaseDatabase database;
+
+  /// Firebase database reference for user data
   late DatabaseReference _uidReference;
+
+  /// Firebase database reference for devices
   late DatabaseReference _devicesReference;
 
+  /// Private field for current user email
   dynamic _currentEmail;
+
+  /// Getter for current user email
   dynamic get email => _currentEmail;
 
+  /// Private field for current username
   dynamic _currentUserName;
+
+  /// Getter for current username
   dynamic get name => _currentUserName;
 
+  /// Private field for email notification preference
   bool _emailOnAlarm = true;
+
+  /// Getter for email notification preference
   bool get emailOnAlarm => _emailOnAlarm;
-  
+
+  /// Private field for selected device ID
   String _selectedDevice = 'null';
+
+  /// Getter for selected device ID
   String get selectedDevice => _selectedDevice;
 
+  /// Private field for list of watched device IDs
   List<String> _watchedDevices = [];
+
+  /// Getter for list of watched device IDs
   List<String> get watchedDevices => _watchedDevices;
 
+  /// Private field for Terms and Conditions acceptance
   bool _doesAcceptTaC = false;
+
+  /// Getter for Terms and Conditions acceptance status
   bool get doesAcceptTaC => _doesAcceptTaC;
 
-  UserHandler.uninitialized(){
+  UserHandler.uninitialized({FirebaseAuth? auth, FirebaseDatabase? db})
+      : auth = auth ?? FirebaseAuth.instance,
+        database = db ?? FirebaseDatabase.instance {
     initialized = false;
   }
 
   Future<void> initialize() async {
     dynamic currentUser = auth.currentUser;
-    if (currentUser != null){
+    if (currentUser != null) {
       uid = currentUser.uid;
       _currentUserName = currentUser.displayName;
       _currentEmail = currentUser.email;
-      _uidReference = FirebaseDatabase.instance.ref('/users/$uid');
+      _uidReference = database.ref('/users/$uid');
       await _initName();
       await _initEmail();
       await _initSelectedDevice();
@@ -52,63 +98,68 @@ class UserHandler{
       await _initDevices();
       await _initDoesAcceptTaC();
       initialized = true;
-    }
-    else {
+    } else {
       /* User == null */
       _clear();
     }
   }
 
   Future<void> _initName() async {
-    _uidReference.update({"name" : _currentUserName});
-    _uidReference.child('/name').onValue.listen((DatabaseEvent event){
+    _uidReference.update({"name": _currentUserName});
+    _uidReference.child('/name').onValue.listen((DatabaseEvent event) {
       _currentUserName = event.snapshot.value.toString();
     });
   }
 
   Future<void> _initEmail() async {
-    _uidReference.update({"email" : _currentEmail});
-    _uidReference.child('/email').onValue.listen((DatabaseEvent event){
+    _uidReference.update({"email": _currentEmail});
+    _uidReference.child('/email').onValue.listen((DatabaseEvent event) {
       _currentEmail = event.snapshot.value.toString();
     });
   }
 
   Future<void> _initSelectedDevice() async {
-    _uidReference.child('/selected_device').onValue.listen((DatabaseEvent event) {
+    _uidReference
+        .child('/selected_device')
+        .onValue
+        .listen((DatabaseEvent event) {
       _selectedDevice = event.snapshot.value.toString();
     });
   }
-  
+
   Future<void> _initEmailAlertOnAlarm() async {
-    _uidReference.child('/email_on_alarm').onValue.listen((DatabaseEvent event) {
+    _uidReference
+        .child('/email_on_alarm')
+        .onValue
+        .listen((DatabaseEvent event) {
       String check = event.snapshot.value.toString();
-      if (check == "true"){
+      if (check == "true") {
         _emailOnAlarm = true;
-      }
-      else {
+      } else {
         _emailOnAlarm = false;
       }
     });
   }
 
   Future<void> _initDoesAcceptTaC() async {
-    _uidReference.child('/does_accept_tac').onValue.listen((DatabaseEvent event) {
-    String check = event.snapshot.value.toString();
-    if (check == "true"){
-      _doesAcceptTaC = true;
-    }
-    else {
-      _doesAcceptTaC = false;
-    }
-  });
-}
+    _uidReference
+        .child('/does_accept_tac')
+        .onValue
+        .listen((DatabaseEvent event) {
+      String check = event.snapshot.value.toString();
+      if (check == "true") {
+        _doesAcceptTaC = true;
+      } else {
+        _doesAcceptTaC = false;
+      }
+    });
+  }
 
   Future<bool> getDoesAcceptTaC() async {
     _uidReference.child('/does_accept_tac').get().then((event) {
-      if (event.value.toString() == "true"){
+      if (event.value.toString() == "true") {
         return true;
-      }
-      else {
+      } else {
         return false;
       }
     });
@@ -116,26 +167,28 @@ class UserHandler{
   }
 
   Future<void> _initDevices() async {
-    _devicesReference = FirebaseDatabase.instance.ref('/users/$uid/watched_devices');
-    await _devicesReference.get().then((snap) => {
-      for (final child in snap.children) {
-        _watchedDevices.add(child.key.toString())
-      } 
-     }, onError: ((error) => {
-        initialized = false,
-      }));
+    _devicesReference = database.ref('/users/$uid/watched_devices');
+    await _devicesReference.get().then(
+        (snap) => {
+              for (final child in snap.children)
+                {_watchedDevices.add(child.key.toString())}
+            },
+        onError: ((error) => {
+              initialized = false,
+            }));
 
-    _devicesReference.onValue.listen((DatabaseEvent event){
+    _devicesReference.onValue.listen((DatabaseEvent event) {
       _watchedDevices = [];
       for (final child in event.snapshot.children) {
         _watchedDevices.add(child.key.toString());
       }
-    }, onError: ((error) => {
-        initialized = false,
-    }));
+    },
+        onError: ((error) => {
+              initialized = false,
+            }));
   }
 
-  void _clear(){
+  void _clear() {
     _currentUserName = null;
     _currentEmail = null;
     _watchedDevices = [];
@@ -147,21 +200,22 @@ class UserHandler{
   }
 
   bool isEmailVerified() {
-    if (auth.currentUser != null){
-      auth.currentUser.reload();
-      return auth.currentUser.emailVerified;
+    if (auth.currentUser != null) {
+      auth.currentUser?.reload();
+      return auth.currentUser?.emailVerified ?? false;
     }
     return false;
   }
 
   Future<bool> doesEmailExist(String email) async {
-    dynamic userReference = FirebaseDatabase.instance.ref('/users');
-    if (userReference != null){
+    dynamic userReference = database.ref('/users');
+    if (userReference != null) {
       dynamic userSnapshot = await userReference.get();
-      for (dynamic user in userSnapshot.children){
+      for (dynamic user in userSnapshot.children) {
         dynamic emailSnapshot = await user.child('/email').ref.get();
-        if (emailSnapshot != null){
-          if (emailSnapshot.value.toString().toLowerCase() == email.toLowerCase()){
+        if (emailSnapshot != null) {
+          if (emailSnapshot.value.toString().toLowerCase() ==
+              email.toLowerCase()) {
             return true;
           }
         }
@@ -171,63 +225,53 @@ class UserHandler{
   }
 
   Future<void> acceptTaC() async {
-    await _uidReference.update({
-      "does_accept_tac" : true
-    });
+    await _uidReference.update({"does_accept_tac": true});
   }
 
-    Future<void> declineTaC() async {
-    await _uidReference.update({
-      "does_accept_tac" : false
-    });
+  Future<void> declineTaC() async {
+    await _uidReference.update({"does_accept_tac": false});
   }
 
   Future<void> verifyEmail() async {
-    if (auth.currentUser!= null && !auth.currentUser.emailVerified) {
-      await auth.currentUser.sendEmailVerification();
+    if (auth.currentUser != null &&
+        !(auth.currentUser?.emailVerified ?? true)) {
+      await auth.currentUser?.sendEmailVerification();
     }
   }
 
   Future<void> setUsername(String userName) async {
-    auth.currentUser.updateDisplayName(userName);
-    await _uidReference.update({
-      "name" : userName
-    });
+    await auth.currentUser?.updateDisplayName(userName);
+    await _uidReference.update({"name": userName});
   }
 
-  void emailAlertOnAlarm(bool value){
-    _uidReference.update({
-      "email_on_alarm" : value
-    });
+  void emailAlertOnAlarm(bool value) {
+    _uidReference.update({"email_on_alarm": value});
   }
 
   Future<void> setSelectedDeviceId(String selection) async {
-    await _uidReference.update({
-      "selected_device" : selection
-    });
+    await _uidReference.update({"selected_device": selection});
   }
 
   Future<void> watchDevice(BuildContext context, String deviceId) async {
-    if (_uidReference.parent?.key == 'users'){
-      if (!_watchedDevices.contains(deviceId)){
+    if (_uidReference.parent?.key == 'users') {
+      if (!_watchedDevices.contains(deviceId)) {
         showSnack(context, deviceRegisteredSnack(deviceId));
         _uidReference.child('watched_devices').update({deviceId: true});
-      }
-      else {
+      } else {
         showSnack(context, deviceAlreadyRegisteredSnack(deviceId));
       }
     }
   }
 
   setFCMToken(String? token) {
-    if (token != null){
+    if (token != null) {
       _deviceToken = token;
       _uidReference.child('notification_tokens').update({token: true});
     }
   }
 
   updateFCMToken(String? token) {
-    if (token != null){
+    if (token != null) {
       _uidReference.child('/notification_tokens/$_deviceToken').remove();
       _uidReference.child('notification_tokens').update({token: true});
     }
@@ -238,8 +282,8 @@ class UserHandler{
     await _uidReference.child('/watched_devices/$deviceId').remove();
   }
 
-  void addDeviceToCurrentUser(String deviceId){
-    _devicesReference.update({deviceId : true});
+  void addDeviceToCurrentUser(String deviceId) {
+    _devicesReference.update({deviceId: true});
   }
 
   void removeDeviceFromCurrentUser(String deviceId) {
@@ -252,17 +296,79 @@ class UserHandler{
     await setSelectedDeviceId('None');
   }
 
-  void reloadUser(){
-    auth.currentUser.reload();
+  void reloadUser() {
+    auth.currentUser?.reload();
   }
 
   String getUserName(String uid) {
-    DatabaseReference userReference = FirebaseDatabase.instance.ref('/users/$uid/name');
+    DatabaseReference userReference = database.ref('/users/$uid/name');
     userReference.get().then((snapshot) => {
-      if (snapshot.exists){
-        _currentUserName = snapshot.value.toString()
-      }
-    });
+          if (snapshot.exists) {_currentUserName = snapshot.value.toString()}
+        });
     return _currentUserName;
   }
+
+  /// @brief Sign in with email and password
+  /// @details Authenticates user with email and password, then initializes user data
+  /// @param email User's email address
+  /// @param password User's password
+  /// @return Future<bool> true if sign in successful, false otherwise
+  /// @since 1.0
+  Future<bool> signInWithEmailAndPassword(String email, String password) async {
+    try {
+      await auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      initialized = false;
+      await initialize();
+      FirebaseApi fbApi = FirebaseApi();
+      String? token = await fbApi.getToken();
+      setFCMToken(token);
+      fbApi.setTokenRefreshCallback(setFCMToken);
+      return true;
+    } on FirebaseAuthException catch (e) {
+      // Let the UI handle the specific error display
+      rethrow;
+    } catch (error) {
+      // Let the UI handle the generic error display
+      rethrow;
+    }
+  }
+
+  /// @brief Sign in with Google
+  /// @details Authenticates user with Google OAuth, then initializes user data
+  /// @return `Future<bool>` true if sign in successful, false otherwise
+  /// @since 1.0
+  Future<bool> signInWithGoogle() async {
+    try {
+      // Configure GoogleSignIn - let it use platform-specific client IDs from configuration
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        return false; // User cancelled sign-in
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await auth.signInWithCredential(credential);
+      initialized = false;
+      await initialize();
+      FirebaseApi fbApi = FirebaseApi();
+      String? token = await fbApi.getToken();
+      setFCMToken(token);
+      fbApi.setTokenRefreshCallback(setFCMToken);
+      return true;
+    } catch (error) {
+      // Let the UI handle the error display
+      rethrow;
+    }
+  }
+
 }

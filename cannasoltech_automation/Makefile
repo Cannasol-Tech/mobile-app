@@ -12,7 +12,7 @@
 #   make coverage       - Generate coverage report
 #   make clean-test     - Clean test artifacts
 
-.PHONY: help test test-unit test-widget test-golden test-integration coverage clean-test setup-test
+.PHONY: help test test-unit test-widget test-widget-legacy test-widget-suite test-components test-pages test-dialogs test-golden test-golden-components test-integration coverage clean-test setup-test
 
 # Default target
 help:
@@ -20,18 +20,25 @@ help:
 	@echo ""
 	@echo "Available targets:"
 	@echo "  test              - Run complete test suite (unit + widget + integration)"
-	@echo "  test-unit         - Run unit tests (≥85% coverage required)"
-	@echo "  test-widget       - Run widget tests (≥70% coverage required)"
+	@echo "  test-unit         - Run unit tests (≥85% coverage required, mocking allowed)"
+	@echo "  test-widget       - Run widget tests (≥85% coverage required, dependency mocking allowed via Mocktail; do not mock widgets/rendering)"
+	@echo "  test-widget-suite - Run comprehensive widget test suite"
+	@echo "  test-widget-legacy- DEPRECATED: alias to test-widget"
+	@echo "  test-components   - Run component widget tests"
+	@echo "  test-pages        - Run page widget tests"
+	@echo "  test-dialogs      - Run dialog widget tests"
 	@echo "  test-golden       - Run golden tests (visual regression)"
 	@echo "  test-integration  - Run integration tests (critical paths)"
 	@echo "  coverage          - Generate and display coverage report"
 	@echo "  clean-test        - Clean test artifacts and coverage files"
 	@echo "  setup-test        - Setup test environment and dependencies"
 	@echo ""
-	@echo "Coverage Requirements:"
-	@echo "  Unit Tests:       ≥85% statement coverage"
-	@echo "  Widget Tests:     ≥70% widget coverage"
+	@echo "Coverage Requirements (per Flutter Testing Standard):"
+	@echo "  Unit Tests:       ≥85% statement coverage (mocking allowed)"
+	@echo "  Widget Tests:     ≥85% widget coverage (dependency mocking allowed via Mocktail; do not mock widgets/rendering)"
 	@echo "  Overall Project:  ≥80% total coverage"
+	@echo ""
+	@echo "Company Standard: .axovia-flow/company-standards/flutter-specific/flutter-testing-standard.md"
 
 # Setup test environment
 setup-test:
@@ -55,32 +62,171 @@ test-unit:
 	flutter test test/unit/ --coverage --reporter=expanded
 	@echo "✅ Unit tests completed"
 
-# Widget Testing (NO mocking)
+
+# Widget Testing (dependency mocking allowed via Mocktail; do not mock widgets/rendering)
 # Executes: flutter test test/widget/
-# Coverage: ≥70% requirement  
-# Mocking: PROHIBITED
+# Coverage: ≥85% requirement
+# Mocking: Allowed for external dependencies via Mocktail; Mockito prohibited
+# Standard: .axovia-flow/company-standards/flutter-specific/flutter-testing-standard.md
 test-widget:
 	@echo "🎨 Running widget tests..."
-	@echo "Target: ≥70% coverage | Mocking: PROHIBITED"
-	flutter test test/widget/ --reporter=expanded
-	@echo "✅ Widget tests completed"
+	@echo "Standard: Flutter Testing Standard | Coverage: ≥85% | Mocking: Allowed for external dependencies via Mocktail; do not mock widgets/rendering"
+	@echo "📋 Validating compliance with mocking framework policy (Mockito prohibited)..."
+	@if grep -R -n -E "package:mockito|Mockito" test/widget/ --include="*.dart" >/dev/null 2>&1; then \
+		echo "❌ VIOLATION: Mockito detected in widget tests! Use Mocktail instead."; \
+		echo "   Standard: .axovia-flow/company-standards/flutter-specific/flutter-testing-standard.md"; \
+		exit 1; \
+	else \
+		echo "✅ No prohibited frameworks detected"; \
+	fi
+	flutter test test/widget/ --coverage --reporter=expanded
+	@echo "✅ Widget tests completed with coverage"
+	@echo "📊 Validating coverage requirements..."
+	@if [ -f coverage/lcov.info ]; then \
+		echo "Coverage report generated: coverage/lcov.info"; \
+		if command -v lcov >/dev/null 2>&1; then \
+			echo "Widget test coverage summary:"; \
+			lcov --summary coverage/lcov.info | grep -E "(lines|functions)"; \
+		fi; \
+	else \
+		echo "⚠️  Coverage file not found"; \
+	fi
+
+# Widget Test Suite (comprehensive)
+test-widget-suite:
+	@echo "🎨 Running comprehensive widget test suite..."
+	flutter test test/widget/widget_test_suite.dart --reporter=expanded
+	@echo "✅ Widget test suite completed"
+
+# Component-specific widget tests
+test-components:
+	@echo "🧩 Running component widget tests..."
+	flutter test test/widget/components/ --reporter=expanded
+	@echo "✅ Component tests completed"
+
+# Page-specific widget tests
+test-pages:
+	@echo "📄 Running page widget tests..."
+	flutter test test/widget/pages/ --reporter=expanded
+	@echo "✅ Page tests completed"
+
+# Dialog-specific widget tests
+test-dialogs:
+	@echo "💬 Running dialog widget tests..."
+	flutter test test/widget/dialogs/ --reporter=expanded
+	@echo "✅ Dialog tests completed"
+
+# Widget tests with coverage (DEPRECATED - use test-widget instead)
+test-widget-coverage:
+	@echo "🎨📊 Running widget tests with coverage..."
+	@echo "⚠️  DEPRECATED: Use 'make test-widget' instead (includes coverage)"
+	flutter test test/widget/ --coverage --reporter=expanded
+	@echo "✅ Widget tests with coverage completed"
+
+# Legacy widget testing (TEMPORARY - for migration period only)
+# ⚠️  WARNING: This target bypasses company standards and should only be used
+# during the migration period to remove mocking from widget tests
+test-widget-legacy:
+	@echo "🎨⚠️  LEGACY target is deprecated. Using standard widget tests (mocking dependencies allowed via Mocktail)."
+	$(MAKE) test-widget
+
+# Run only compliant widget tests (no mocking violations)
+test-widget-compliant:
+	@echo "🎨✅ Running compliant widget tests (Mocktail allowed; Mockito prohibited)..."
+	@echo "Standard: Flutter Testing Standard | Coverage: ≥85% | Mocking: Allowed for external dependencies via Mocktail; do not mock widgets/rendering"
+	@echo "Validating widget tests for prohibited frameworks..."
+	@if grep -R -n -E "package:mockito|Mockito" test/widget/ --include="*.dart" >/dev/null 2>&1; then \
+		echo "❌ VIOLATION: Mockito detected in widget tests! Use Mocktail instead."; \
+		exit 1; \
+	else \
+		echo "✅ No prohibited frameworks detected"; \
+	fi
+	flutter test test/widget/ --coverage --reporter=expanded
+	@echo "✅ Compliant widget tests completed"
+	@echo "📊 Coverage report generated for compliant tests"
 
 # Golden Testing (visual regression)
-# Executes: flutter test test/golden/
+# Executes: flutter test with golden file generation
 # Mocking: PROHIBITED
 test-golden:
 	@echo "🖼️  Running golden tests (visual regression)..."
 	@echo "Mocking: PROHIBITED | Purpose: Visual consistency"
-	flutter test test/golden/ --reporter=expanded
+	@echo "🔎 Checking for baseline golden images in test/golden/screenshots ..."
+	@if ls -1 test/golden/screenshots/*.png >/dev/null 2>&1; then \
+		echo "📦 Baseline goldens found."; \
+	else \
+		echo "⚠️  No baseline golden images found in test/golden/screenshots"; \
+		if [ -n "$$CI" ]; then \
+			echo "❌ CI detected and no baseline images found. Add baselines under test/golden/screenshots or run: make update-goldens"; \
+			exit 1; \
+		else \
+			read -p "Create baseline images now? (y/N): " confirm; \
+			if [ "$$confirm" = "y" ]; then \
+				echo "🔄 Generating baseline golden images..."; \
+				FILES=$$(find test -type f -name "*golden*_test.dart"); \
+				if [ -z "$$FILES" ]; then echo "❌ No golden tests found"; exit 1; fi; \
+				flutter test --dart-define=ENABLE_GOLDEN_TESTS=true --update-goldens $$FILES --reporter=expanded; \
+				echo "✅ Baseline golden images created."; \
+			else \
+				echo "❌ Golden baselines missing. Aborting. Run: make update-goldens"; \
+				exit 1; \
+			fi; \
+		fi; \
+	fi
+	FILES=$$(find test -type f -name "*golden*_test.dart"); \
+	if [ -z "$$FILES" ]; then echo "❌ No golden tests found"; exit 1; fi; \
+	flutter test --dart-define=ENABLE_GOLDEN_TESTS=true $$FILES --reporter=expanded
 	@echo "✅ Golden tests completed"
+
+# Golden tests for specific components
+test-golden-components:
+	@echo "🖼️  Running component golden tests..."
+	@echo "🔎 Checking for baseline golden images in test/golden/screenshots ..."
+	@if ls -1 test/golden/screenshots/*.png >/dev/null 2>&1; then \
+		echo "📦 Baseline goldens found."; \
+	else \
+		echo "⚠️  No baseline golden images found in test/golden/screenshots"; \
+		if [ -n "$$CI" ]; then \
+			echo "❌ CI detected and no baseline images found. Add baselines under test/golden/screenshots or run: make update-goldens-components"; \
+			exit 1; \
+		else \
+			read -p "Create baseline images now? (y/N): " confirm; \
+			if [ "$$confirm" = "y" ]; then \
+				echo "🔄 Generating baseline golden images..."; \
+				FILES=$$(find test/widget/components -type f -name "*golden*_test.dart"); \
+				if [ -z "$$FILES" ]; then echo "❌ No component golden tests found"; exit 1; fi; \
+				flutter test --dart-define=ENABLE_GOLDEN_TESTS=true --update-goldens $$FILES --reporter=expanded; \
+				echo "✅ Baseline golden images created."; \
+			else \
+				echo "❌ Golden baselines missing. Aborting. Run: make update-goldens-components"; \
+				exit 1; \
+			fi; \
+		fi; \
+	fi
+	FILES=$$(find test/widget/components -type f -name "*golden*_test.dart"); \
+	if [ -z "$$FILES" ]; then echo "❌ No component golden tests found"; exit 1; fi; \
+	flutter test --dart-define=ENABLE_GOLDEN_TESTS=true $$FILES --reporter=expanded
+	@echo "✅ Component golden tests completed"
 
 # Update golden files (use with caution)
 update-goldens:
 	@echo "🔄 Updating golden files..."
 	@echo "⚠️  WARNING: This will update all golden reference images"
 	@read -p "Are you sure? (y/N): " confirm && [ "$$confirm" = "y" ] || exit 1
-	flutter test test/golden/ --update-goldens
+	@FILES=$$(find test -type f -name "*golden*_test.dart"); \
+	if [ -z "$$FILES" ]; then echo "❌ No golden tests found"; exit 1; fi; \
+	flutter test --dart-define=ENABLE_GOLDEN_TESTS=true --update-goldens $$FILES
 	@echo "✅ Golden files updated"
+
+# Update golden files for specific components
+update-goldens-components:
+	@echo "🔄 Updating component golden files..."
+	@echo "⚠️  WARNING: This will update component golden reference images"
+	@read -p "Are you sure? (y/N): " confirm && [ "$$confirm" = "y" ] || exit 1
+	@FILES=$$(find test/widget/components -type f -name "*golden*_test.dart"); \
+	if [ -z "$$FILES" ]; then echo "❌ No component golden tests found"; exit 1; fi; \
+	flutter test --dart-define=ENABLE_GOLDEN_TESTS=true --update-goldens $$FILES
+	@echo "✅ Component golden files updated"
 
 # Integration Testing (end-to-end)
 # Executes: flutter test integration_test/

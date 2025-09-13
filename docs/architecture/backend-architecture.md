@@ -4,7 +4,7 @@
 
 ### Function Organization
 
-```
+```sh
 cannasoltech_automation/functions/
 ├── main.py                     # Main Cloud Functions entry point
 ├── requirements.txt            # Python dependencies

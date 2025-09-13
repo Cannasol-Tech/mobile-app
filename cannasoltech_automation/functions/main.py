@@ -408,7 +408,7 @@ def export_device_history(event: db_fn.Event[db_fn.Change]) -> None:
     worksheet.append(columns)
     
     # Write data rows
-    for log in run_logs:
+    for LOG in run_logs:
         row = list(log.values())
         worksheet.append(row)
     

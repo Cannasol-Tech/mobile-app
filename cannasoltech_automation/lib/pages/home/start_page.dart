@@ -1,3 +1,14 @@
+/**
+ * @file start_page.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief Device operation start page with configuration interface.
+ * @details Provides user interface for configuring and starting device operations
+ *          including time settings, pump controls, and system validation.
+ * @version 1.0
+ * @since 1.0
+ */
+
 import 'package:cannasoltech_automation/handlers/current_run.dart';
 
 import '../../UserInterface/ui.dart';
@@ -20,8 +31,23 @@ import '../../components/pump_control_config.dart';
 import '../../providers/system_data_provider.dart';
 import '../../components/system_input_warning.dart';
 
+/**
+ * @brief Start page for device operation configuration and initiation.
+ * @details Stateful widget providing comprehensive interface for configuring
+ *          device parameters and starting operations with validation.
+ * @since 1.0
+ */
 class StartPage extends StatefulWidget {
+  /**
+   * @brief Creates a StartPage widget.
+   * @param key Optional widget key for identification
+   */
   const StartPage({super.key});
+
+  /**
+   * @brief Creates the state for StartPage widget.
+   * @return _StartPageState instance
+   */
   @override
   State<StartPage> createState() => _StartPageState();
 }

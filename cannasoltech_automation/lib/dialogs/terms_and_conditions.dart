@@ -1,3 +1,14 @@
+/**
+ * @file terms_and_conditions.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief Terms and Conditions dialog with acceptance functionality.
+ * @details Provides Terms and Conditions display dialog with markdown content,
+ *          user acceptance tracking, and animated UI elements.
+ * @version 1.0
+ * @since 1.0
+ */
+
 // ignore_for_file: library_private_types_in_public_api
 import 'package:simple_animations/simple_animations.dart';
 
@@ -12,13 +23,28 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 
 import 'style.dart';
 
-
+/**
+ * @brief Terms and Conditions dialog widget.
+ * @details Stateful widget that displays Terms and Conditions with markdown
+ *          content and handles user acceptance with state management.
+ * @since 1.0
+ */
 class TaCDialog extends StatefulWidget {
+  /**
+   * @brief Creates a TaCDialog widget.
+   * @param key Optional widget key for identification
+   * @param needsAccept Whether user acceptance is required (default: true)
+   */
   const TaCDialog({super.key, this.needsAccept=true});
 
+  /**
+   * @brief Creates the state for TaCDialog widget.
+   * @return _TaCDialogState instance
+   */
   @override
   State<TaCDialog> createState() => _TaCDialogState();
 
+  /// Flag indicating whether user acceptance is required
   final bool needsAccept;
 
 }

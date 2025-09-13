@@ -59,7 +59,7 @@ The application follows a layered architecture with the following key components
 
 ## Code Organization
 
-```
+```text
 lib/
 ├── Formatters/          # Data formatting utilities
 ├── UserInterface/       # UI themes, styles, and animations
@@ -267,4 +267,7 @@ lib/
 
 ## Conclusion
 
-The CannaSol Technologies Mobile App is a well-structured Flutter application with good potential. By addressing the identified areas for improvement, the application can achieve higher quality, better security, and improved maintainability. The current architecture provides a solid foundation for future growth and feature development.
+The CannaSol Technologies Mobile App is a well-structured Flutter application with good
+potential. By addressing the identified areas for improvement, the application can achieve
+higher quality, better security, and improved maintainability. The current architecture
+provides a solid foundation for future growth and feature development.

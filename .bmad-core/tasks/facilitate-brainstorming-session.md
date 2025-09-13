@@ -106,7 +106,7 @@ Generate structured document with these sections:
 ## Key Principles
 
 - **YOU ARE A FACILITATOR**: Guide the user to brainstorm, don't brainstorm for them (unless they request it persistently)
-- **INTERACTIVE DIALOGUE**: Ask questions, wait for responses, build on their ideas
+- **INTERACTIVE DIA  LOGUE**: Ask questions, wait for responses, build on their ideas
 - **ONE TECHNIQUE AT A TIME**: Don't mix multiple techniques in one response
 - **CONTINUOUS ENGAGEMENT**: Stay with one technique until user wants to switch
 - **DRAW IDEAS OUT**: Use prompts and examples to help them generate their own ideas

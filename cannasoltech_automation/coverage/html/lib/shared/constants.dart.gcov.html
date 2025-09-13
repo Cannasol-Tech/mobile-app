@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - lib/shared/constants.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory lib/shared">lib/shared</a> - constants.dart</td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">0.0&nbsp;%</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2025-09-10 03:06:30</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : /**</span>
+<span id="L2"><span class="lineNum">       2</span>              :  * @file constants.dart</span>
+<span id="L3"><span class="lineNum">       3</span>              :  * @author Stephen Boyett</span>
+<span id="L4"><span class="lineNum">       4</span>              :  * @date 2025-09-06</span>
+<span id="L5"><span class="lineNum">       5</span>              :  * @brief Application-wide constants and configuration values.</span>
+<span id="L6"><span class="lineNum">       6</span>              :  * @details Defines system state constants, UI element identifiers, page titles,</span>
+<span id="L7"><span class="lineNum">       7</span>              :  *          file paths, and other application-wide constant values.</span>
+<span id="L8"><span class="lineNum">       8</span>              :  * @version 1.0</span>
+<span id="L9"><span class="lineNum">       9</span>              :  * @since 1.0</span>
+<span id="L10"><span class="lineNum">      10</span>              :  */</span>
+<span id="L11"><span class="lineNum">      11</span>              : </span>
+<span id="L12"><span class="lineNum">      12</span>              : import 'package:flutter/material.dart';</span>
+<span id="L13"><span class="lineNum">      13</span>              : // ignore_for_file: constant_identifier_names</span>
+<span id="L14"><span class="lineNum">      14</span>              : </span>
+<span id="L15"><span class="lineNum">      15</span>              : /// System state constant for reset operation</span>
+<span id="L16"><span class="lineNum">      16</span>              : const int RESET = 100;</span>
+<span id="L17"><span class="lineNum">      17</span>              : </span>
+<span id="L18"><span class="lineNum">      18</span>              : /// System state constant for initialization</span>
+<span id="L19"><span class="lineNum">      19</span>              : const int INIT = 0;</span>
+<span id="L20"><span class="lineNum">      20</span>              : </span>
+<span id="L21"><span class="lineNum">      21</span>              : /// System state constant for warm-up phase</span>
+<span id="L22"><span class="lineNum">      22</span>              : const int WARM_UP = 1;</span>
+<span id="L23"><span class="lineNum">      23</span>              : </span>
+<span id="L24"><span class="lineNum">      24</span>              : /// System state constant for running operation</span>
+<span id="L25"><span class="lineNum">      25</span>              : const int RUNNING = 2;</span>
+<span id="L26"><span class="lineNum">      26</span>              : </span>
+<span id="L27"><span class="lineNum">      27</span>              : /// System state constant for alarm condition</span>
+<span id="L28"><span class="lineNum">      28</span>              : const int ALARM = 3;</span>
+<span id="L29"><span class="lineNum">      29</span>              : </span>
+<span id="L30"><span class="lineNum">      30</span>              : /// System state constant for finished operation</span>
+<span id="L31"><span class="lineNum">      31</span>              : const int FINISHED = 4;</span>
+<span id="L32"><span class="lineNum">      32</span>              : </span>
+<span id="L33"><span class="lineNum">      33</span>              : /// System state constant for cool-down phase</span>
+<span id="L34"><span class="lineNum">      34</span>              : const int COOL_DOWN = 5;</span>
+<span id="L35"><span class="lineNum">      35</span>              : </span>
+<span id="L36"><span class="lineNum">      36</span>              : /// Display constant for no element selected</span>
+<span id="L37"><span class="lineNum">      37</span>              : const int NO_ELEMENT = -1;</span>
+<span id="L38"><span class="lineNum">      38</span>              : </span>
+<span id="L39"><span class="lineNum">      39</span>              : /// Display constant for showing sonicator element</span>
+<span id="L40"><span class="lineNum">      40</span>              : const int SHOW_SONICATOR = 0;</span>
+<span id="L41"><span class="lineNum">      41</span>              : </span>
+<span id="L42"><span class="lineNum">      42</span>              : /// Display constant for showing pump element</span>
+<span id="L43"><span class="lineNum">      43</span>              : const int SHOW_PUMP  = 1;</span>
+<span id="L44"><span class="lineNum">      44</span>              : </span>
+<span id="L45"><span class="lineNum">      45</span>              : /// Display constant for showing tank element</span>
+<span id="L46"><span class="lineNum">      46</span>              : const int SHOW_TANK  = 2;</span>
+<span id="L47"><span class="lineNum">      47</span>              : </span>
+<span id="L48"><span class="lineNum">      48</span>              : /// Page title for system running state</span>
+<span id="L49"><span class="lineNum">      49</span>              : const String RUN_TITLE = &quot;System Running&quot;;</span>
+<span id="L50"><span class="lineNum">      50</span>              : </span>
+<span id="L51"><span class="lineNum">      51</span>              : /* - - - - - - - - - - - - - - - - - - */</span>
+<span id="L52"><span class="lineNum">      52</span>              : /* - - - - - - FILE PATHS. - - - - - - */</span>
+<span id="L53"><span class="lineNum">      53</span>              : /* - - - - - - - - - - - - - - - - - - */</span>
+<span id="L54"><span class="lineNum">      54</span>              : </span>
+<span id="L55"><span class="lineNum">      55</span>              : /* Logging */</span>
+<span id="L56"><span class="lineNum">      56</span>              : const String  LOG_FILE_PATH = &quot;log.txt&quot;;</span>
+<span id="L57"><span class="lineNum">      57</span>              : </span>
+<span id="L58"><span class="lineNum">      58</span>              : /* System Elements */</span>
+<span id="L59"><span class="lineNum">      59</span>              : const String TANK_PATH  = &quot;assets/images/Tank.png&quot;;</span>
+<span id="L60"><span class="lineNum">      60</span>              : const String PUMP_PATH  = &quot;assets/images/pump.png&quot;;</span>
+<span id="L61"><span class="lineNum">      61</span>              : const String LARGE_ICON = &quot;assets/images/BigIcon2.png&quot;;</span>
+<span id="L62"><span class="lineNum">      62</span>              : const String SONIC_PATH = &quot;assets/images/sonicator2.png&quot;;</span>
+<span id="L63"><span class="lineNum">      63</span>              : </span>
+<span id="L64"><span class="lineNum">      64</span>              : /* Icons */</span>
+<span id="L65"><span class="lineNum">      65</span>              : const String WARN_ICON  = &quot;assets/images/warn.jpg&quot;;</span>
+<span id="L66"><span class="lineNum">      66</span>              : const String LOCK_OPEN  = &quot;assets/images/padlock_open.avif&quot;;</span>
+<span id="L67"><span class="lineNum">      67</span>              : </span>
+<span id="L68"><span class="lineNum">      68</span>              : /* Documents */</span>
+<span id="L69"><span class="lineNum">      69</span>              : const String PP_PATH = &quot;assets/documents/privacy_policy.md&quot;;</span>
+<span id="L70"><span class="lineNum">      70</span>              : const String TAC_PATH = &quot;assets/documents/terms_and_conditions.md&quot;;</span>
+<span id="L71"><span class="lineNum">      71</span>              : </span>
+<span id="L72"><span class="lineNum">      72</span>              : // const Color originalConfirmButtonColor = Color.fromARGB(156, 95, 103, 97);</span>
+<span id="L73"><span class="lineNum">      73</span> <span class="tlaUNC">           0 : Color originalConfirmButtonColor = Colors.blueGrey.withAlpha(20);</span></span>
+<span id="L74"><span class="lineNum">      74</span>              : const freqLockWidth = 52;</span>
+<span id="L75"><span class="lineNum">      75</span>              : </span>
+<span id="L76"><span class="lineNum">      76</span>              : </span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.3.2-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

@@ -1,26 +1,67 @@
+/**
+ * @file firebase_api.dart
+ * @author Stephen Boyett
+ * @date 2025-09-06
+ * @brief Firebase API service for handling Firebase Cloud Messaging and authentication.
+ * @details Provides comprehensive Firebase integration including push notifications,
+ *          background message handling, token management, and alarm notification processing.
+ * @version 1.0
+ * @since 1.0
+ */
+
 import 'dart:io';
+import 'package:flutter/material.dart';
 import '../objects/logger.dart';
 import '../firebase_options.dart';
 import '../objects/alarm_notification.dart';
-import 'package:cannasoltech_automation/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
+/**
+ * @brief Background message handler for Firebase Cloud Messaging.
+ * @details Handles incoming FCM messages when the app is in the background.
+ *          Initializes Firebase and logs message processing.
+ * @param message The remote message received from FCM
+ * @throws Exception if Firebase initialization fails
+ * @since 1.0
+ */
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   try {
     await Firebase.initializeApp(
         name: "cannasoltech", options: DefaultFirebaseOptions.currentPlatform);
-    log.info("Handling a background message: ${message.messageId}");
+    LOG.info("Handling a background message: ${message.messageId}");
   } catch (e) {
-    log.info("Error initializing Firebase in background: $e");
+    LOG.info("Error initializing Firebase in background: $e");
   }
 }
 
+/**
+ * @brief Firebase API service class for handling Firebase Cloud Messaging operations.
+ * @details Provides comprehensive Firebase integration including:
+ *          - Initializing Firebase notifications and push notifications
+ *          - Handling foreground and background message processing
+ *          - Managing FCM tokens and token refresh callbacks
+ *          - Processing alarm notifications and navigation
+ * @since 1.0
+ */
 class FirebaseApi {
-  final _firebaseMessaging = FirebaseMessaging.instance;
-  FirebaseAuth auth = FirebaseAuth.instance;
+  final GlobalKey<NavigatorState> navigatorKey;
+
+  FirebaseApi({
+    FirebaseMessaging? firebaseMessaging,
+    GlobalKey<NavigatorState>? navigatorKey,
+    FirebaseAuth? auth,
+  })  : _firebaseMessaging = firebaseMessaging ?? FirebaseMessaging.instance,
+        navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
+        auth = auth ?? FirebaseAuth.instance;
+
+  /// Firebase Cloud Messaging instance for handling push notifications
+  final FirebaseMessaging _firebaseMessaging;
+
+  /// Firebase Authentication instance for user authentication
+  final FirebaseAuth auth;
 
   Future<void> initNotifications() async {
     if (Platform.isIOS) {
@@ -40,13 +81,13 @@ class FirebaseApi {
       // of notifications they would like to receive once the user receives a notification.
       NotificationSettings notificationSettings =
           await FirebaseMessaging.instance.requestPermission(provisional: true);
-      log.info("DEBUG -> notification settings = $notificationSettings");
+      LOG.info("DEBUG -> notification settings = $notificationSettings");
     }
 
     String? token = await getToken();
 
     if (token == null) {
-      log.info("ERROR -> Error retrieving FCM token.");
+      LOG.info("ERROR -> Error retrieving FCM token.");
     }
 
     await initPushNotifications();
@@ -56,11 +97,11 @@ class FirebaseApi {
   Future<String?> getToken() async {
     try {
       String? token;
-      token = await FirebaseMessaging.instance.getToken();
-      log.info("DEBUG -> FCM Token retrieved = $token");
+      token = await _firebaseMessaging.getToken();
+      LOG.info("DEBUG -> FCM Token retrieved = $token");
       return token;
     } catch (e) {
-      log.info("Error retrieving FCM token: $e");
+      LOG.info("Error retrieving FCM token: $e");
       return null;
     }
   }
@@ -73,13 +114,15 @@ class FirebaseApi {
     if (message == null) return;
 
     message.notification != null
-        ? log.info("debug -> mesage title = ${message.notification?.title}")
+        ? LOG.info("debug -> mesage title = ${message.notification?.title}")
         : null;
 
     if (message.notification != null) {
       if (['System Alarm!', 'Alarm Cleared!']
           .contains(message.notification?.title)) {
-        navigatorKey.currentState
+        this
+            .navigatorKey
+            .currentState
             ?.pushNamed('/push_alarm', arguments: message.data);
       }
     }
@@ -89,7 +132,7 @@ class FirebaseApi {
     if (message == null) return;
 
     message.notification != null
-        ? log.info("debug -> mesage title = ${message.notification?.title}")
+        ? LOG.info("debug -> mesage title = ${message.notification?.title}")
         : null;
 
     if (message.notification != null) {

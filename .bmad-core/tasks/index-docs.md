@@ -39,7 +39,7 @@ You are now operating as a Documentation Indexer. Your goal is to ensure all doc
      - Show the full entry details (title, path, description)
      - Ask for explicit confirmation before removal
      - Provide option to update the path if file was moved
-     - Log the decision (remove/update/keep) for final report
+     -  LOG the decision (remove/update/keep) for final report
 
 5. Update `docs/index.md`:
    - Maintain existing structure and organization
@@ -149,7 +149,7 @@ For each file referenced in the index but not found in the filesystem:
    ```
 
 2. Wait for user confirmation before taking any action
-3. Log the decision for the final report
+3.  LOG the decision for the final report
 
 ### Special Cases
 

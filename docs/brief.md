@@ -154,7 +154,7 @@ The application addresses the specific operational requirements of industrial ul
 - **User Authentication:** Firebase-based secure login with Google Sign-In integration and user session management
 - **Device Registration:** QR code or manual device ID registration system with user-specific device access control
 - **Basic Configuration Control:** Remote adjustment of key processing parameters (temperature setpoints, flow rates, timing parameters)
-- **Alarm History:** 30-day alarm log retention with basic filtering and search capabilities
+- **Alarm History:** 30-day alarm LOG retention with basic filtering and search capabilities
 - **Cross-Platform Support:** Native iOS and Android applications with responsive web interface for desktop access
 
 ### Out of Scope for MVP
@@ -192,14 +192,6 @@ Transform the Cannasol Technologies Mobile Application into the industry-leading
 - **AI-Powered Optimization:** Machine learning recommendations for process parameter optimization based on aggregated performance data
 - **Supply Chain Integration:** Predictive maintenance alerts integrated with parts ordering and service scheduling systems
 - **Regulatory Compliance:** Automated compliance reporting and audit trail generation for FDA, ISO, and industry-specific requirements
-
-### Expansion Opportunities
-
-**Horizontal Market Expansion:** Adapt the platform architecture for other industrial automation applications including chemical processing, pharmaceutical manufacturing, and food production systems.
-
-**Technology Integration:** Expand connectivity to support additional industrial protocols (Modbus, OPC-UA, MQTT) and integrate with existing SCADA and MES systems.
-
-**Global Deployment:** Multi-language support and regional cloud deployment options to serve international markets with local data residency requirements.
 
 ## Technical Considerations
 
@@ -274,6 +266,74 @@ Transform the Cannasol Technologies Mobile Application into the industry-leading
 4. **Performance Optimization:** Conduct load testing with simulated multi-device scenarios to validate Firebase scalability assumptions
 5. **Documentation and Training Materials:** Create operator training guides, technical documentation, and deployment procedures for client onboarding
 
+---
+
+# Phase 2 Brownfield Enhancement: Multiple Sonicator Control and Monitoring Extension
+
+## Executive Summary - Phase 2 Enhancement
+
+This brownfield enhancement project extends the existing single-sonicator application to support simultaneous monitoring and control of up to 4 ultrasonic processing devices, targeting 25% reduction in unplanned downtime and 40% reduction in on-site monitoring requirements through intelligent multi-device management and automated alarm systems.
+
+## Problem Statement - Multi-Sonicator Scaling
+
+The existing Cannasol Technologies Mobile App successfully addresses single-sonicator monitoring but cannot scale to facilities with multiple ultrasonic processing devices. This limitation forces operators to:
+- Switch between multiple single-device applications or interfaces
+- Manually correlate data across multiple systems
+- Miss critical cross-device operational patterns
+- Experience delayed alarm response times when managing multiple units
+
+## Proposed Solution - Multi-Sonicator Extension
+
+The Multiple Sonicator Control and Monitoring Extension transforms the existing application into a unified multi-device industrial automation platform, leveraging the proven Flutter + Firebase architecture to enable simultaneous monitoring and control of up to 4 ultrasonic processing devices through a single, intuitive mobile interface.
+
+**Core Enhancement Features:**
+- **Unified Dashboard:** All sonicator configurations and real-time states displayed simultaneously on the main screen with responsive design
+- **Enhanced Database Schema:** Extended Firebase RTDB with CT2000-specific configuration and state objects per sonicator, plus global amplitude control (sonic_amp_all)
+- **Individual Controls:** START/STOP buttons for each sonicator with 'CT2000 Config' dialogs and confirmation workflows
+- **Backwards Compatibility:** Seamless operation for existing single-sonicator installations
+
+## MVP Scope - Phase 2
+
+### Core Features (Must Have)
+- Multi-Sonicator Display Interface with responsive design for all device sizes
+- Individual Sonicator Controls (START/STOP) with immediate state reflection
+- CT2000 Configuration Management with mandatory confirmation workflows
+- Global Amplitude Control (sonic_amp_all parameter, INT 20-100)
+- Enhanced Database Schema (CT2000 Config/State objects per sonicator)
+- Backwards Compatibility with existing single-sonicator installations
+- Responsive Priority Display (Operating State, START/STOP, configuration access)
+
+### Success Criteria
+- **Backwards Compatibility:** Existing single-sonicator users can seamlessly upgrade without workflow disruption
+- **Test Coverage:** Achieve 85% minimum test coverage per company standards before deployment
+- **Multi-Sonicator Functionality:** 25% reduction in monitoring overhead and sub-5-minute alarm response times
+
+## Technical Implementation - Phase 2
+
+### Technology Stack
+- **Frontend:** Flutter 3.24+ with Provider package (v6.1.2) for state management
+- **Backend:** Firebase Realtime Database with enhanced CT2000 schema
+- **Platform Support:** iOS 12.0+, Android API 23+, Web
+- **Testing:** mocktail, flutter_test, integration_test frameworks
+
+### Resource Requirements
+- **Timeline:** 8-12 weeks (Test Coverage Enhancement → Multi-Sonicator Development → Integration & Testing)
+- **Team:** 1 Flutter Developer, 1 Backend Developer, 1 QA Engineer, 1 Project Manager
+- **Dependencies:** Coordination with hardware project team for CT2000 data streaming
+
+### Risk Mitigation
+- **Primary Risk:** Backwards compatibility disruption - Mitigated through comprehensive test suite and phased rollout
+- **Performance Risk:** Real-time streaming with 4x data volume - Mitigated through performance testing and Provider optimization
+- **Integration Risk:** Hardware project coordination - Mitigated through early coordination and simulation mode
+
+## Reference Documents - Phase 2
+- **Detailed Requirements:** `docs/multiple-sonicator-extension-requirements.md`
+- **Comprehensive Project Brief:** `docs/project-brief.md`
+- **Technical Architecture:** Enhanced sections in `docs/architecture.md`
+- **Company Standards:** `.axovia-flow/company-standards/` compliance throughout
+
+---
+
 ### PM Handoff
 
-This Project Brief provides the full context for Cannasol Technologies Mobile Application. Please start in 'PRD Generation Mode', review the brief thoroughly to work with the user to create the PRD section by section as the template indicates, asking for any necessary clarification or suggesting improvements.
+This Project Brief provides the full context for Cannasol Technologies Mobile Application including the Phase 2 Multiple Sonicator Extension. Please start in 'PRD Generation Mode', review the brief thoroughly to work with the user to create the PRD section by section as the template indicates, asking for any necessary clarification or suggesting improvements.

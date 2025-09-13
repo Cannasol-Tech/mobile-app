@@ -7,7 +7,7 @@ openapi: 3.0.0
 info:
   title: Cannasol Technologies API
   version: 1.0.0
-  description: Firebase Cloud Functions API for cannabis monitoring system
+  description: Firebase Cloud Functions API for Industrial Automation IO Config/Monitoring System
 servers:
   - url: https://us-central1-cannasol-tech.cloudfunctions.net
     description: Production Firebase Functions

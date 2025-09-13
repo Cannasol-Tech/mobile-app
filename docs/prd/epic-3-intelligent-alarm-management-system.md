@@ -55,7 +55,7 @@ so that I can analyze alarm patterns and improve system performance.
 
 ***Acceptance Criteria***
 
-1. Comprehensive alarm log with all alarm events and operator responses
+1. Comprehensive alarm LOG with all alarm events and operator responses
 2. Filtering by date range, device, alarm type, and severity level
 3. Search functionality for specific alarm events or response actions
 4. Alarm statistics and trending analysis for pattern identification

@@ -32,7 +32,7 @@ To identify the next logical story based on project progress and epic definition
 
 - Extract story requirements from the identified epic file
 - If previous story exists, review Dev Agent Record sections for:
-  - Completion Notes and Debug Log References
+  - Completion Notes and Debug  LOG References
   - Implementation deviations and technical decisions
   - Challenges encountered and lessons learned
 - Extract relevant insights that inform the current story's preparation
